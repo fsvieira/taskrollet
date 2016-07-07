@@ -1,0 +1,36 @@
+<div class='content'>
+	<div class='task-display'>
+		<div class='title'>Task Rollet</div>
+		
+		<div class='task' *ngIf="taskOfTheDay && taskOfTheDay.task">
+			<div class='header'>
+				<div class='title'>
+					Task of the day ({{showDate(taskOfTheDay.task.date)}})
+				</div>
+				<div class='buttons'>
+					<div class='button' (click)='deleteTask()' *ngIf='taskOfTheDay.index !== undefined'>Delete</div>
+				</div>
+			</div>
+			<div class='task-content'>
+			{{taskOfTheDay.task.content}}
+			</div>
+		</div>
+
+		<div class='task' *ngIf="!taskOfTheDay">
+			There is no tasks... go outside and enjoy the day ;)
+		</div>
+
+		<div class='task' *ngIf="taskOfTheDay && !taskOfTheDay.task">
+			There is no more tasks for today... go outside and enjoy the day ;)
+		</div>
+
+	</div>
+	<div class='taskeditor'>
+		<textarea 
+			#taskDescription 
+			placeholder="New task description!"
+			(input)="addTaskKeepAlive()"
+		></textarea>
+		<div class='button' (click)="addTask(taskDescription.value)">Add</div>
+	</div>
+</div>
