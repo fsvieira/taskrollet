@@ -13,6 +13,13 @@
 			var taskTimeout = 0;
 			var timeoutIsRunning = false;
 
+			this.STATE_INITIAL = 0;
+			this.STATE_TASKROULLET = 1;
+			this.STATE_TASKROULLET_EMPTY = 2;
+			this.STATE_TASKROULLET_DAY_EMPTY = 3;
+			this.STATE_TASKMANAGER = 4;
+			
+			this.state = this.STATE_INITIAL;
 
 			this.selectTaskOfTheDay = function () {
 				if (this.tasks && this.tasks.length > 0) {
@@ -45,6 +52,9 @@
 						this.taskOfTheDay = td;
 					}
 				}
+				else {
+					this.state = this.STATE_TASKROULLET_EMPTY;
+				}
 			}
 			
 			this.saveTasks = function () {
@@ -71,30 +81,21 @@
 					content: taskDescription,
 					date: new Date()
 				});
-				
-				if (!this.taskOfTheDay && !timeoutIsRunning) {
-					timeoutIsRunning = true;
-					setTimeout(function check () {
-						taskTimeout++;
-						console.log(taskTimeout);
-						if (!_self.taskOfTheDay) {
-							if (taskTimeout > 30) {
-								timeoutIsRunning = false;
-								_self.selectTaskOfTheDay();
-							}
-							else {
-								setTimeout(check, 1000);
-							}
-						}
-					}, 1000);
-				}
-				
+
 				// save tasks,
 				this.saveTasks();
+				
+				if (this.state === this.STATE_TASKROULLET_EMPTY) {
+					this.state = this.STATE_TASKMANAGER;
+				}
 			};
+
+			this.done = function () {
+				console.log("Done");
+			}
 			
-			this.deleteTask = function () {
-				var index = this.taskOfTheDay.index;
+			this.deleteTask = function (index) {
+				var index = index===undefined?this.taskOfTheDay.index:index;
 				this.tasks.splice(index, 1);
 				
 				localStorage.setItem("tasks", JSON.stringify(this.tasks));
@@ -105,12 +106,7 @@
 				
 				localStorage.setItem("taskOfTheDay", JSON.stringify(this.taskOfTheDay));
 			};
-			
-			this.addTaskKeepAlive = function () {
-				console.log("Task Keep Alive");
-				taskTimeout = 0;
-			};
-			
+						
 			this.showDate = function (date) {
 				return date.toISOString().split("T")[0];
 			};

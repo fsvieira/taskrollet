@@ -14,14 +14,16 @@ body {
   height: 100%;
   display: block;
 }
-
-.title {
-	font-size: 2em;
-	margin: 0.5em;
+.content .title {
+	height: 3%;
+	font-size: 1.5em;
+	min-height: 1em;
+	padding: 0.5em;
+	margin: 0;
 }
 
 .task-display {
-	height: 60%;
+	height: 50%;
 	min-height: 10em;
 	max-height: 60%;
 	display: block;
@@ -35,6 +37,8 @@ body {
 
 .task .title {
 	font-size: 1.5em;
+	margin: 0;
+	padding: 0;
 	float: left;
 }
 
@@ -74,6 +78,29 @@ body {
 	margin-bottom: 0.5em;
 }
 
+.task-manager {
+	height: 100%;
+	background-color: #FFEB98;
+	overflow: hidden;
+	border-radius: 0.5em;
+}
+
+.header .button {
+	float: right;
+}
+
+.header .title {
+	float: left;
+}
+
+.header {
+	padding: 0.5em;
+}
+
+.task-manager .header {
+	height: 7%;
+}
+
 .button {
 	padding: 0.5em;
 	font-size: 1.2em;
@@ -82,4 +109,11 @@ body {
 	display: block;
 	color: white;
 	display: inline-block;
+}
+
+.tasks {
+	margin: 0.5em;
+	height: 85%;
+	overflow: auto;
+	clear: both;
 }
