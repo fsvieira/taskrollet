@@ -8,7 +8,7 @@
 					Task of the day ({{showDate(taskOfTheDay.task.date)}})
 				</div>
 				<div class='buttons'>
-					<div class='button' (click)='deleteTask()' *ngIf='taskOfTheDay.index !== undefined'>Delete</div>
+					<div class='button' (click)='deleteTask()'>Delete</div>
 				</div>
 			</div>
 			<div class='task-content'>
@@ -51,9 +51,9 @@
 	</div>
 	<div class='taskeditor'>
 		<textarea 
-			#taskDescription 
 			placeholder="New task description!"
+			[(ngModel)]="taskDescription"
 		></textarea>
-		<div class='button' (click)="addTask(taskDescription.value)">Add</div>
+		<div class='button' (click)="addTask()">Add</div>
 	</div>
 </div>
