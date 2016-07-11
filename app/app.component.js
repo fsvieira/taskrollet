@@ -9,11 +9,22 @@
 			var _self = this;
 			this.tasks = [];
 			this.taskOfTheDay = undefined;
+			this.taskDescription = "";
 
 			var taskTimeout = 0;
 			var timeoutIsRunning = false;
+			
 
+			this.STATE_INITIAL = 0;
+			this.STATE_TASKROULLET = 1;
+			this.STATE_TASKROULLET_EMPTY = 2;
+			this.STATE_TASKROULLET_DAY_EMPTY = 3;
+			this.STATE_TASKMANAGER = 4;
+			
+			// initial state, nothing decided yet.
+			this.state = this.STATE_INITIAL;
 
+			// select task of the day,
 			this.selectTaskOfTheDay = function () {
 				if (this.tasks && this.tasks.length > 0) {
 					var tdString = localStorage.getItem("taskOfTheDay");
@@ -29,26 +40,44 @@
 					now.setHours(0,0,0,0);
 						
 					if (!td || td.date.getTime() !== now.getTime()) {
-						console.log(this.tasks.length);
+						var taskManager = 1;
+						if (this.state !== this.STATE_TASKMANAGER) {
+							taskManager = Math.random();
+						}
 						
-						var index = Math.floor(Math.random()*this.tasks.length);
-						var td = {
-							index: index,
-							date: now,
-							task: this.tasks[index]
-						};
+						if (taskManager > 0.3) {
+							var index = Math.floor(Math.random()*this.tasks.length);
+							var td = {
+								index: index,
+								date: now,
+								task: this.tasks[index]
+							};
+								
+							localStorage.setItem("taskOfTheDay", JSON.stringify(td));
+							this.taskOfTheDay = td;
 							
-						localStorage.setItem("taskOfTheDay", JSON.stringify(td));
-						this.taskOfTheDay = td;
+							// a task was seleted.
+							this.state = this.STATE_TASKROULLET;
+						}
+						else {
+							this.state = this.STATE_TASKMANAGER;
+						}
 					}
 					else {
 						this.taskOfTheDay = td;
+						// a task was seleted.
+						this.state = this.STATE_TASKROULLET;
 					}
 				}
+				else {
+					// there is no tasks,
+					this.state = this.STATE_TASKROULLET_EMPTY;
+				}
+				
+				localStorage.setItem("state", this.state);
 			}
 			
 			this.saveTasks = function () {
-				console.log(JSON.stringify(_self.tasks));
 				localStorage.setItem("tasks", JSON.stringify(_self.tasks));
 			}
 
@@ -61,40 +90,39 @@
 					});
 				}
 				
-				this.selectTaskOfTheDay();
+				// read state,
+				this.state = +localStorage.getItem("state");
+				if (this.state !== this.STATE_TASKMANAGER) {
+					this.selectTaskOfTheDay();
+				}
 			}
 
 			this.loadTasks();
 
-			this.addTask = function (taskDescription) {
+			this.addTask = function () {
+				var taskDescription = this.taskDescription;
+				this.taskDescription = "";				
+				
 				this.tasks.push({
 					content: taskDescription,
 					date: new Date()
 				});
-				
-				if (!this.taskOfTheDay && !timeoutIsRunning) {
-					timeoutIsRunning = true;
-					setTimeout(function check () {
-						taskTimeout++;
-						console.log(taskTimeout);
-						if (!_self.taskOfTheDay) {
-							if (taskTimeout > 30) {
-								timeoutIsRunning = false;
-								_self.selectTaskOfTheDay();
-							}
-							else {
-								setTimeout(check, 1000);
-							}
-						}
-					}, 1000);
-				}
-				
+
 				// save tasks,
 				this.saveTasks();
+				
+				// if this is the first task of empty list then show taskmanager.
+				if (this.state === this.STATE_TASKROULLET_EMPTY) {
+					this.state = this.STATE_TASKMANAGER;
+				}
+			};
+
+			this.done = function () {
+				this.selectTaskOfTheDay();
 			};
 			
-			this.deleteTask = function () {
-				var index = this.taskOfTheDay.index;
+			this.deleteTask = function (index) {
+				var index = index===undefined?this.taskOfTheDay.index:index;
 				this.tasks.splice(index, 1);
 				
 				localStorage.setItem("tasks", JSON.stringify(this.tasks));
@@ -105,12 +133,7 @@
 				
 				localStorage.setItem("taskOfTheDay", JSON.stringify(this.taskOfTheDay));
 			};
-			
-			this.addTaskKeepAlive = function () {
-				console.log("Task Keep Alive");
-				taskTimeout = 0;
-			};
-			
+						
 			this.showDate = function (date) {
 				return date.toISOString().split("T")[0];
 			};
