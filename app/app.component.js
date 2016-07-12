@@ -111,6 +111,8 @@
 				// save tasks,
 				this.saveTasks();
 				
+				this.toast(taskDescription.substring(0, 10) + " ...");
+				
 				// if this is the first task of empty list then show taskmanager.
 				if (this.state === this.STATE_TASKROULLET_EMPTY) {
 					this.state = this.STATE_TASKMANAGER;
@@ -136,6 +138,25 @@
 						
 			this.showDate = function (date) {
 				return date.toISOString().split("T")[0];
+			};
+			
+			this.toasts = [];
+			
+			var _self = this;
+			this.toastsClear = function () {
+				if (this.toasts.length === 1) {
+					setTimeout(function clear () {
+						_self.toasts.splice(0, 1);
+						if (_self.toasts.length > 0) {
+							setTimeout(clear, 3000);
+						}
+					}, 3000);
+				}
+			};
+			
+			this.toast = function (message) {
+				this.toasts.push(message);
+				this.toastsClear();
 			};
 		}
     });
