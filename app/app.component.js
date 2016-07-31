@@ -66,7 +66,12 @@
 					else {
 						this.taskOfTheDay = td;
 						// a task was seleted.
-						this.state = this.STATE_TASKROULLET;
+						if (td.task) {
+							this.state = this.STATE_TASKROULLET;
+						}
+						else {
+							this.state = this.STATE_TASKROULLET_DAY_EMPTY;
+						}
 					}
 				}
 				else {
@@ -134,6 +139,9 @@
 				};
 				
 				localStorage.setItem("taskOfTheDay", JSON.stringify(this.taskOfTheDay));
+
+				this.state = STATE_TASKROULLET_DAY_EMPTY;
+				localStorage.setItem("state", this.state);
 			};
 						
 			this.showDate = function (date) {
