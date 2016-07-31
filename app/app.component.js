@@ -140,7 +140,7 @@
 				
 				localStorage.setItem("taskOfTheDay", JSON.stringify(this.taskOfTheDay));
 
-				this.state = STATE_TASKROULLET_DAY_EMPTY;
+				this.state = this.STATE_TASKROULLET_DAY_EMPTY;
 				localStorage.setItem("state", this.state);
 			};
 						
