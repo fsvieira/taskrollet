@@ -45,7 +45,7 @@
 							taskManager = Math.random();
 						}
 						
-						if (taskManager > 0.3) {
+						if (taskManager > 0.15) {
 							var index = Math.floor(Math.random()*this.tasks.length);
 							var td = {
 								index: index,
