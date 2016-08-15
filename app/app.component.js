@@ -24,6 +24,38 @@
 			// initial state, nothing decided yet.
 			this.state = this.STATE_INITIAL;
 
+			this.stats = function (tasks, perc) {
+				perc = perc || Math.random();
+				var now = new Date().getTime();
+				var total = 0;
+				tasks.forEach(function (task) {
+					// calculate time pass,
+					var time = now - new Date(task.update || task.date).getTime();
+					
+					total += time;
+					task.stats = {
+						time: time
+					};
+				});
+
+				tasks.sort(function (a, b) {
+					return b.stats.time - a.stats.time;
+				});
+
+				var accum = 0;
+				perc = perc * total;
+
+				for (var i=0; i<tasks.length; i++) {
+					accum += tasks[i].stats.time;
+					console.log("ACCUM: " + accum + ", index=" + i + ", task=" + tasks[i].content);
+					if (perc <= accum) {
+						return i;
+					}
+				}
+				
+				console.log("BUG");
+			};
+
 			// select task of the day,
 			this.selectTaskOfTheDay = function () {
 				if (this.tasks && this.tasks.length > 0) {
@@ -37,7 +69,7 @@
 					}
 
 					var now = new Date();
-					now.setHours(0,0,0,0);
+					now.setHours(0,0,1,0);
 						
 					if (!td || td.date.getTime() !== now.getTime()) {
 						var taskManager = 1;
@@ -46,14 +78,20 @@
 						}
 						
 						if (taskManager > 0.15) {
-							var index = Math.floor(Math.random()*this.tasks.length);
+							// var index = Math.floor(Math.random()*this.tasks.length);
+							// TODO: saving index is bad ideia, tasks must have an id (sha2+timesptamp).
+							var index = this.stats(this.tasks);
 							var td = {
 								index: index,
 								date: now,
 								task: this.tasks[index]
 							};
-								
+							
+							td.task.update = now;
+							
 							localStorage.setItem("taskOfTheDay", JSON.stringify(td));
+							localStorage.setItem("tasks", JSON.stringify(this.tasks));
+							
 							this.taskOfTheDay = td;
 							
 							// a task was seleted.
