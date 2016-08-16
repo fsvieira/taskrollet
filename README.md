@@ -1,11 +1,19 @@
-# taskroullet
-choices are bad, let a program do it for you. Task roullet chooses randomly one task for day for you to do.
+# taskroulette
+
+Task roulette is not a task manager, its a simple task that stores and chooses one and only one task per day for you to do.
+
+# Features
+
+* Only one task per day this means that after completed you are free for the rest of the day with a good feeling of work done,
+* You can add as many tasks as you like at any time,
+* You can only manage tasks when the task manager/list appear,
+* You can't see your tasks, only the task of the day,
+* Tasks are stored on you browser (localStorage) so no login needed,
+* Older tasks have a higher probability of being chosen.
 
 # try online
   * http://fsvieira.com/taskroullet/
-  * tasks will be saved on local storage (means that it will work on your browser only),
-  * After pressing add (that doens't give feedback) you will need to remove text and write other task and press add again.
-  
+
 # install
 
 * clone repo
