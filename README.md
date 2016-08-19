@@ -1,6 +1,6 @@
 # taskroulette
 
-Task roulette is not a task manager, its a simple task that stores and chooses one and only one task per day for you to do.
+Task roulette is not a task manager, its a simple task helper that stores and chooses one and only one task per day for you to do.
 
 # Features
 
