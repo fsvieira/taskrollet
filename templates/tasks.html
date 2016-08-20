@@ -17,8 +17,13 @@
 					<div class='button' (click)='deleteTask()'>Delete</div>
 				</div>
 			</div>
-			<div class='task-content'>
-			{{taskOfTheDay.task.content}}
+			<div class='task-content' ng-if='taskOfTheDay.task.parsed.task'>
+				<div *ngFor="let line of taskOfTheDay.task.parsed.task;" class='line'>
+					<div *ngFor="let content of line.line;" [ngClass]="{tag: content.tag, text: content.text}">
+						{{content.tag?"#" +content.tag:content.text}}
+					</div>
+				</div>
+				<div class='line'></div>
 			</div>
 		</div>
 

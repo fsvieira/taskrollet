@@ -30,7 +30,6 @@
     "concurrently": "^2.0.0",
     "lite-server": "^2.2.0",
     "mocha": "^3.0.2",
-    "nearley": "^2.7.3",
     "should": "^11.0.0"
   }
 }

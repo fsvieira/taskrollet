@@ -47,7 +47,7 @@
 
 				for (var i=0; i<tasks.length; i++) {
 					accum += tasks[i].stats.time;
-					console.log("ACCUM: " + accum + ", index=" + i + ", task=" + tasks[i].content);
+
 					if (perc <= accum) {
 						return i;
 					}
@@ -118,8 +118,11 @@
 				}
 				
 				localStorage.setItem("state", this.state);
+				
+				console.log(JSON.stringify(this.taskOfTheDay));
+
 			}
-			
+						
 			this.saveTasks = function () {
 				localStorage.setItem("tasks", JSON.stringify(_self.tasks));
 			}
@@ -128,6 +131,10 @@
 				var t = localStorage.getItem("tasks");
 				if (t) {
 					this.tasks = JSON.parse(t).map(function (t) {
+						if (!t.parsed ) {
+							t.parsed = parser.parse(t.content);
+						}
+						
 						t.date = new Date(t.date);
 						return t;
 					});
@@ -145,9 +152,10 @@
 			this.addTask = function () {
 				var taskDescription = this.taskDescription;
 				this.taskDescription = "";				
-				
+
 				this.tasks.push({
 					content: taskDescription,
+					parsed: parser.parse(taskDescription),
 					date: new Date()
 				});
 
@@ -172,12 +180,14 @@
 				
 				localStorage.setItem("tasks", JSON.stringify(this.tasks));
 				
-				this.taskOfTheDay = {
-					date: this.taskOfTheDay.date
-				};
+				if (this.taskOfTheDay) {
+					this.taskOfTheDay = {
+						date: this.taskOfTheDay.date
+					};
+					
+					localStorage.setItem("taskOfTheDay", JSON.stringify(this.taskOfTheDay));
+				}
 				
-				localStorage.setItem("taskOfTheDay", JSON.stringify(this.taskOfTheDay));
-
 				this.state = this.STATE_TASKROULLET_DAY_EMPTY;
 				localStorage.setItem("state", this.state);
 			};

@@ -1,0 +1,15 @@
+// pegjs --format globals -e parser task.peg
+
+task = task:taskline* {return {task: task};}
+
+taskline = tc:taskcontent+ "\n"* {
+	return {line: tc};
+}
+
+taskcontent = tasktext / tag
+
+tasktext = text:[^#\n]+ {
+	return {text: text.join("")};
+}
+
+tag = "#" tag:[^# \n\t]+ {return {tag: tag.join("")};}

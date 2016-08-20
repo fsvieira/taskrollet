@@ -141,5 +141,18 @@ body {
 	border: 1px solid #444;
 }
 
+/* Task Content */
+.task-content .tag,
+.task-content .text {
+	float: left;
+	margin-right: 0.2em;
+}
 
+.task-content .tag {
+	color: #1E90FF;
+}
+
+.task-content .line {
+	clear: both;
+}
 
