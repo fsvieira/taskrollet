@@ -7,6 +7,7 @@ body {
 	max-width: 60em;
 	margin-left: auto;
 	margin-right: auto;
+	background-color: #eee;
 }
 
 .content {
@@ -30,38 +31,9 @@ body {
 	overflow: auto;
 }
 
-.task .header {
-	clear: both;
-	display: block;
-}
-
-.task .title {
-	font-size: 1.5em;
-	margin: 0;
-	padding: 0;
-	float: left;
-}
-
-.task .buttons {
-	float: right;
-}
-
 .task {
-	background-color: #32CD32;
-	border-radius: 0.5em;
-	padding: 0.5em;
-	margin-bottom: 0.5em;
-	font-size: 1.2em;
-	color: #FFFFE0;
-	
-}
-
-.task-content {
-	background-color: #90EE90;
-	padding: 0.5em;
-	font-size: 1em;
-	color: #333;
-	clear: both;
+	width: 98%;
+	margin: 1%;
 }
 
 .taskeditor {
@@ -80,7 +52,7 @@ body {
 
 .task-manager {
 	height: 100%;
-	background-color: #FFEB98;
+	background-color: #FFECB3;
 	overflow: hidden;
 	border-radius: 0.5em;
 }
@@ -154,5 +126,20 @@ body {
 
 .task-content .line {
 	clear: both;
+}
+
+/*
+ */
+.enjoy-day.mdl-card {
+  width: 100%;
+  height: 10em;
+  background: url('../images/zion-sunset-2.png') center / cover;
+}
+
+.enjoy-day > .mdl-card__actions {
+  height: 52px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
 }
 

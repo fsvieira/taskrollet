@@ -191,7 +191,22 @@
 				this.state = this.STATE_TASKROULLET_DAY_EMPTY;
 				localStorage.setItem("state", this.state);
 			};
-						
+				
+			this.dismissTask = function (index) {
+				var index = index===undefined?this.taskOfTheDay.index:index;
+				
+				if (this.taskOfTheDay) {
+					this.taskOfTheDay = {
+						date: this.taskOfTheDay.date
+					};
+					
+					localStorage.setItem("taskOfTheDay", JSON.stringify(this.taskOfTheDay));
+				}
+				
+				this.state = this.STATE_TASKROULLET_DAY_EMPTY;
+				localStorage.setItem("state", this.state);
+			};	
+					
 			this.showDate = function (date) {
 				return date.toISOString().split("T")[0];
 			};
@@ -210,9 +225,22 @@
 				}
 			};
 			
+			/*
 			this.toast = function (message) {
 				this.toasts.push(message);
 				this.toastsClear();
+			};*/
+			
+			// TODO: check how to do this on angular2.
+			var snackbarContainer;
+			this.toast = function (message) {
+				if (!snackbarContainer) {
+					snackbarContainer = document.querySelector('#toast');
+				}
+				
+				snackbarContainer.MaterialSnackbar.showSnackbar({
+					message: message
+				});
 			};
 		}
     });

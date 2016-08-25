@@ -5,19 +5,21 @@
 		</div>
 	</div>
 	
+	<div id="toast" class="mdl-js-snackbar mdl-snackbar">
+		<div class="mdl-snackbar__text"></div>
+		<button class="mdl-snackbar__action" type="button"></button>
+	</div>
+	
 	<div class='title'>Task Roullet</div>
 
 	<div class='task-display'>
-		<div class='task' *ngIf="state===STATE_TASKROULLET" >
-			<div class='header'>
-				<div class='title'>
-					Task of the day ({{showDate(taskOfTheDay.task.date)}})
-				</div>
-				<div class='buttons'>
-					<div class='button' (click)='deleteTask()'>Delete</div>
-				</div>
-			</div>
-			<div class='task-content' ng-if='taskOfTheDay.task.parsed.task'>
+		<div class="task mdl-card mdl-shadow--2dp" *ngIf="state===STATE_TASKROULLET">
+		  <div class="mdl-card__title mdl-card--expand">
+			<h2 class="mdl-card__title-text">
+				Task of the day ({{showDate(taskOfTheDay.task.date)}})
+			</h2>
+		  </div>
+			<div class='task-content mdl-card__supporting-text' ng-if='taskOfTheDay.task.parsed.task'>
 				<div *ngFor="let line of taskOfTheDay.task.parsed.task;" class='line'>
 					<div *ngFor="let content of line.line;" [ngClass]="{tag: content.tag, text: content.text}">
 						{{content.tag?"#" +content.tag:content.text}}
@@ -25,36 +27,63 @@
 				</div>
 				<div class='line'></div>
 			</div>
+		  <div class="mdl-card__actions mdl-card--border">
+			<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" (click)='deleteTask()'>
+				Delete
+			</button>
+			<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" (click)='dismissTask()'>
+				Dismiss
+			</button>
+		  </div>
 		</div>
-
+		
 		<div class='task' *ngIf="state===STATE_TASKROULLET_EMPTY" >
-			There is no tasks... go outside and enjoy the day ;)
+			<div class="enjoy-day mdl-card mdl-shadow--2dp">
+			  <div class="mdl-card__title mdl-card--expand"></div>
+			  <div class="mdl-card__actions">
+				<span>There is no tasks... go outside and enjoy the day ;)</span>
+			  </div>
+			</div>
 		</div>
 
 		<div class='task' *ngIf="state===STATE_TASKROULLET_DAY_EMPTY" >
-			There is no more tasks for today... go outside and enjoy the day ;)
+			<div class="enjoy-day mdl-card mdl-shadow--2dp">
+			  <div class="mdl-card__title mdl-card--expand"></div>
+			  <div class="mdl-card__actions">
+				<span>There is no more tasks for today... go outside and enjoy the day ;)</span>
+			  </div>
+			</div>
 		</div>
 
 		<div class='task-manager' *ngIf="state===STATE_TASKMANAGER" >
 			<div class='header'>
 				<div class='title'>Task Manager</div>
 				<div class='buttons'>
-					<div class='button' (click)='done()'>Done</div>
+					<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" (click)='done()'>
+						Done
+					</button>
 				</div>
 			</div>
 			<div class='tasks'>
-				<div class='task' *ngFor="let task of tasks; let i=index">
-					<div class='header'>
-						<div class='title'>
-							Task of the day ({{showDate(task.date)}})
+				<div class="task mdl-card mdl-shadow--2dp" *ngFor="let task of tasks; let i=index">
+				  <div class="mdl-card__title mdl-card--expand">
+					<h2 class="mdl-card__title-text">
+						Task of the day ({{showDate(task.date)}})
+					</h2>
+				  </div>
+					<div class='task-content mdl-card__supporting-text'>
+						<div *ngFor="let line of task.parsed.task;" class='line'>
+							<div *ngFor="let content of line.line;" [ngClass]="{tag: content.tag, text: content.text}">
+								{{content.tag?"#" +content.tag:content.text}}
+							</div>
 						</div>
-						<div class='buttons'>
-							<div class='button' (click)='deleteTask(i)'>Delete</div>
-						</div>
+						<div class='line'></div>
 					</div>
-					<div class='task-content'>
-						{{task.content}}
-					</div>				
+				  <div class="mdl-card__actions mdl-card--border">
+					<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" (click)='deleteTask()'>
+						Delete
+					</button>
+				  </div>
 				</div>
 			</div>
 		</div>
@@ -65,6 +94,9 @@
 			placeholder="New task description!"
 			[(ngModel)]="taskDescription"
 		></textarea>
-		<div class='button' (click)="addTask()">Add</div>
+
+		<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" (click)="addTask()">
+			Add
+		</button>
 	</div>
 </div>
