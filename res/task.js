@@ -154,8 +154,8 @@
         },
         peg$c7 = "#",
         peg$c8 = peg$literalExpectation("#", false),
-        peg$c9 = /^[^# \n\t]/,
-        peg$c10 = peg$classExpectation(["#", " ", "\n", "\t"], true, false),
+        peg$c9 = /^[^ \n\t]/,
+        peg$c10 = peg$classExpectation([" ", "\n", "\t"], true, false),
         peg$c11 = function(tag) {return {tag: tag.join("")};},
 
         peg$currPos          = 0,

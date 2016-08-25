@@ -12,4 +12,4 @@ tasktext = text:[^#\n]+ {
 	return {text: text.join("")};
 }
 
-tag = "#" tag:[^# \n\t]+ {return {tag: tag.join("")};}
+tag = "#" tag:[^ \n\t]+ {return {tag: tag.join("")};}
