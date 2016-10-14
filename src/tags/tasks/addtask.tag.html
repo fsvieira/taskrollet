@@ -1,0 +1,38 @@
+<add-task>
+    <div class='addtask'>
+        <div class='tkr-editor {empty: !text.length, editing: text.length}' >
+            <div id='addTaskEditor' contenteditable=true class='tkr-edit' onkeyup={ edit }>
+            </div>
+            <div class='placeholder'>
+                <div class='help-message'>
+                    Write a new task here...
+                </div>
+            </div>
+        </div>
+
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored tkr-right" onclick={add} disabled={text.length === 0}>
+            Add
+        </button>
+        <div class='clear'></div>
+    </div>
+    
+    <script>
+        var tag = this;
+        this.text = "";
+
+        this.edit = function (e) {
+            this.text = e.target.innerText;
+        };
+
+        this.add = function () {
+            opts.app.trigger("addTask", {
+                description: this.text
+            });
+            this.addTaskEditor.innerHTML = "";
+            this.text = "";
+        };
+
+
+    </script>
+    
+</add-task>
