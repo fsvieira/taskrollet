@@ -1,0 +1,36 @@
+<task-manager>
+    <div class='tkr-taskmanager-tasks'>
+        <div each={task in tasks}>
+            <task
+                title="Task ({date2string(task.createDate)})"
+                description={task.parsedDescription}
+                actions={{dismiss: false, delete: true}}
+                local_id={task.localId}
+                app={app}
+            ></task>
+        </div>
+    </div>
+    <div class='tkr-taskmanager-buttons'>
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" onclick={done}>Done</button>
+    </div>
+    
+    <script>
+        var tag = this;
+        var App = require("../../app.js");
+        
+        this.app = opts.app;
+        this.tasks = this.app.getTasks();
+
+        this.date2string = App.date2string;
+        
+        this.done = function () {
+            opts.app.trigger('taskManagerDone');
+        };
+        
+        opts.app.on("tasksChanged", function (tasks) {
+            tag.tasks = tasks;
+            tag.update();
+        });
+        
+    </script>
+</task-manager>

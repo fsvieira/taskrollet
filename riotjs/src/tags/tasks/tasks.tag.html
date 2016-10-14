@@ -1,0 +1,66 @@
+<tasks>
+    <div class='tkr-show-tasks'>
+        <div id='tasksPlaceholder'></div>
+    </div>
+    <div class='tkr-add-tasks'>
+        <add-task app={opts.app}></add-task>
+    </div>
+    
+    <script>
+        var tag = this;
+        var App = require("../../app.js");
+
+        function setTaskPlaceholder (state) {
+            var state = state || opts.app.getState();
+            var mountTag, args, task;
+
+            switch (state) {
+                case App.STATE.EMPTY_TASKS:
+                    mountTag = "no-tasks";
+                    args = {
+                        message: 'There is no tasks... go outside and enjoy the day ;)'
+                    };
+                    break;
+                    
+                case App.STATE.NO_TASKS_FOR_TODAY:
+                    mountTag = "no-tasks";
+                    args = {
+                        message: 'There is no more tasks for today... go outside and enjoy the day ;)'
+                    };
+                    break;
+                    
+                case App.STATE.TASK_MANAGER:
+                    mountTag = "task-manager";
+                    args = opts;
+                    break;
+                    
+                case App.STATE.TASK_OF_THE_DAY:
+                    mountTag = "task";
+                    task = opts.app.getTask();
+                    args = {
+                        title: "Task Of The Day ("+ App.date2string(task.createDate) +")",
+                        description: task.parsedDescription,
+                        actions: {dismiss: false, delete: true},
+                        local_id: task.localId,
+                        app: opts.app
+                    };
+                    break;
+            };
+            
+            riot.mount(
+                tag.tasksPlaceholder,
+                mountTag,
+                args
+            );
+        }
+
+        this.on("mount", function () {
+            setTaskPlaceholder();
+            
+            opts.app.on("stateChange", function (state) {
+                setTaskPlaceholder(state);
+            });
+        });
+    </script>
+    
+</tasks>

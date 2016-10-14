@@ -14,6 +14,7 @@
     "gulp-concat": "^2.6.0",
     "gulp-riot": "^0.5.5",
     "lite-server": "^2.2.2",
+    "pegjs": "^0.10.0",
     "riot": "^2.6.3"
   }
 }

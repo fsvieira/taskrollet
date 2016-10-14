@@ -1,0 +1,8 @@
+<add-sprint>
+    <div each={taskTag in tasksTags}>{taskTag}</div>
+    
+    <script>
+        this.tasksTags = opts.app.getTasksTags();
+        console.log(JSON.stringify(this.tasksTags));
+    </script>
+</add-sprint>
