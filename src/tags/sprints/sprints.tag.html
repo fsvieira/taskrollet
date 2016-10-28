@@ -1,0 +1,36 @@
+<sprints>
+    <div >
+        <h1>Sprints</h1>
+        <hr>
+        <list-sprints app={opts.app}></list-sprints>
+        <add-sprint 
+            add_sprint={add_sprint}
+            sprints_tags={sprints_tags}
+            if={sprints_tags.length > 0}
+        ></add-sprint>
+    </div>
+    
+    <script>
+        var tag = this;
+        
+        this.sprints_tags = opts.app.getAvailableSprintsTags();
+
+        this.add_sprint = function (tag, date) {
+            opts.app.addSprint(tag, date);
+        };
+        
+        function refresh (state) {
+            var sprintTags = opts.app.getAvailableSprintsTags();
+
+            tag.update({
+                sprints_tags: sprintTags
+            });
+        }
+        
+        opts.app.on("update", refresh);
+        
+        this.on('unmount', function () {
+            opts.app.off("update", refresh);
+        });
+    </script>
+</sprints>

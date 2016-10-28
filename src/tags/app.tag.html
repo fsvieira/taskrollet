@@ -2,26 +2,19 @@
       <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
       <header class="mdl-layout__header">
         <div class="mdl-layout__header-row">
-          <!-- Title -->
           <span class="mdl-layout-title">{opts.app.title}</span>
-          <!-- Add spacer, to align navigation to the right -->
           <div class="mdl-layout-spacer"></div>
-          <!-- Navigation. We hide it in small screens. -->
-          <!--
-          <nav class="mdl-navigation mdl-layout--large-screen-only">
-            <a class="mdl-navigation__link" href="#datainput">Set Data</a>
-          </nav>
-          -->
         </div>
       </header>
       <div class="mdl-layout__drawer">
-        <span class="mdl-layout-title">{opts.app.title}</span>
+        <span class="mdl-layout-title" style='color: #8bc34a;'>{opts.app.title}</span>
         <!--
-        <nav class="mdl-navigation">
-          <a class="mdl-navigation__link" href="#datainput">Set Data</a>
-        </nav>
-        -->
         <add-sprint app={opts.app}></add-sprint>
+        -->
+        <div class='drawer-content'>
+          <sprints app={opts.app} if={showSprints}></sprints>
+          <p if={!showSprints}>First add some tasks to start. For more information check the <a href='#'>documentation</a>.</p>
+        </div>
       </div>
       <main class="mdl-layout__content {background}"  name='content'>
       </main>
@@ -34,6 +27,7 @@
     
     <script>
       var tag = this;
+      this.showSprints = opts.app.state.tasks.length > 0;
 
       this.on('mount', function () {
           componentHandler.upgradeDom();
@@ -57,5 +51,11 @@
             tag.toasts.MaterialSnackbar.showSnackbar(data);
           });
       });
+      
+      opts.app.on('update', function (state) {
+        tag.showSprints = state.tasks.length > 0;
+        tag.update();
+      });
+      
     </script>
 </app>

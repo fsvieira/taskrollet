@@ -33,7 +33,11 @@
 		var tag = this;
 		
 		this.deleteTask = function () {
-			opts.app.trigger("deleteTask", opts.local_id);
+			opts.app.deleteTask(opts.local_id);
+		};
+
+		this.dismissTask = function () {
+			opts.app.dismissTask(opts.local_id);
 		};
 		
 	</script>

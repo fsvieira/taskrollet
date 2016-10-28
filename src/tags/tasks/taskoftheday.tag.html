@@ -1,0 +1,73 @@
+<task-of-the-day>
+    <div class='task-of-the-day'>
+        <div if={activeTags.length > 1}>
+            <button id="tags-filter"
+                class="mdl-button mdl-js-button mdl-button--raised tkr-right">
+                  <div class='tkr-ellipsis tkr-left'>
+                      {tagPresentation(activeTag)}
+                  </div>
+                  <i class="material-icons">more_vert</i>
+            </button>
+            
+            <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
+                for="tags-filter"
+            >
+                <li 
+                    class="mdl-menu__item tkr-tags-item" each={taskTag in activeTags} onclick={tagFilter(taskTag)}
+                    if={taskTag !== activeTag}
+                >
+                    {tagPresentation(taskTag)}
+                </li>
+            </ul>
+        </div> 
+        
+        <task
+            title={taskTitle}
+            description={description}
+            actions={{dismiss: true, delete: true}}
+            local_id={localId}
+            app={opts.app}
+        ></task>
+    </div>
+    
+    <script>
+        var tag = this;
+        var App = require('../../app.js');
+
+        function refresh (state, taskTag) {
+            var taskOfTheDay = opts.app.getTaskOfTheDay(taskTag);
+
+            tag.activeTags = taskOfTheDay.activeTags;
+
+            tag.activeTag = taskOfTheDay.activeTag;
+
+            tag.taskTitle = "Task Of The Day (" + App.date2string(taskOfTheDay.content.createDate) + ")";    
+            tag.description = taskOfTheDay.content.parsedDescription;
+            tag.localId = taskOfTheDay.content.localId;
+            
+            tag.update();
+        }
+        
+        this.tagFilter = function (activeTag) {
+            return function (e) {
+                refresh(undefined, activeTag);
+            };
+        };
+        
+        this.tagPresentation = function (tag) {
+            return tag.replace(/-/g, ' ');
+        }
+        
+        opts.app.on('update', refresh);
+        
+        tag.on('mount', function () {
+            refresh();
+            componentHandler.upgradeDom();
+        });
+
+        tag.on('unmount', function () {
+            opts.app.off('update', refresh);
+        });
+
+    </script>
+</task-of-the-day>

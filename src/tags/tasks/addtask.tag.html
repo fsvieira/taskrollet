@@ -25,9 +25,7 @@
         };
 
         this.add = function () {
-            opts.app.trigger("addTask", {
-                description: this.text
-            });
+            opts.app.addTask({description: this.text});
             this.addTaskEditor.innerHTML = "";
             this.text = "";
         };

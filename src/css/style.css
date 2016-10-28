@@ -205,3 +205,73 @@ task-manager {
 .tkr-taskmanager-buttons {
   margin: 0.25em;
 }
+
+/* Tasks of the day */
+.task-of-the-day {
+  position: relative;
+  width:100%;
+  display:block;
+}
+
+.tkr-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 20em;
+}
+
+
+.task-of-the-day ul,
+.task-of-the-day .mdl-menu__container {
+  width: 100% !important;
+  max-width: 20em;
+}
+
+.tkr-tags-item {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tkr-left {
+  float: left;
+}
+
+.tkr-right {
+  float: right;
+}
+
+/* sprints */
+.add-sprint {
+  margin: 1em;
+}
+
+.add-sprint ul,
+.add-sprint .mdl-menu__container {
+  width: 90% !important;
+  max-width: 20em;
+}
+
+#tags-sprints {
+  width: 100%;
+}
+
+#tags-sprints i {
+  float: right;
+  margin: 0.2em;
+}
+
+.tkr-full-width {
+  width: 100%;
+}
+
+.drawer-content {
+  padding: 0.5em;
+}
+
+/* Global standart Elements */
+
+a {
+  color: #8bc34a;
+  font-size: 1.2em;
+}

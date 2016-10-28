@@ -4,76 +4,25 @@ var LOCAL_STORAGE_PREFIX = "taskroulette@";
 var LOCAL_STORAGE_STATE = LOCAL_STORAGE_PREFIX + "state";
 var day = 1000*60*60*24;
 
-// If state is undefined keep same state.
-
 function App () {
     riot.observable(this);
     var self = this;
     
     this.state = this.load();
     this.title = "Task Roulette";
-    
-    // setup Listenner,
-    this.on("addTask", function (task) {
-        task.localId = self.state.tasks.length;
-        task.createDate = task.createDate || new Date().getTime();
-        task.parsedDescription = parser.parse(task.description);
-        var tags = App.getTags(task.parsedDescription);
-
-        task.tags = tags;
-        self.state.tasks.push(task);
-
-        self.save();
-        self.getState();
-        self.trigger("notification", {message: "Task '" + task.description.substring(0, 10) + "...' added"});
-        self.trigger("tasksChanged", self.state.tasks);
-    });
-    
-    this.on("deleteTask", function (localId) {
-
-        self.state.tasks[localId] = self.state.tasks[self.state.tasks.length-1];
-        self.state.tasks[localId].localId = localId;
-        self.state.tasks.pop();
-
-        if (
-            self.state.taskOfTheDay && 
-            self.state.taskOfTheDay.task && 
-            self.state.taskOfTheDay.task.localId === localId
-        ) {
-           self.state.taskOfTheDay.task = undefined; 
-        }
-
-        self.save();
-        self.getState();
-    });
-
-    this.on("taskManagerDone", function () {
-        var days = day*4 + day*(Math.floor(Math.random()*3));
-        var date = new Date(self.state.taskManagerScheduled + days);
-        date.setHours(0, 0, 0, 0);
-
-        self.state.taskManagerScheduled = date.getTime();
-        self.save();
-        self.getState();
-    });
 }
 
-
-/* Static App Functions and Constants */
+/* 
+==============================
+    Static Functions 
+==============================
+*/
 App.enums = function (context, values) {
     App[context] = {};
     for (var i=0; i<values.length; i++) {
         App[context][values[i]] = i;
     }
 };
-
-// States,
-App.enums("STATE", [
-    "EMPTY_TASKS",
-    "TASK_MANAGER",
-    "TASK_OF_THE_DAY",
-    "NO_TASKS_FOR_TODAY"
-]);
 
 // Maybe put this on utils ? 
 App.date2string = function (date) {
@@ -107,8 +56,32 @@ App.getTags = function (description, tags) {
 };
 
 
+/* Static Constants */
+App.constants = {
+    allTags: 'all-tags'
+};
+
+
+
+// States,
+App.enums("STATE", [
+    "EMPTY_TASKS",
+    "TASK_MANAGER",
+    "TASK_OF_THE_DAY",
+    "NO_TASKS_FOR_TODAY"
+]);
+
+const initialState = {
+    tasks: [],
+    currentState: App.STATE.EMPTY_TASKS,
+    sprints: {}
+};
+
+
 /* 
+==============================
     Persistent data handle, (Local Storage)
+==============================
 */
 App.prototype.save = function () {
     localStorage.setItem(LOCAL_STORAGE_STATE, JSON.stringify(this.state));
@@ -116,21 +89,262 @@ App.prototype.save = function () {
 
 App.prototype.load = function () {
     var state = localStorage.getItem(LOCAL_STORAGE_STATE);
-    state = state?JSON.parse(state):{
-        tasks: [],
-        currentState: App.STATE.EMPTY_TASKS
-    };
+    state = state?JSON.parse(state):initialState;
     
     return state;
 };
 
+/*
+==============================
+    Sprints write
+==============================
+*/
+App.prototype.addSprint = function (tag, date) {
+    this.state.sprints[tag].date = date;
+    this.state.sprints[tag].tag = tag;
+    this.save();
+    this.getState(true);
+};
+
+App.prototype.deleteSprint = function (tag) {
+    this.state.sprints[tag].date = undefined;
+    this.save();
+    this.getState(true);
+};
+
+/*
+==============================
+    Sprints Read
+==============================
+*/
+App.prototype.getSprints = function () {
+    var sprints = [];
+    
+    for (var tag in this.state.sprints) {
+        var sprint = this.state.sprints[tag];
+
+        if (sprint.date !== undefined) {
+            sprints.push(sprint);
+        }
+    }
+    
+    sprints.sort(function (a, b) {
+        return b.date < a.date;
+    });
+
+    return sprints;
+};
+
+App.prototype.getAvailableSprintsTags = function () {
+    var sprintsTags = [];
+    
+    for (var tag in this.state.sprints) {
+        var sprint = this.state.sprints[tag];
+
+        if (sprint.date === undefined) {
+            sprintsTags.push(tag);
+        }
+    }
+    
+    sprintsTags.sort();
+
+    return sprintsTags;
+};
+
+/* 
+==============================
+    Tasks Write
+==============================
+*/
+
+App.prototype.addTask = function (task) {
+    task.localId = this.state.tasks.length;
+    task.createDate = task.createDate || new Date().getTime();
+    task.parsedDescription = parser.parse(task.description);
+    var tags = App.getTags(task.parsedDescription);
+
+    if (tags.indexOf(App.constants.allTags) === -1) {
+        tags.push(App.constants.allTags);
+    }
+
+    task.tags = tags;
+    this.state.tasks.push(task);
+
+    // add task to sprints
+    for (var i=0; i<tags.length; i++) {
+        var tag = tags[i];
+        this.state.sprints[tag] = this.state.sprints[tag] || {tasks: []};
+        this.state.sprints[tag].tasks.push(task.localId);
+    }
+
+    var taskOfTheDay = this.state.taskOfTheDay;
+    if (taskOfTheDay && taskOfTheDay.task) {
+        for (var i=0; i<tags.length; i++) {
+            var t = tags[i];
+            if (
+                taskOfTheDay.task.activeTags.indexOf(t) === -1 &&
+                taskOfTheDay.dismissTags.indexOf(t) === -1
+            ) {
+                taskOfTheDay.task.activeTags.push(t);
+                taskOfTheDay.task.activeTags.sort();
+            }
+        }
+    }
+
+    this.save();
+    this.trigger("notification", {message: "Task '" + task.description.substring(0, 10) + "...' added"});
+    this.getState(true);
+};
+
+App.prototype.dismissTask = function (localId) {
+    this.deleteTask(localId, true);
+};
+    
+App.prototype.deleteTask = function (localId, keep) {
+    var taskOfTheDay = this.state.taskOfTheDay;
+    var lastId = this.state.tasks.length-1;
+    var task = this.state.tasks[localId];
+    var tag;
+
+    // clean up taskOfTheDay, if necessary.
+    if (
+        taskOfTheDay && 
+        taskOfTheDay.tagTask
+    ) {
+        for (var i=0; i < task.tags.length; i++) {
+            tag = task.tags[i];
+            
+            delete taskOfTheDay.tagTask[tag];
+
+            taskOfTheDay.task.activeTags.splice(
+                taskOfTheDay.task.activeTags.indexOf(tag),
+                1
+            );
+                
+            if (taskOfTheDay.dismissTags.indexOf(tag) === -1) {
+                taskOfTheDay.dismissTags.push(tag);
+            }
+        }
+            
+        if (taskOfTheDay.task.activeTags.indexOf(taskOfTheDay.task.activeTag) === -1) {
+            taskOfTheDay.task.activeTag = taskOfTheDay.task.activeTags[0];
+        }
+            
+        taskOfTheDay.task.content = this.state.tasks[taskOfTheDay.tagTask[taskOfTheDay.task.activeTag]];
+        
+        if (!keep) {
+            // rewrite id,
+            for (var tag in taskOfTheDay.tagTask) {
+                if (taskOfTheDay.tagTask[tag] === lastId) {
+                    taskOfTheDay.tagTask[tag] = localId;
+                }
+            }
+        }
+    }
+
+    if (!keep) {
+        // delete task,
+
+        // rewrite task on sprints,
+        // remove task from sprints,
+        task = this.state.tasks[lastId];
+        for (var i=0; i<task.tags.length; i++) {
+            tag = task.tags[i];
+
+            this.state.sprints[tag].tasks.splice(
+                this.state.sprints[tag].tasks.indexOf(lastId),
+                1
+            );
+            
+            this.state.sprints[tag].tasks.push(localId);
+        }
+
+        task = this.state.tasks[localId];
+        for (var i=0; i<task.tags.length; i++) {
+            tag = task.tags[i];
+
+            this.state.sprints[tag].tasks.splice(
+                this.state.sprints[tag].tasks.indexOf(localId),
+                1
+            );
+            
+            if (this.state.sprints[tag].tasks.length === 0) {
+                delete this.state.sprints[tag];
+            }
+        }
+
+        // switch tags id,
+        this.state.tasks[localId] = this.state.tasks[lastId];
+        this.state.tasks[localId].localId = localId;
+        this.state.tasks.pop();
+    }
+    
+    this.save();
+    this.getState(true);
+};
+
+App.prototype.taskManagerDone = function () {
+    var days = day*4 + day*(Math.floor(Math.random()*3));
+    var date = new Date(this.state.taskManagerScheduled + days);
+    date.setHours(0, 0, 0, 0);
+
+    this.state.taskManagerScheduled = date.getTime();
+    this.save();
+    this.getState(true);
+};
 
 
-App.prototype.taskSelector = function (filter) {
-    var tasks = filter?filter(this.state.tasks):this.state.tasks;
+/*
+==============================
+    Tasks Read
+==============================
+*/
+App.prototype.taskSelector = function (tag) {
+    var tasks = this.state.tasks;
     var total = 0;
     var task, r;
     var now = new Date().getTime();
+    var date, days, sprintIds, stat;
+    var today = new Date().getTime();
+
+    // reset all stats,
+    for (var i=0; i<tasks.length; i++) {
+        tasks[i].stat = 0;
+    }
+
+    // calculate stats,
+    for (var sprintTag in this.state.sprints) {
+        date = this.state.sprints[sprintTag].date;
+        
+        if (date) {
+            days = date - today;
+            days = days < 0?1:days;
+            sprintIds = this.state.sprints[sprintTag].tasks;
+            stat = sprintIds.length / days;
+
+            for (var i=0; i<sprintIds.length; i++) {
+                task = this.state.tasks[sprintIds[i]];
+                
+                if (task.stat < stat) {
+                    task.stat = stat;
+                }
+            }
+        }
+    }
+
+    tasks = tasks.filter(function (task) {
+        return task.tags && task.tags.indexOf(tag) !== -1;
+    });
+
+    tasks.sort(function (a, b) {
+        return a.stat < b.stat;
+    });
+    
+    stat = tasks[0].stat;
+    
+    tasks = tasks.filter(function (task) {
+       return task.stat === stat;
+    });
     
     tasks.forEach(function (t, index) {
         t.updateDate = t.updateDate || t.createDate;
@@ -154,8 +368,6 @@ App.prototype.taskSelector = function (filter) {
     }
 
     task.updateDate = new Date().getTime();
-    
-    this.save();
 
     return task;
 };
@@ -166,47 +378,100 @@ App.prototype.getTasks = function () {
 
 App.prototype.getTasksTags = function () {
     var tags = [];
+
+    for (var tag in this.state.sprints) {
+        tags.push(tag);
+    }
     
-    this.state.tasks.forEach(function (t) {
-        var tag;
-        for (var i=0; i<t.tags.length; i++) {
-            tag = t.tags[i];
-            if (tags.indexOf(tag) === -1) {
-               tags.push(tag);
-            }
-       }
-    });
-
     tags.sort();
-
+    
     return tags;
 };
 
-App.prototype.getTask = function () {
-    if (this.getState() === App.STATE.TASK_OF_THE_DAY) {
-        if (this.state.taskOfTheDay) {
-            return this.state.taskOfTheDay.task;
-        }
-        
-        var today = new Date();
-        today.setHours(0, 0, 0, 0);
-        today = today.getTime();
-        
-        this.state.taskOfTheDay = {
+App.prototype.getTaskOfTheDay = function (tag) {
+    var task;
+    var change = false;
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
+    today = today.getTime();
+
+    if (this.state.taskOfTheDay && this.state.taskOfTheDay.update !== today) {
+        change = true;
+
+        this.state.taskOfTheDay = undefined;
+    }
+    
+    if (this.state.taskOfTheDay === undefined) {
+        change = true;
+
+        this.state.taskOfTheDay = this.state.taskOfTheDay || {
             update: today,
-            task: this.taskSelector()
+            tagTask: {},
+            task: {}
         };
     
-        this.save();
-    
-        return this.state.taskOfTheDay.task;
+        this.state.taskOfTheDay.task.activeTags =
+            this.state.taskOfTheDay.task.activeTags || this.getTasksTags();
+            
+        this.state.taskOfTheDay.dismissTags =
+            this.state.taskOfTheDay.dismissTags || [];
     }
+
+    tag = tag || this.state.taskOfTheDay.task.activeTags[0] || App.constants.allTags;
+
+    if (
+        this.state.taskOfTheDay.task.activeTags.length
+    ) {
+        change = true;
+
+        task = this.state.taskOfTheDay.tagTask[tag];
+
+        if (task === undefined) {
+            task = this.taskSelector(tag);
+
+            for (var i=0; i<task.tags.length; i++) {
+                var taskTag = task.tags[i];
+                if (this.state.taskOfTheDay.tagTask[taskTag] === undefined) {
+                    this.state.taskOfTheDay.tagTask[taskTag] = task.localId;
+                }
+            }
+            
+            this.state.taskOfTheDay.task.content = task;
+        }
+        else {
+            task = this.state.tasks[task];
+        }
+
+        this.state.taskOfTheDay.task.content = task;
+    }
+    else if (
+        this.state.taskOfTheDay.task.content === undefined
+    ) {
+        task = this.taskSelector(tag);
+
+        if (
+            task.stat >= 1
+        ) {
+            change = true;
+
+            this.state.taskOfTheDay.task.content = task;
+        }
+    }
+
+    this.state.taskOfTheDay.task.activeTag = tag;
+    
+    if (change) {
+        this.save();
+    }
+    
+    return this.state.taskOfTheDay.task;
 };
 
-App.prototype.getState = function () {
+App.prototype.getState = function (update) {
     // 
     var state = this.state.currentState;
     if (this.state.tasks.length === 0) {
+        this.state.taskManagerScheduled = undefined;
         state = App.STATE.EMPTY_TASKS;
     }
     else {
@@ -215,27 +480,26 @@ App.prototype.getState = function () {
         today = today.getTime();
         
         this.state.taskManagerScheduled = this.state.taskManagerScheduled || today;
-        
+
         if (today >= this.state.taskManagerScheduled) {
             state = App.STATE.TASK_MANAGER;
         }
-        else if (this.state.taskOfTheDay && this.state.taskOfTheDay.update === today) {
-            if (this.state.taskOfTheDay.task) {
+        else {
+            this.getTaskOfTheDay();
+            if (
+                this.state.taskOfTheDay.task && this.state.taskOfTheDay.task.content
+            ) {
                 state = App.STATE.TASK_OF_THE_DAY;
             }
             else {
                 state = App.STATE.NO_TASKS_FOR_TODAY;
             }
         }
-        else {
-            this.state.taskOfTheDay = undefined;
-            state = App.STATE.TASK_OF_THE_DAY;
-        }
     }
     
-    if (this.state.currentState !== state) {
+    if (update || this.state.currentState !== state) {
         this.state.currentState = state;
-        this.trigger('stateChange', state);
+        this.trigger("update", this.state);
     }
 
     return state;

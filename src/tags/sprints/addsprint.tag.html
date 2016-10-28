@@ -1,8 +1,68 @@
 <add-sprint>
-    <div each={taskTag in tasksTags}>{taskTag}</div>
-    
+    <div class='add-sprint'>
+        <div>
+            <button id="tags-sprints"
+                class="mdl-button mdl-js-button mdl-button--raised">
+                  <div class='tkr-ellipsis tkr-left'>
+                      {tagPresentation(selectedTag)}
+                  </div>
+                  <i class="material-icons">more_vert</i>
+            </button>
+                
+            <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect"
+                for="tags-sprints"
+            >
+                <li 
+                    class="mdl-menu__item tkr-tags-item" 
+                    each={sprintTag in opts.sprints_tags} 
+                    onclick={selectTag(sprintTag)}
+                    if={sprintTag !== selectedTag}
+                >{tagPresentation(sprintTag)}</li>
+            </ul>
+        </div>
+        <input class="mdl-textfield__input js-textfield-required" type="date" onchange={ edit }/>
+
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored tkr-full-width" onclick={add} disabled={sprintDate.length === 0}>
+            Add
+        </button>
+    </div>
     <script>
-        this.tasksTags = opts.app.getTasksTags();
-        console.log(JSON.stringify(this.tasksTags));
+        var tag = this;
+
+        tag.selectedTag = opts.sprints_tags[0];
+        tag.sprintDate = "";
+
+        this.edit = function (e) {
+            this.sprintDate = new Date(e.target.value);
+        };
+
+        this.add = function () {
+            opts.add_sprint(
+                this.selectedTag, 
+                this.sprintDate.getTime()
+            );
+        };
+
+        this.selectTag = function (selectedTag) {
+            return function (e) {
+                console.log("tag: " + selectedTag);
+                tag.selectedTag = selectedTag;
+                console.log(tag.selectedTag);
+            };
+        };
+        
+        this.tagPresentation = function (tag) {
+            return tag.replace(/-/g, ' ');
+        };
+
+        this.on("mount", function () {
+            componentHandler.upgradeDom();
+        });
+        
+        this.on('update', function () {
+            if (opts.sprints_tags.indexOf(tag.selectedTag) === -1) {
+                tag.selectedTag = opts.sprints_tags[0];
+            }
+        });
     </script>
 </add-sprint>

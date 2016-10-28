@@ -9,6 +9,7 @@
     <script>
         var tag = this;
         var App = require("../../app.js");
+        var tasksPlaceholder;
 
         function setTaskPlaceholder (state) {
             var state = state || opts.app.getState();
@@ -35,30 +36,26 @@
                     break;
                     
                 case App.STATE.TASK_OF_THE_DAY:
-                    mountTag = "task";
-                    task = opts.app.getTask();
+                    mountTag = "task-of-the-day";
                     args = {
-                        title: "Task Of The Day ("+ App.date2string(task.createDate) +")",
-                        description: task.parsedDescription,
-                        actions: {dismiss: false, delete: true},
-                        local_id: task.localId,
                         app: opts.app
                     };
                     break;
             };
-            
+
             riot.mount(
                 tag.tasksPlaceholder,
                 mountTag,
                 args
             );
+            
         }
 
         this.on("mount", function () {
             setTaskPlaceholder();
             
-            opts.app.on("stateChange", function (state) {
-                setTaskPlaceholder(state);
+            opts.app.on("update", function (state) {
+                setTaskPlaceholder(state.currentState);
             });
         });
     </script>
