@@ -242,6 +242,19 @@ task-manager {
 }
 
 /* sprints */
+.sprints .title {
+  font-size: 1.5em;
+  border-bottom: 3px solid #8bc34a;
+  padding: 0.2em;
+  margin-bottom: 0.5em;
+  font-style: italic;
+}
+
+.sprint {
+  margin-bottom: 1em; 
+  border-bottom: 1px solid #d3d3d3;
+}
+
 .add-sprint {
   margin: 1em;
 }
