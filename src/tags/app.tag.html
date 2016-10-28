@@ -2,10 +2,21 @@
       <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
       <header class="mdl-layout__header">
         <div class="mdl-layout__header-row">
-          <span class="mdl-layout-title">{opts.app.title}</span>
+          <span class="mdl-layout-title" onclick={start}>{opts.app.title}</span>
           <div class="mdl-layout-spacer"></div>
+          <button id="main-menu"
+                  class="mdl-button mdl-js-button mdl-button--icon">
+            <i class="material-icons">more_vert</i>
+          </button>
+          
+          <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
+              for="main-menu">
+            <li class="mdl-menu__item"><a href='#/tasks'>Tasks</a></li>
+            <li class="mdl-menu__item"><a href='#/documentation'>Documentation</a></li>
+          </ul>
         </div>
       </header>
+
       <div class="mdl-layout__drawer">
         <span class="mdl-layout-title" style='color: #8bc34a;'>{opts.app.title}</span>
         <!--
@@ -13,7 +24,7 @@
         -->
         <div class='drawer-content'>
           <sprints app={opts.app} if={showSprints}></sprints>
-          <p if={!showSprints}>First add some tasks to start. For more information check the <a href='#'>documentation</a>.</p>
+          <p if={!showSprints}>First add some tasks to start. For more information check the <a href='#/documentation'>documentation</a>.</p>
         </div>
       </div>
       <main class="mdl-layout__content {background}"  name='content'>
@@ -29,22 +40,25 @@
       var tag = this;
       this.showSprints = opts.app.state.tasks.length > 0;
 
+      this.start = function () {
+        riot.route('tasks');
+      };
+
       this.on('mount', function () {
           componentHandler.upgradeDom();
 
-/*          riot.route((collection) => {
+          riot.route((collection) => {
               // Mount another tag, or do something with the data
-              riot.mount(this.content, collection, tag.opts)
+              console.log(collection);
+              riot.mount('main', collection, opts)
           });
-*/
-          // riot.mount('main', 'task');
-          /*riot.mount('main', 'notasks', {
-            message: 'There is no tasks... go outside and enjoy the day ;)'
-          });*/
 
-          riot.mount('main', 'tasks', opts);
+          riot.route('/', function () {
+             riot.route("tasks");
+          });
 
-          // riot.route.base('/datainput');
+          // TODO: make this configurable on file
+          riot.route.base('#/')
           riot.route.start(true);
           
           opts.app.on("notification", function (data) {

@@ -15,4 +15,6 @@ require('./tags/sprints/sprints.tag.js');
 require('./tags/sprints/listsprints.tag.js');
 require('./tags/sprints/addsprint.tag.js');
 
+require('./tags/documentation/documentation.tag.js');
+
 riot.mount('app', {app: new App()});

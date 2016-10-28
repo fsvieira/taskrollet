@@ -288,3 +288,40 @@ a {
   color: #8bc34a;
   font-size: 1.2em;
 }
+
+/* documentation */
+.page {
+  background: white;
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 0.5cm;
+  box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
+  width: 98%;
+  max-width: 52em;
+  padding-right: 1em;
+  padding-left: 2em;
+  padding-top: 2em;
+  padding-bottom: 2em;
+  box-sizing: border-box;
+}
+
+.page .section {
+    margin-bottom: 1em;
+}
+
+.page .section .title {
+  font-size: 1.5em;
+  border-bottom: 1px solid #8bc34a;
+  margin-bottom: 0.5em;
+  padding-bottom: 0.2em;
+  width: 100%;
+  color: #8bc34a;
+}
+
+.page .section .content {
+  padding-left: 1em;
+}
+
+.page ul {
+  padding-left: 0.8em;  
+}
