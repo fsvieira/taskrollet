@@ -37,15 +37,16 @@
         function refresh (state, taskTag) {
             var taskOfTheDay = opts.app.getTaskOfTheDay(taskTag);
 
-            tag.activeTags = taskOfTheDay.activeTags;
-
-            tag.activeTag = taskOfTheDay.activeTag;
-
-            tag.taskTitle = "Task Of The Day (" + App.date2string(taskOfTheDay.content.createDate) + ")";    
-            tag.description = taskOfTheDay.content.parsedDescription;
-            tag.localId = taskOfTheDay.content.localId;
-            
-            tag.update();
+            if (taskOfTheDay.content) {
+                tag.activeTags = taskOfTheDay.activeTags;
+                tag.activeTag = taskOfTheDay.activeTag;
+    
+                tag.taskTitle = "Task Of The Day (" + App.date2string(taskOfTheDay.content.createDate) + ")";    
+                tag.description = taskOfTheDay.content.parsedDescription;
+                tag.localId = taskOfTheDay.content.localId;
+                
+                tag.update();
+            }
         }
         
         this.tagFilter = function (activeTag) {

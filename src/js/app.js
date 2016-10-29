@@ -317,8 +317,9 @@ App.prototype.taskSelector = function (tag) {
         date = this.state.sprints[sprintTag].date;
         
         if (date) {
-            days = date - today;
+            days = (date - today) / (1000 * 60 * 60 * 24);
             days = days < 0?1:days;
+
             sprintIds = this.state.sprints[sprintTag].tasks;
             stat = sprintIds.length / days;
 

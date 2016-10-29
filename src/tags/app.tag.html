@@ -48,8 +48,6 @@
           componentHandler.upgradeDom();
 
           riot.route((collection) => {
-              // Mount another tag, or do something with the data
-              console.log(collection);
               riot.mount('main', collection, opts)
           });
 
