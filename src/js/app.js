@@ -340,9 +340,7 @@ App.prototype.taskSelector = function (tag) {
     tasks.sort(function (a, b) {
         return b.stat - a.stat;
     });
-    
-    console.log(JSON.stringify(tasks, null, '\t'));
-    
+
     stat = tasks[0].stat;
     
     tasks = tasks.filter(function (task) {

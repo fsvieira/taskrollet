@@ -15,7 +15,7 @@
         this.sprints_tags = opts.app.getAvailableSprintsTags();
 
         this.add_sprint = function (tag, date) {
-            opts.app.addSprint(tag, date.getTime());
+            opts.app.addSprint(tag, date);
         };
         
         function refresh (state) {
