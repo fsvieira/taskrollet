@@ -129,7 +129,7 @@ App.prototype.getSprints = function () {
     }
     
     sprints.sort(function (a, b) {
-        return b.date < a.date;
+        return a.date - b.date;
     });
 
     return sprints;
@@ -317,7 +317,7 @@ App.prototype.taskSelector = function (tag) {
         date = this.state.sprints[sprintTag].date;
         
         if (date) {
-            days = (date - today) / (1000 * 60 * 60 * 24);
+            days = Math.ceil((date - today) / (1000 * 60 * 60 * 24));
             days = days < 0?1:days;
 
             sprintIds = this.state.sprints[sprintTag].tasks;
@@ -338,8 +338,10 @@ App.prototype.taskSelector = function (tag) {
     });
 
     tasks.sort(function (a, b) {
-        return a.stat < b.stat;
+        return b.stat - a.stat;
     });
+    
+    console.log(JSON.stringify(tasks, null, '\t'));
     
     stat = tasks[0].stat;
     
@@ -354,7 +356,7 @@ App.prototype.taskSelector = function (tag) {
     });
     
     tasks.sort(function (a, b) {
-        return a.timeSpan < b.timeSpan;
+        return b.timeSpan - a.timeSpan;
     });
     
     r = Math.random()*total;

@@ -33,7 +33,10 @@
         tag.sprintDate = "";
 
         this.edit = function (e) {
-            this.sprintDate = new Date(e.target.value);
+            var date = new Date(e.target.value);
+            date.setHours(23, 59, 0, 0);
+
+            this.sprintDate = date;
         };
 
         this.add = function () {
