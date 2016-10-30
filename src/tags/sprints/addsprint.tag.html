@@ -28,6 +28,7 @@
     </div>
     <script>
         var tag = this;
+        var App = require('../../app.js');
 
         tag.selectedTag = opts.sprints_tags[0];
         tag.sprintDate = "";
@@ -52,9 +53,7 @@
             };
         };
         
-        this.tagPresentation = function (tag) {
-            return tag.replace(/-/g, ' ');
-        };
+        this.tagPresentation = App.tagPresentation;
 
         this.on("mount", function () {
             componentHandler.upgradeDom();

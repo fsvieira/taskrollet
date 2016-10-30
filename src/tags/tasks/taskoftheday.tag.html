@@ -55,9 +55,7 @@
             };
         };
         
-        this.tagPresentation = function (tag) {
-            return tag.replace(/-/g, ' ');
-        }
+        this.tagPresentation = App.tagPresentation;
         
         opts.app.on('update', refresh);
         

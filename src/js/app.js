@@ -30,6 +30,10 @@ App.date2string = function (date) {
     return d.toISOString().replace("T", " ").split(".")[0];
 };
 
+App.tagPresentation = function (tag) {
+    return tag.replace(/-/g, ' ');
+};
+
 App.getTags = function (description, tags) {
     tags = tags || [];
     var tag;

@@ -2,7 +2,7 @@
     <div each={sprint in sprints} class='sprint'>
         <div style='margin-bottom: 0.5em;'>
             <div class='tkr-left' style='font-size: 1.5em;'>
-                <div style='font-weight: bold;'>{sprint.tag}</div>
+                <div style='font-weight: bold;'>{tagPresentation(sprint.tag)}</div>
                 <div style='font-size: 1.2em;'>{showDate(sprint.date)}</div>
             </div>
             
@@ -16,6 +16,9 @@
     
     <script>
         var tag = this;
+        var App = require('../../app.js');
+
+        this.tagPresentation = App.tagPresentation;
 
         this.showDate = function (date) {
             return new Date(date).toLocaleDateString();
