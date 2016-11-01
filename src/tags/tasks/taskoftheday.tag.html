@@ -39,6 +39,7 @@
 
             if (taskOfTheDay.content) {
                 tag.activeTags = taskOfTheDay.activeTags;
+                console.log("Active Tags: " + JSON.stringify(tag.activeTags));
                 tag.activeTag = taskOfTheDay.activeTag;
     
                 tag.taskTitle = "Task Of The Day (" + App.date2string(taskOfTheDay.content.createDate) + ")";    

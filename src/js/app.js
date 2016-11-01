@@ -9,6 +9,8 @@ function App () {
     var self = this;
     
     this.state = this.load();
+    this.updateTreshold();
+
     this.title = "Task Roulette";
 }
 
@@ -78,7 +80,13 @@ App.enums("STATE", [
 const initialState = {
     tasks: [],
     currentState: App.STATE.EMPTY_TASKS,
-    sprints: {}
+    sprints: {},
+    stats: {
+        tasksClosed: 0,
+        threshold: 0,
+        parcialThreshold: 0,
+        update: new Date().getTime()
+    }
 };
 
 
@@ -87,6 +95,26 @@ const initialState = {
     Persistent data handle, (Local Storage)
 ==============================
 */
+App.prototype.updateTreshold = function () {
+    var today = new Date().getTime();
+    var days = Math.ceil((today - this.state.stats.update) / (1000*60*60*24)); 
+
+    var threshold = (this.state.stats.tasksClosed / days) || 1;
+    this.state.stats.parcialThreshold = Math.floor((this.state.stats.threshold + threshold) / 2);
+    
+    console.log("Parcial Threshold:" + this.state.stats.parcialThreshold);
+    
+    // Close stats.
+    if (days >= 30) {
+        this.state.stats.threshold = this.state.stats.parcialThreshold;
+        this.state.stats.tasksClosed = 0;
+        this.state.stats.update = today;
+    } 
+    
+    
+    return this.state.stats.parcialThreshold;
+};
+
 App.prototype.save = function () {
     localStorage.setItem(LOCAL_STORAGE_STATE, JSON.stringify(this.state));
 };
@@ -95,8 +123,20 @@ App.prototype.load = function () {
     var state = localStorage.getItem(LOCAL_STORAGE_STATE);
     state = state?JSON.parse(state):initialState;
     
+    // TODO: remove this, since we are still in beta version,
+    if (state.stats === undefined) {
+        state.stats = {
+            tasksClosed: 0,
+            threshold: 1,
+            parcialThreshold: 1,
+            update: new Date().getTime()
+        };
+    }
+
     return state;
 };
+
+
 
 /*
 ==============================
@@ -283,6 +323,10 @@ App.prototype.deleteTask = function (localId, keep) {
         this.state.tasks.pop();
     }
     
+    // calculare stats:
+    this.state.stats.tasksClosed++;
+    this.updateTreshold();
+    
     this.save();
     this.getState(true);
 };
@@ -455,7 +499,7 @@ App.prototype.getTaskOfTheDay = function (tag) {
         task = this.taskSelector(tag);
 
         if (
-            task.stat >= 1
+            task.stat >= this.state.stats.parcialThreshold
         ) {
             change = true;
 
