@@ -321,12 +321,13 @@ App.prototype.deleteTask = function (localId, keep) {
         this.state.tasks[localId] = this.state.tasks[lastId];
         this.state.tasks[localId].localId = localId;
         this.state.tasks.pop();
+
+        // calculare stats:
+        this.state.stats.tasksClosed++;
+        this.updateTreshold();
     }
     
-    // calculare stats:
-    this.state.stats.tasksClosed++;
-    this.updateTreshold();
-    
+
     this.save();
     this.getState(true);
 };
