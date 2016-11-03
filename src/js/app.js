@@ -224,12 +224,12 @@ App.prototype.addTask = function (task) {
     if (taskOfTheDay && taskOfTheDay.task) {
         for (var i=0; i<tags.length; i++) {
             var t = tags[i];
+
             if (
                 taskOfTheDay.task.activeTags.indexOf(t) === -1 &&
                 taskOfTheDay.dismissTags.indexOf(t) === -1
             ) {
-                taskOfTheDay.task.activeTags.push(t);
-                taskOfTheDay.task.activeTags.sort();
+                taskOfTheDay.dismissTags.push(t);
             }
         }
     }
