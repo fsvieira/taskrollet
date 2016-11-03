@@ -397,6 +397,7 @@ App.prototype.taskSelector = function (tag) {
     });
 
     stat = tasks[0].stat;
+    task = undefined;
     
     if (tag === App.constants.allTags) {
         for (var t in this.state.taskOfTheDay.tagTask) {
