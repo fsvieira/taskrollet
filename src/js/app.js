@@ -102,8 +102,6 @@ App.prototype.updateTreshold = function () {
     var threshold = (this.state.stats.tasksClosed / days) || 1;
     this.state.stats.parcialThreshold = Math.floor((this.state.stats.threshold + threshold) / 2);
     
-    console.log("Parcial Threshold:" + this.state.stats.parcialThreshold);
-    
     // Close stats.
     if (days >= 30) {
         this.state.stats.threshold = this.state.stats.parcialThreshold;
@@ -116,6 +114,7 @@ App.prototype.updateTreshold = function () {
 };
 
 App.prototype.save = function () {
+    console.log("STATE: " + JSON.stringify(this.state, null, '\t'));
     localStorage.setItem(LOCAL_STORAGE_STATE, JSON.stringify(this.state));
 };
 
@@ -260,13 +259,15 @@ App.prototype.deleteTask = function (localId, keep) {
             
             delete taskOfTheDay.tagTask[tag];
 
-            taskOfTheDay.task.activeTags.splice(
-                taskOfTheDay.task.activeTags.indexOf(tag),
-                1
-            );
-                
-            if (taskOfTheDay.dismissTags.indexOf(tag) === -1) {
-                taskOfTheDay.dismissTags.push(tag);
+            if (tag !== App.constants.allTags) {
+                taskOfTheDay.task.activeTags.splice(
+                    taskOfTheDay.task.activeTags.indexOf(tag),
+                    1
+                );
+                    
+                if (taskOfTheDay.dismissTags.indexOf(tag) === -1) {
+                    taskOfTheDay.dismissTags.push(tag);
+                }
             }
         }
             
@@ -349,6 +350,11 @@ App.prototype.taskManagerDone = function () {
 ==============================
 */
 App.prototype.taskSelector = function (tag) {
+    if (this.state.tasks === 0) {
+        // no tasks to select.
+        return;
+    }
+    
     var tasks = this.state.tasks;
     var total = 0;
     var task, r;
@@ -392,31 +398,44 @@ App.prototype.taskSelector = function (tag) {
 
     stat = tasks[0].stat;
     
-    tasks = tasks.filter(function (task) {
-       return task.stat === stat;
-    });
-    
-    tasks.forEach(function (t, index) {
-        t.updateDate = t.updateDate || t.createDate;
-        t.timeSpan = now - t.updateDate;
-        total += t.timeSpan;
-    });
-    
-    tasks.sort(function (a, b) {
-        return b.timeSpan - a.timeSpan;
-    });
-    
-    r = Math.random()*total;
-    var accum = 0;
-    
-    for (var i=0; i<tasks.length; i++) {
-        task = tasks[i];
-        accum += task.timeSpan;
-        if (r < accum) {
-            break;
+    if (tag === App.constants.allTags) {
+        for (var t in this.state.taskOfTheDay.tagTask) {
+            if (this.state.taskOfTheDay.tagTask[t].stat === stat) {
+                // a task was found,
+                task = this.state.taskOfTheDay[tag];
+                break;
+            }
         }
     }
-
+    
+    if (!task) {
+        // select a random task,
+        tasks = tasks.filter(function (task) {
+           return task.stat === stat;
+        });
+        
+        tasks.forEach(function (t, index) {
+            t.updateDate = t.updateDate || t.createDate;
+            t.timeSpan = now - t.updateDate;
+            total += t.timeSpan;
+        });
+        
+        tasks.sort(function (a, b) {
+            return b.timeSpan - a.timeSpan;
+        });
+        
+        r = Math.random()*total;
+        var accum = 0;
+        
+        for (var i=0; i<tasks.length; i++) {
+            task = tasks[i];
+            accum += task.timeSpan;
+            if (r < accum) {
+                break;
+            }
+        }
+    }
+    
     task.updateDate = new Date().getTime();
 
     return task;
