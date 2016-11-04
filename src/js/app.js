@@ -114,7 +114,6 @@ App.prototype.updateTreshold = function () {
 };
 
 App.prototype.save = function () {
-    console.log("STATE: " + JSON.stringify(this.state, null, '\t'));
     localStorage.setItem(LOCAL_STORAGE_STATE, JSON.stringify(this.state));
 };
 
@@ -229,7 +228,7 @@ App.prototype.addTask = function (task) {
                 taskOfTheDay.task.activeTags.indexOf(t) === -1 &&
                 taskOfTheDay.dismissTags.indexOf(t) === -1
             ) {
-                taskOfTheDay.dismissTags.push(t);
+                taskOfTheDay.activeTags.push(t);
             }
         }
     }
@@ -254,28 +253,38 @@ App.prototype.deleteTask = function (localId, keep) {
         taskOfTheDay && 
         taskOfTheDay.tagTask
     ) {
-        for (var i=0; i < task.tags.length; i++) {
-            tag = task.tags[i];
-            
-            delete taskOfTheDay.tagTask[tag];
 
-            if (tag !== App.constants.allTags) {
-                taskOfTheDay.task.activeTags.splice(
-                    taskOfTheDay.task.activeTags.indexOf(tag),
-                    1
-                );
+        for (var tag in taskOfTheDay.tagTask) {
+            if (taskOfTheDay.tagTask[tag] === localId) {
+                delete taskOfTheDay.tagTask[tag];
+                if (tag !== App.constants.allTags) {
+                    var index = taskOfTheDay.task.activeTags.indexOf(tag);
                     
-                if (taskOfTheDay.dismissTags.indexOf(tag) === -1) {
-                    taskOfTheDay.dismissTags.push(tag);
+                    if (index >= 0) {
+                        taskOfTheDay.task.activeTags.splice(
+                            index,
+                            1
+                        );
+                    }
+    
+                    if (taskOfTheDay.dismissTags.indexOf(tag) === -1) {
+                        taskOfTheDay.dismissTags.push(tag);
+                    }
+   
+                }
+                else {
+                    taskOfTheDay.sprintMode = true;
                 }
             }
         }
-            
+        
         if (taskOfTheDay.task.activeTags.indexOf(taskOfTheDay.task.activeTag) === -1) {
             taskOfTheDay.task.activeTag = taskOfTheDay.task.activeTags[0];
         }
-            
+
+        
         taskOfTheDay.task.content = this.state.tasks[taskOfTheDay.tagTask[taskOfTheDay.task.activeTag]];
+
         
         if (!keep) {
             // rewrite id,
@@ -407,6 +416,26 @@ App.prototype.taskSelector = function (tag) {
                 break;
             }
         }
+        
+        if (!task && this.state.taskOfTheDay.task.activeTags.length > 1) {
+            var activeTags = this.state.taskOfTheDay.task.activeTags;
+            
+            var activeTasks = tasks.filter(function (task) {
+                for (var activeTag in task.tags) {
+                    if (activeTag !== App.constants.allTags
+                        && activeTags.indexOf(activeTag) !== -1
+                    ) {
+                        return true;
+                    }
+                }
+
+                return false;
+            });
+            
+            if (activeTasks.length > 0) {
+                tasks = activeTasks;
+            }
+        }
     }
     
     if (!task) {
@@ -490,7 +519,8 @@ App.prototype.getTaskOfTheDay = function (tag) {
     tag = tag || this.state.taskOfTheDay.task.activeTags[0] || App.constants.allTags;
 
     if (
-        this.state.taskOfTheDay.task.activeTags.length
+        this.state.taskOfTheDay.task.activeTags.length > 1
+        || this.state.taskOfTheDay.sprintMode === undefined
     ) {
         change = true;
 
@@ -520,6 +550,7 @@ App.prototype.getTaskOfTheDay = function (tag) {
         task = this.taskSelector(tag);
 
         if (
+            task.stat > 0 && 
             task.stat >= this.state.stats.parcialThreshold
         ) {
             change = true;
