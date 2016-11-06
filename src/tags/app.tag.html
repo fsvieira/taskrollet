@@ -36,6 +36,8 @@
       <button class="mdl-snackbar__action" type="button"></button>
     </div>
     
+    <tkr-tooltips app={opts.app}/>
+
     <script>
       var tag = this;
       this.showSprints = opts.app.state.tasks.length > 0;

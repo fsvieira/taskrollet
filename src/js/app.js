@@ -130,6 +130,10 @@ App.prototype.load = function () {
             update: new Date().getTime()
         };
     }
+    
+    if (state.disabledMessages === undefined) {
+        state.disabledMessages = [];
+    }
 
     return state;
 };
@@ -228,7 +232,7 @@ App.prototype.addTask = function (task) {
                 taskOfTheDay.task.activeTags.indexOf(t) === -1 &&
                 taskOfTheDay.dismissTags.indexOf(t) === -1
             ) {
-                taskOfTheDay.activeTags.push(t);
+                taskOfTheDay.task.activeTags.push(t);
             }
         }
     }
@@ -569,8 +573,10 @@ App.prototype.getTaskOfTheDay = function (tag) {
 };
 
 App.prototype.getState = function (update) {
-    // 
+    //
     var state = this.state.currentState;
+    var oldState = state;
+    
     if (this.state.tasks.length === 0) {
         this.state.taskManagerScheduled = undefined;
         state = App.STATE.EMPTY_TASKS;
@@ -600,10 +606,75 @@ App.prototype.getState = function (update) {
     
     if (update || this.state.currentState !== state) {
         this.state.currentState = state;
-        this.trigger("update", this.state);
+        this.trigger('update', this.state);
     }
 
+    this.sendMessage(oldState, state);
+
     return state;
+};
+
+/* Messages */
+
+App.messages = {
+    TASK_MANAGER: {
+        title: 'Task Manager',
+        content: 'You are now in task manager mode, you can view and delete tasks, this is the only way to view tasks. When finish managing tasks press the "DONE" button. See <a href="#/documentation">Documentation</a>.',
+        id: 'TASK_MANAGER'
+    },
+    TASK_MANAGER_EXIT: {
+        title: 'Exiting Task Manager',
+        content: 'You have exit task manager mode, this mode will only appear again next week! See <a href="#/documentation">Documentation</a>.',
+        id: 'TASK_MANAGER_EXIT'
+    },
+    TAGS: {
+        title: 'Tags',
+        content: 'You can add tags on your tasks by using #<tag-name>, ex: #work #task-roulette ... See <a href="#/documentation">Documentation</a>.',
+        id: 'TAGS'
+    },
+    SPRINTS: {
+        title: 'Sprints',
+        content: 'You can add sprints to your tags on the drawer from the top left menu! See <a href="#/documentation">Documentation</a>.',
+        id: 'SPRINTS'
+    }
+};
+
+App.prototype.saveMessage = function (message) {
+    console.log("save Message!");
+    if (message.disable && this.state.disabledMessages.indexOf(message.id) === -1) {
+        this.state.disabledMessages.push(message.id);
+        this.save();
+    }
+};
+
+App.prototype.sendMessage = function (oldState, newState) {
+    var message;
+    
+    if (oldState !== newState) {
+        if (newState === App.STATE.TASK_MANAGER) {
+            message = App.messages.TASK_MANAGER;
+        }
+        else if (oldState === App.STATE.TASK_MANAGER) {
+            message = App.messages.TASK_MANAGER_EXIT;
+        }
+    }
+    
+
+    if (this.state.tasks.length > 1) {
+        var tagsTotal = this.getTasksTags().length;
+        var sprintTagsTotal = this.getAvailableSprintsTags().length;
+
+        if (tagsTotal === 1) {
+            message = App.messages.TAGS;
+        }
+        else if (sprintTagsTotal === tagsTotal) {
+            message = App.messages.SPRINTS;
+        }
+    }
+    
+    if (message && this.state.disabledMessages.indexOf(message.id) === -1) {
+        this.trigger('message', message);
+    }
 };
 
 module.exports = App;
