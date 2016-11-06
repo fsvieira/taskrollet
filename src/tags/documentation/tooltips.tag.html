@@ -1,0 +1,70 @@
+<tkr-tooltips>
+    <div class='modal {class}'>
+        <div class='bg'></div>
+        <div class='content'>
+            <div class="tooltips-card-square mdl-card mdl-shadow--2dp">
+              <div class="mdl-card__title mdl-card--expand">
+                <h2 class="mdl-card__title-text">{message.title}</h2>
+              </div>
+              <div class="mdl-card__supporting-text" id='message_content'></div>
+              <hr>
+              <div class="mdl-card__actions mdl-card--border">
+                <div style='float: left'>
+                  <span>Don't show this message again</span>
+                  <input type="checkbox" name='disable_message'>
+                </div>
+                
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored tkr-right" onclick={close}>
+                  Close
+                </button>
+              </div>
+            </div>
+        </div>        
+    </div>
+
+    <script>
+        var tag = this;
+        // tag.class = ""; // "hide";
+        tag.class = 'hide';
+        var fifo = [];
+        
+        
+        function refreshMessage () {
+            tag.class = '';
+            tag.message = fifo[0];
+            tag.message_content.innerHTML = tag.message.content;
+            tag.disable_message.checked = tag.message.disable?'on':undefined;
+            tag.update();
+        }
+
+        function refresh (message) {
+          if (fifo.indexOf(message) === -1) {
+            fifo.push(message);
+            refreshMessage();
+          }
+        }
+        
+        tag.close = function () {
+          tag.class = 'hide';
+          tag.message.disable = tag.disable_message.checked;
+          opts.app.saveMessage(tag.message);
+          tag.update();
+          fifo.shift();
+          
+          if (fifo.length > 0) {
+            refreshMessage(fifo[0]);
+          }
+        }
+        
+        opts.app.on('message', refresh);
+        
+        tag.on('mount', function () {
+          componentHandler.upgradeDom();
+        });
+        
+        tag.on('unmount', function () {
+          opts.app.off("message", refresh);
+        });
+        
+    </script>
+</tkr-tooltips>
