@@ -1,8 +1,8 @@
 <add-task>
     <div class='addtask'>
         <div class='tkr-editor {empty: !text.length, editing: text.length}' >
-            <div id='addTaskEditor' contenteditable=true class='tkr-edit' onkeyup={ edit }>
-            </div>
+            <textarea id='addTaskEditor' class='tkr-edit' oninput={ edit }>
+            </textarea>
             <div class='placeholder'>
                 <div class='help-message'>
                     Write a new task here...
@@ -18,16 +18,17 @@
     
     <script>
         var tag = this;
-        this.text = "";
+        tag.text = "";
 
-        this.edit = function (e) {
-            this.text = e.target.innerText;
+        tag.edit = function (e) {
+            console.log(e.target.value);
+            tag.text = e.target.value;
         };
 
-        this.add = function () {
+        tag.add = function () {
             opts.app.addTask({description: this.text});
-            this.addTaskEditor.innerHTML = "";
-            this.text = "";
+            tag.addTaskEditor.value = "";
+            tag.text = "";
         };
 
 
