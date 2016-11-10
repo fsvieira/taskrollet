@@ -425,7 +425,8 @@ App.prototype.taskSelector = function (tag) {
             var activeTags = this.state.taskOfTheDay.task.activeTags;
             
             var activeTasks = tasks.filter(function (task) {
-                for (var activeTag in task.tags) {
+                for (var i=0; i<task.tags.length; i++) {
+                    var activeTag = task.tags[i];
                     if (activeTag !== App.constants.allTags
                         && activeTags.indexOf(activeTag) !== -1
                     ) {
