@@ -4,8 +4,9 @@ var browserify = require('gulp-browserify');
 var cleanCSS = require('gulp-clean-css');
 var concat = require('gulp-concat');
 var path = require('path');
+var htmlmin = require('gulp-htmlmin');
+var uglify = require('gulp-uglify');
 
-// TODO: use path to concat paths.
 var BUILD_DEST = './www';
 
 gulp.task('riot', function () {
@@ -23,7 +24,7 @@ gulp.task('browserify', ['riot'], function () {
         }
       }
     }))
-    .pipe(gulp.dest(path.join(BUILD_DEST, 'js')))
+    .pipe(gulp.dest(path.join(BUILD_DEST, 'js')));
 });
 
 gulp.task('minify-css', function() {
@@ -33,14 +34,31 @@ gulp.task('minify-css', function() {
     .pipe(gulp.dest(path.join(BUILD_DEST, 'css')));
 });
 
-gulp.task('build', ['minify-css', 'browserify'], function () {
+gulp.task('minify-html', function() {
+  return gulp.src('src/index.html')
+    .pipe(htmlmin({collapseWhitespace: true}))
+    .pipe(gulp.dest(BUILD_DEST));
+});
+
+gulp.task('dist', ['build'], function () {
+  return gulp.src('src/js/main.js')
+    .pipe(browserify({
+      insertGlobalVars: {
+        riot: function(file, dir) {
+          return 'require("riot")';
+        }
+      }
+    }))
+    .pipe(uglify().on('error', function(e){
+      console.log(e);
+    }))
+    .pipe(gulp.dest(path.join(BUILD_DEST, 'js')));
+});
+
+gulp.task('build', ['minify-html', 'minify-css', 'browserify'], function () {
   return gulp.src([
     'src/**/*',
-    '!src/**/*.css',
-    '!src/tags',
-    '!src/tags/**/*',
-    '!src/js',
-    '!src/js/**/*',
+    '!src/**/*.{css,js,html}'
   ])
   .pipe(gulp.dest(BUILD_DEST));
 });
