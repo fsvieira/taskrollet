@@ -620,22 +620,22 @@ App.prototype.getState = function (update) {
 App.messages = {
     TASK_MANAGER: {
         title: 'Task Manager',
-        content: 'You are now in task manager mode, you can view and delete tasks, this is the only way to view tasks. When finish managing tasks press the "DONE" button. See <a href="#/documentation">Documentation</a>.',
+        content: 'You are now in task manager mode, you can view and delete tasks, this is the only way to view tasks. When finish managing tasks press the "DONE" button. See <a href="#/user-manual">User Manual</a>.',
         id: 'TASK_MANAGER'
     },
     TASK_MANAGER_EXIT: {
         title: 'Exiting Task Manager',
-        content: 'You have exit task manager mode, this mode will only appear again next week! See <a href="#/documentation">Documentation</a>.',
+        content: 'You have exit task manager mode, this mode will only appear again next week! See <a href="#/user-manual">User Manual</a>.',
         id: 'TASK_MANAGER_EXIT'
     },
     TAGS: {
         title: 'Tags',
-        content: 'You can add tags on your tasks by using #<tag-name>, ex: #work #task-roulette ... See <a href="#/documentation">Documentation</a>.',
+        content: 'You can add tags on your tasks by using #<tag-name>, ex: #work #task-roulette ... See <a href="#/user-manual">User Manual</a>.',
         id: 'TAGS'
     },
     SPRINTS: {
         title: 'Sprints',
-        content: 'You can add sprints to your tags on the drawer from the top left menu! See <a href="#/documentation">Documentation</a>.',
+        content: 'You can add sprints to your tags on the drawer from the top left menu! See <a href="#/user-manual">User Manual</a>.',
         id: 'SPRINTS'
     }
 };
