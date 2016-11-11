@@ -49,7 +49,9 @@ gulp.task('dist', ['build'], function () {
         }
       }
     }))
-    .pipe(uglify().on('error', function(e){
+    .pipe(uglify({
+      mangle: false
+    }).on('error', function(e){
       console.log(e);
     }))
     .pipe(gulp.dest(path.join(BUILD_DEST, 'js')));
