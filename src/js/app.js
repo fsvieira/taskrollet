@@ -363,7 +363,7 @@ App.prototype.taskManagerDone = function () {
 ==============================
 */
 App.prototype.taskSelector = function (tag) {
-    if (this.state.tasks === 0) {
+    if (this.state.tasks.length === 0) {
         // no tasks to select.
         return;
     }
