@@ -100,16 +100,15 @@ App.prototype.updateTreshold = function () {
     var days = Math.ceil((today - this.state.stats.update) / (1000*60*60*24)); 
 
     var threshold = (this.state.stats.tasksClosed / days) || 1;
-    this.state.stats.parcialThreshold = Math.floor((this.state.stats.threshold + threshold) / 2);
+    this.state.stats.parcialThreshold = Math.ceil((this.state.stats.threshold + threshold) / 2);
     
     // Close stats.
-    if (days >= 30) {
+    if (days >= 7) {
         this.state.stats.threshold = this.state.stats.parcialThreshold;
         this.state.stats.tasksClosed = 0;
         this.state.stats.update = today;
     } 
-    
-    
+
     return this.state.stats.parcialThreshold;
 };
 
@@ -338,6 +337,7 @@ App.prototype.deleteTask = function (localId, keep) {
 
         // calculare stats:
         this.state.stats.tasksClosed++;
+
         this.updateTreshold();
     }
     
@@ -384,12 +384,14 @@ App.prototype.taskSelector = function (tag) {
     for (var sprintTag in this.state.sprints) {
         date = this.state.sprints[sprintTag].date;
         
+        this.state.sprints[sprintTag].stat = 0;
         if (date) {
             days = Math.ceil((date - today) / (1000 * 60 * 60 * 24));
             days = days < 0?1:days;
 
             sprintIds = this.state.sprints[sprintTag].tasks;
             stat = sprintIds.length / days;
+            this.state.sprints[sprintTag].stat = stat;
 
             for (var i=0; i<sprintIds.length; i++) {
                 task = this.state.tasks[sprintIds[i]];
@@ -400,6 +402,13 @@ App.prototype.taskSelector = function (tag) {
             }
         }
     }
+    
+    var tasksPerDay = 0;
+    for (var tag in this.state.sprints) {
+        tasksPerDay += this.state.sprints[tag].stat;
+    }
+    
+    this.state.stats.tasksPerDay = tasksPerDay || 1;
 
     tasks = tasks.filter(function (task) {
         return task.tags && task.tags.indexOf(tag) !== -1;
@@ -555,8 +564,9 @@ App.prototype.getTaskOfTheDay = function (tag) {
         task = this.taskSelector(tag);
 
         if (
+            task &&
             task.stat > 0 && 
-            task.stat >= this.state.stats.parcialThreshold
+            this.state.stats.tasksPerDay >= this.state.stats.parcialThreshold
         ) {
             change = true;
 
@@ -641,7 +651,6 @@ App.messages = {
 };
 
 App.prototype.saveMessage = function (message) {
-    console.log("save Message!");
     if (message.disable && this.state.disabledMessages.indexOf(message.id) === -1) {
         this.state.disabledMessages.push(message.id);
         this.save();
