@@ -83,7 +83,7 @@ const initialState = {
     sprints: {},
     stats: {
         tasksClosed: 0,
-        threshold: 0,
+        threshold: 1,
         parcialThreshold: 0,
         update: new Date().getTime()
     }
@@ -99,15 +99,16 @@ App.prototype.updateTreshold = function () {
     var today = new Date().getTime();
     var days = Math.ceil((today - this.state.stats.update) / (1000*60*60*24)); 
 
-    var threshold = (this.state.stats.tasksClosed / days) || 1;
-    this.state.stats.parcialThreshold = Math.ceil((this.state.stats.threshold + threshold) / 2);
-    
+    this.state.stats.parcialThreshold = (this.state.stats.tasksClosed + this.state.stats.threshold) / (days + 1) || 1;
+
     // Close stats.
     if (days >= 7) {
         this.state.stats.threshold = this.state.stats.parcialThreshold;
         this.state.stats.tasksClosed = 0;
         this.state.stats.update = today;
     } 
+
+    console.log(this.state.stats.parcialThreshold);
 
     return this.state.stats.parcialThreshold;
 };
