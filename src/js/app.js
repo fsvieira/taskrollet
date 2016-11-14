@@ -405,8 +405,8 @@ App.prototype.taskSelector = function (tag) {
     }
     
     var tasksPerDay = 0;
-    for (var tag in this.state.sprints) {
-        tasksPerDay += this.state.sprints[tag].stat;
+    for (var sprintTag in this.state.sprints) {
+        tasksPerDay += this.state.sprints[sprintTag].stat;
     }
     
     this.state.stats.tasksPerDay = tasksPerDay || 1;
