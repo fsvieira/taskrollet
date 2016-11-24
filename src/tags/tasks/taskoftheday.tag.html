@@ -1,6 +1,6 @@
 <task-of-the-day>
     <div class='task-of-the-day'>
-        <div if={activeTags.length > 1}>
+        <div if={activeTags.length > 1} class='clear'>
             <button id="tags-filter"
                 class="mdl-button mdl-js-button mdl-button--raised tkr-right">
                   <div class='tkr-ellipsis tkr-left'>
@@ -19,8 +19,11 @@
                     {tagPresentation(taskTag)}
                 </li>
             </ul>
-        </div> 
-        
+            <div class='clear'></div>
+        </div>
+        <div class='tasks-stats clear'>
+            <div class='percentage' style='width: {percentage}%;'></div>
+        </div>
         <task
             title={taskTitle}
             description={description}
@@ -34,9 +37,13 @@
         var tag = this;
         var App = require('../../app.js');
 
+        tag.percentage = 100;
+
         function refresh (state, taskTag) {
             var taskOfTheDay = opts.app.getTaskOfTheDay(taskTag);
 
+            tag.percentage = opts.app.getPercentage();
+            
             if (taskOfTheDay.content) {
                 tag.activeTags = taskOfTheDay.activeTags;
                 tag.activeTag = taskOfTheDay.activeTag;

@@ -357,7 +357,19 @@ App.prototype.taskManagerDone = function () {
     this.getState(true);
 };
 
-
+App.prototype.getPercentage = function () {
+    // Force stats to update, make a better function for this?
+    this.taskSelector(App.constants.allTags);
+    var perc = 100;
+    
+    if (this.state.stats.tasksPerDay > this.state.stats.parcialThreshold) {
+        perc = (this.state.stats.parcialThreshold / this.state.stats.tasksPerDay) * 100;
+    }
+    
+    console.log(perc);
+    
+    return perc;
+};
 /*
 ==============================
     Tasks Read
@@ -388,7 +400,7 @@ App.prototype.taskSelector = function (tag) {
         this.state.sprints[sprintTag].stat = 0;
         if (date) {
             days = Math.ceil((date - today) / (1000 * 60 * 60 * 24));
-            days = days < 0?1:days;
+            days = days < 1?1:days;
 
             sprintIds = this.state.sprints[sprintTag].tasks;
             stat = sprintIds.length / days;
@@ -410,6 +422,8 @@ App.prototype.taskSelector = function (tag) {
     }
     
     this.state.stats.tasksPerDay = tasksPerDay || 1;
+
+    console.log(this.state.stats.tasksPerDay);
 
     tasks = tasks.filter(function (task) {
         return task.tags && task.tags.indexOf(tag) !== -1;

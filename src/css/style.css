@@ -50,7 +50,7 @@ main {
 
 /* Show Task */
 .tkr-task {
-  margin-top: 1em;
+  /*margin-top: 1em;*/
   width: 100%;
 }
 
@@ -196,6 +196,7 @@ task-manager {
   position: relative;
   width:100%;
   display:block;
+  margin-top: 1em;
 }
 
 .tkr-ellipsis {
@@ -357,4 +358,22 @@ a {
 
 .hide {
   display: none;
+}
+
+.clear {
+  clear: both;  
+}
+
+.tasks-stats {
+  width: 95%;
+  height: 4px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: red;
+}
+
+.tasks-stats .percentage {
+  width: 20%;
+  background-color: green;
+  height: 4px;
 }
