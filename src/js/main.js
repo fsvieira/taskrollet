@@ -2,7 +2,8 @@
 var riot = require('riot');
 var App = require('./app.js');
 
-require('./libs/material.min.js');
+require('material-design-lite');
+
 require('./tags/app.tag.js');
 require('./tags/tasks/tasks.tag.js');
 require('./tags/tasks/task.tag.js');

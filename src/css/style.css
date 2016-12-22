@@ -54,6 +54,9 @@ main {
   width: 100%;
 }
 
+.tkr-taskmanager-tasks .tkr-task {
+  margin-top: 0.5em;
+}
 
 .tkr-task-content .tkr-tag {
 	color: #1E90FF;
