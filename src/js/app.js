@@ -449,15 +449,18 @@ App.prototype.taskSelector = function (tag) {
             var activeTags = this.state.taskOfTheDay.task.activeTags;
             
             var activeTasks = tasks.filter(function (task) {
-                for (var i=0; i<task.tags.length; i++) {
-                    var activeTag = task.tags[i];
-                    if (activeTag !== App.constants.allTags
-                        && activeTags.indexOf(activeTag) !== -1
-                    ) {
-                        return true;
+                // Choose a priority task, for all tags task!
+                if (task.stat === stat) {
+                    for (var i=0; i<task.tags.length; i++) {
+                        var activeTag = task.tags[i];
+                        if (activeTag !== App.constants.allTags
+                            && activeTags.indexOf(activeTag) !== -1
+                        ) {
+                            return true;
+                        }
                     }
                 }
-
+                
                 return false;
             });
             
