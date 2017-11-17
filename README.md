@@ -12,7 +12,7 @@ Task roulette is not a task manager, its a simple task helper that stores and ch
 * Older tasks have a higher probability of being chosen.
 
 # try online
-  * http://fsvieira.com/taskroulette/
+  * https://fsvieira.github.io/taskroulette/
 
 # install
 
