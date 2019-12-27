@@ -11,11 +11,30 @@ import {
 
 import "@blueprintjs/core/lib/css/blueprint.css";
 
+export function PrettyDescription ({description}) {
+  return description.split(/([^ \n\t]+)/).map(
+    (elem, i) => {
+      if (elem.startsWith("#")) {
+        return <span key={i} style={{color: Colors.BLUE3}}>{elem}</span>
+      }
+      else if (elem === '\n') {
+        return <br key={i} />
+      }
+      else if (elem === '\t') {
+        return <span key={i} style={{width: "3em"}}></span>
+      }
+
+      return <span key={i}>{elem}</span>;
+    }
+  );
+}
+
 export default function Task ({
   task,
   doneTask,
   dismissTask,
-  deleteTask
+  deleteTask,
+  children
 }) {
   const description = task?task.description:"There is no tasks, please add some!!";
   const date = (task?new Date(task.createdAt):new Date()).toLocaleDateString();
@@ -34,6 +53,13 @@ export default function Task ({
           height: "100%"
         }}
       >
+        {children &&         
+        <header>
+          {children}
+          <div style={{clear: "both"}}></div> 
+          <Divider />
+        </header>
+        }
         <article
             style={{
               flex: "1 1 auto",
@@ -41,8 +67,7 @@ export default function Task ({
               height: "100px"
             }}
         >
-        <p style={{color: Colors.BLUE3, fontSize: "1.1em"}}>Creation Date: {date}</p>
-        <pre>{description}</pre>
+        <PrettyDescription description={description}></PrettyDescription>
       </article>
     <footer>
       <Divider />
@@ -51,6 +76,8 @@ export default function Task ({
             {dismissTask && <Button icon="swap-vertical" onClick={() => dismissTask(task)} disabled={!task}>Dismiss</Button>}
             {deleteTask && <Button icon="trash" onClick={() => deleteTask(task)} disabled={!task}>Delete</Button>}
           </ButtonGroup>
+
+          <div style={{float: "right", color: Colors.BLUE3}}>{date}</div>
       </footer>
       </section>
     </Card>

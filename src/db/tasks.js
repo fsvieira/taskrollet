@@ -12,6 +12,12 @@ const dbTODOs = new PouchDB('todo');
 
 dbTasks.createIndex({
     index: {
+      fields: ['createAt']
+    }
+});
+
+dbTasks.createIndex({
+    index: {
       fields: ['done', 'deleted']
     }
 });
@@ -35,17 +41,14 @@ async function getTODO (force) {
             delete todo.task;
         }     
     }
+    const todos = (await dbTasks.find({
+        selector: {
+            deleted: null,
+            done: null
+        }
+    })).docs;
 
     if (force || !todo.task || todo.task.deleted || todo.task.done) {
-        const todos = (await dbTasks.find({
-            selector: {
-                deleted: null, 
-                done: null
-            }
-        })).docs;
-
-        todo.total = todos.length;
-
         if (todos.length) {
             const index = Math.floor(Math.random() * todos.length);
             const task = todos[index];
@@ -55,9 +58,12 @@ async function getTODO (force) {
         else {
             delete todo.task;
         }
-
-        await dbTODOs.put(todo);
     }
+    
+    todo.total = todos.length;
+
+    await dbTODOs.put(todo);
+
     
     return todo;
 }
@@ -75,14 +81,14 @@ export const dismissTask = () => getTODO(true);
 
 // === Subscriptions ===
 export function subscribeTODO (fn) {
-    let todo;
+    // let todo;
     const todoListener = dbTODOs.changes({
         since: 'now',
         live: true,
         include_docs: true,
         filter: todo => todo._id === 'todo'
     }).on("change", change => {
-        todo = change.doc;
+        // todo = change.doc;
         fn(change.doc);
     });
 
@@ -92,7 +98,7 @@ export function subscribeTODO (fn) {
         since: 'now',
         live: true,
         include_docs: true,
-        filter: t => !todo || !todo.task || (t._id === todo.task._id)
+        // filter: t => !todo || !todo.task || (t._id === todo.task._id)
     }).on("change", () => getTODO());
 
     getTODO().then(fn);
@@ -111,6 +117,7 @@ export async function getActiveTasks () {
         }
     });
 
+    tasks.docs.sort((a, b) => new Date(a.createAt).getTime() - new Date(b.createAt).getTime());
     return tasks.docs;
 }
 
@@ -131,6 +138,36 @@ export function subscribeActiveTasks(fn) {
     return () => listener.cancel();
 }
 
+// --- Tags
+export async function getActiveTags () {
+    const tags = await dbTasks.find({
+        selector: {
+            deleted: null,
+            done: null
+        }
+    });
+
+    return tags.docs.reduce((acc, t) => [...new Set(t.tags.concat(acc))], []);
+}
+
+export function subscribeActiveTags(fn) {
+    let listener;
+
+    getActiveTags().then(fn);
+
+    listener = dbTasks.changes({
+        since: 'now',
+        live: true,
+        include_docs: true
+    })
+    .on("change", async () => {
+        fn(await getActiveTags());
+    });
+
+    return () => listener.cancel();
+}
+
+
 // === Hooks,
 export const useTODO = tags => {
     const [todo, setTODO] = useState({});
@@ -146,7 +183,7 @@ export const useTODO = tags => {
     return {
         todo,
         doneTask,
-        dismissTask,
+        dismissTask: (todo && todo.total > 1)?dismissTask:undefined,
         deleteTask
     };
 }
@@ -156,7 +193,6 @@ export const useTasks = () => {
     const [tasks, setTasks] = useState([]);
   
     const handleTasksChange = tasks => {
-        console.log(tasks);
         setTasks(tasks);
     }
 
@@ -172,3 +208,17 @@ export const useTasks = () => {
     };
 }
 
+export const useActiveTags = () => {
+    const [tags, setTags] = useState([]);
+  
+    const handleTagsChange = tags => {
+        setTags(tags);
+    }
+
+    useEffect(
+        () => subscribeActiveTags(handleTagsChange), 
+        [true]
+    );
+  
+    return tags;
+}

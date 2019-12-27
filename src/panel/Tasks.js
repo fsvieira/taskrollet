@@ -10,12 +10,7 @@ export default function Tasks () {
         deleteTask
     } = useTasks();
 
-    tasks.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-
-    console.log(JSON.stringify(tasks));
-    /*
-    return <div>{JSON.stringify(tasks)}</div>;*/
-    return tasks.map(
+    const tasksList = tasks.map(
         task => <Task 
                 task={task}
                 doneTask={doneTask}
@@ -23,4 +18,13 @@ export default function Tasks () {
                 key={task._id}
             ></Task>
     );
+
+    return (
+        <section style={{overflow: "auto"}}>
+            <article>
+                {tasksList}
+            </article>
+        </section>
+    );
 }
+
