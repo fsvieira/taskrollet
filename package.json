@@ -5,19 +5,35 @@
   "author": "Filipe Vieira",
   "license": "MIT",
   "scripts": {
-    "dev": "lite-server ./www"
+    "start": "parcel index.html"
   },
+  "browserslist": [
+    "last 1 Chrome versions"
+  ],
   "devDependencies": {
-    "gulp": "^3.9.1",
-    "gulp-browserify": "^0.5.1",
-    "gulp-clean-css": "^2.0.13",
-    "gulp-concat": "^2.6.0",
-    "gulp-htmlmin": "^3.0.0",
-    "gulp-riot": "^0.5.5",
-    "gulp-uglify": "^2.0.0",
-    "lite-server": "^2.2.2",
-    "material-design-lite": "^1.3.0",
-    "pegjs": "^0.10.0",
-    "riot": "^2.6.3"
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.0.6",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "pegjs": "^0.10.0"
+  },
+  "dependencies": {
+    "@babel/core": "^7.7.7",
+    "@babel/preset-react": "^7.7.4",
+    "@blueprintjs/core": "^3.22.2",
+    "@blueprintjs/icons": "^3.12.0",
+    "babel": "^6.23.0",
+    "babel-cli": "^6.26.0",
+    "babel-preset-react-app": "^3.1.2",
+    "components": "^0.1.0",
+    "pouchdb": "^7.1.1",
+    "pouchdb-find": "^7.1.1",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-redux": "^7.1.3",
+    "reactjs": "^1.0.0",
+    "redux": "^4.0.4",
+    "remove": "^0.1.5"
   }
 }
