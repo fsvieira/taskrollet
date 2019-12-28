@@ -1,7 +1,7 @@
 import React from "react";
 
 import Task from "./Task";
-import SearchTags from "./SelectTags";
+import SelectTags from "./SelectTags";
 import {useTODO} from "../db/tasks";
 
 import "@blueprintjs/core/lib/css/blueprint.css";
@@ -14,7 +14,7 @@ export default function TODO () {
     <div>
     <span>Tasks: {todo.total} </span>
     <span style={{float: "right"}}>
-      <SearchTags
+      <SelectTags
         onChange={tags => console.log("Tags", tags)}
       />
     </span>

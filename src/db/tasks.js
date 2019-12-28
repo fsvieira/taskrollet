@@ -9,6 +9,7 @@ PouchDB.plugin(PouchDBFind);
 const dbTasks = new PouchDB('tasks');
 // const dbState = new PouchDB('state');
 const dbTODOs = new PouchDB('todo');
+const dbSprints = new PouchDB('sprints');
 
 dbTasks.createIndex({
     index: {
@@ -67,6 +68,13 @@ async function getTODO (force) {
     
     return todo;
 }
+
+// === DB Sprints functions ===
+export const addSprint = async sprint => {
+    await dbSprint.post(sprint);
+    return task;
+}
+
 
 // === DB Tasks functions ===
 export const addTask = async task => {
@@ -167,6 +175,29 @@ export function subscribeActiveTags(fn) {
     return () => listener.cancel();
 }
 
+// --- Sprints 
+export async function getActiveSprints () {
+    const sprints = await dbSprints.find();
+    return sprints.docs;
+}
+
+export function subscribeActiveSprints (fn) {
+    let listener;
+
+    getActiveSprints().then(fn);
+
+    listener = dbSprints.changes({
+        since: 'now',
+        live: true,
+        include_docs: true
+    })
+    .on("change", async () => {
+        fn(await getActiveSprints());
+    });
+
+    return () => listener.cancel();
+}
+
 
 // === Hooks,
 export const useTODO = tags => {
@@ -221,4 +252,19 @@ export const useActiveTags = () => {
     );
   
     return tags;
+}
+
+export const useActiveSprints = () => {
+    const [sprints, setSprints] = useState([]);
+  
+    const handleSprintsChange = sprints => {
+        setSprints(sprints);
+    }
+
+    useEffect(
+        () => subscribeActiveSprints(handleSprintsChange), 
+        [true]
+    );
+  
+    return {sprints, addSprint};
 }

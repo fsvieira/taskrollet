@@ -81,6 +81,7 @@ export default function TaskEditor () {
           style={{width: "100%", height: "8em"}}
           value={value}
           onChange={setValue}
+          placeholder={" Write here the task description, use # to add #tags!!"}
         />
         <Divider />
         <Button 
