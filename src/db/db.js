@@ -9,20 +9,80 @@ export const dbTODOs = new PouchDB('todo');
 
 dbTasks.createIndex({
     index: {
-      fields: ['createdAt']
+      fields: ["createdAt"]
     }
 });
 
 dbTasks.createIndex({
     index: {
-      fields: ['done', 'deleted']
+      fields: ["done", "deleted"]
     }
 });
 
+async function activeTasksListener (fn, tags={all: true}) {
+
+  const queryFields = [];
+  const queryTagsSelector = {};
+  for (let tag in tags) {
+    const field = `tags.${tag}`;
+    queryFields.push(field);
+    queryTagsSelector[field] = true;
+  }
+
+  await dbTasks.createIndex({
+    index: {
+      fields: queryFields
+    }
+  });
+
+  const tasks = (await dbTasks.find({
+    selector: queryTagsSelector
+  })).docs;
+
+  fn(tasks);
+
+  const taskChanges = dbTasks.changes({
+    since: 'now',
+    live: true,
+    include_docs: true,
+    filter: doc => {
+      for (let tag in tags) {
+        console.log("filter", doc, doc.tags[tag], tag, doc.tags);
+        if (!doc.tags[tag]) {
+          return false;
+        }
+      }
+
+      return true;
+    }
+  }).on("change", async changes => {
+    const changeTask = changes.doc;
+    const index = tasks.findIndex(task => task._id === changeTask._id); 
+
+    if (index === -1) {
+      tasks.push(changeTask);
+    }
+    else if (changeTask.done || changeTask.deleted) {
+      tasks.splice(index, 1);
+    }
+    else {
+      // task was updated!
+      tasks.splice(index, 1, task);
+    }
+
+    fn(tasks);
+  });
+
+  return () => taskChanges.cancel();
+}
+
+activeTasksListener(r => console.log("Calback ", r));
+
 /**
+ * https://github.com/baconjs/bacon.js#install
+ * 
  * TODO:
  * 
- *  1. replace all tags array to an object,
  *  2. this way we can use find to select tags subsets.
  *  3. we can also add specific listeners to tags.
  *  4. and we can query sprints + tasks. 

@@ -16,7 +16,7 @@ export default function SelectTags ({onChange, label}) {
     const tags = useActiveTags();
     const [selectedTags, setSelectedTags] = useState([]);
 
-    const checks = tags.map(
+    const checks = Object.keys(tags).map(
         tag => {
             return (
                 <Checkbox 

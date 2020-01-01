@@ -8,7 +8,7 @@ export default function TagsList ({tags}) {
         return <p>All tags</p>;
     }
 
-    const tagsList = tags.map(
+    const tagsList = Object.keys(tags).map(
         (tag,i) => <Tag 
             icon="tag" 
             large={true} 

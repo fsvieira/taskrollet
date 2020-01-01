@@ -24,10 +24,13 @@ export default function TaskEditor () {
   const tags = useActiveTags();
 
   async function addTaskText (text) {
-    const tags = text.match(/#([^\s]+)/g);
+    const tags = text.match(/#([^\s]+)/g).concat(["all"]).map(t => t.replace("#", ""));
     const task = {
       description: text,
-      tags: [...new Set(tags)],
+      tags: tags.reduce((acc, tag) => {
+        acc[tag] = true;
+        return acc;
+      }, {}),
       createdAt: new Date()
     };
 
@@ -51,7 +54,7 @@ export default function TaskEditor () {
   }
 
   function parseValue (value) {
-    const pTags = tags.map(t => t.replace("#", ""));
+    const pTags = Object.keys(tags).map(t => t.replace("#", ""));
   
     if (value) {
       const eTags = value.match(/\#([^\s]+)\s/g);

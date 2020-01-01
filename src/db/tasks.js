@@ -101,6 +101,10 @@ async function setTODO (task) {
 
 // === DB Tasks functions ===
 export const addTask = async task => {
+    if (task.tags instanceof Array) {
+        throw "Bad tags array!!"
+    }
+
     task.createdAt = new Date();
     await dbTasks.post(task);
 
@@ -180,7 +184,7 @@ export async function getActiveTags () {
         }
     });
 
-    return tags.docs.reduce((acc, t) => [...new Set(t.tags.concat(acc))], []);
+    return tags.docs.reduce((acc, t) => acc = {...acc, ...t.tags}, {});
 }
 
 export function subscribeActiveTags(fn) {
