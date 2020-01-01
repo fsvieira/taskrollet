@@ -8,14 +8,14 @@ import "@blueprintjs/core/lib/css/blueprint.css";
 
 
 export default function TODO () {
-  const {todo, doneTask, dismissTask, deleteTask} = useTODO([]);
+  const {todo, doneTask, dismissTask, deleteTask, setTags} = useTODO();
 
   const taskHeader = (
     <div>
     <span>Tasks: {todo.total} </span>
     <span style={{float: "right"}}>
       <SelectTags
-        onChange={tags => console.log("Tags", tags)}
+        onChange={tags => setTags(tags.sort())}
       />
     </span>
   </div>);

@@ -12,7 +12,9 @@ import {
 import "@blueprintjs/core/lib/css/blueprint.css";
 
 export function PrettyDescription ({description}) {
-  return description.split(/([^ \n\t]+)/).map(
+  const tokens = description.match(/([^\s]+)|(\s)/g);
+
+  return tokens.map(
     (elem, i) => {
       if (elem.startsWith("#")) {
         return <span key={i} style={{color: Colors.BLUE3}}>{elem}</span>
@@ -34,6 +36,7 @@ export default function Task ({
   doneTask,
   dismissTask,
   deleteTask,
+  selectTask,
   children
 }) {
   const description = task?task.description:"There is no tasks, please add some!!";
@@ -74,6 +77,7 @@ export default function Task ({
           <ButtonGroup>
             {doneTask && <Button icon="tick" onClick={() => doneTask(task)} disabled={!task}>Done</Button>}
             {dismissTask && <Button icon="swap-vertical" onClick={() => dismissTask(task)} disabled={!task}>Dismiss</Button>}
+            {selectTask && <Button icon="pin" onClick={() => selectTask(task)} disabled={!task}>To do</Button>}
             {deleteTask && <Button icon="trash" onClick={() => deleteTask(task)} disabled={!task}>Delete</Button>}
           </ButtonGroup>
 

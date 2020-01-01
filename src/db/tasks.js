@@ -1,35 +1,32 @@
-import PouchDB from 'pouchdb';
-import PouchDBFind from 'pouchdb-find';
+// import PouchDB from 'pouchdb';
+// import PouchDBFind from 'pouchdb-find';
 
 import { useState, useEffect } from 'react';
 
+import {dbTasks, dbTODOs} from "./db";
 
-PouchDB.plugin(PouchDBFind);
 
-const dbTasks = new PouchDB('tasks');
+// PouchDB.plugin(PouchDBFind);
+
+// export const dbTasks = new PouchDB('tasks');
 // const dbState = new PouchDB('state');
-const dbTODOs = new PouchDB('todo');
-const dbSprints = new PouchDB('sprints');
+// const dbTODOs = new PouchDB('todo');
 
-dbTasks.createIndex({
-    index: {
-      fields: ['createAt']
-    }
-});
+// Setup 
 
-dbTasks.createIndex({
-    index: {
-      fields: ['done', 'deleted']
-    }
-});
+// Setup end!!
 
-async function getTODO (force) {
+async function getTODO (force, tags=[]) {
     let todo;
 
+    console.log("TAGS => " + JSON.stringify(tags));
     try {
+        console.log("---")
         todo = await dbTODOs.get("todo");
+        console.log(todo);
     }
     catch (e) {
+        console.log(e);
         todo = {tags: [], _id: "todo"};
     }
     
@@ -37,17 +34,22 @@ async function getTODO (force) {
         // make sure todo task is updated,
         try {
             todo.task = await dbTasks.get(todo.task._id);
+
+            force = force || tags.filter(tag => todo.task.tags.includes(tag)).length !== tags.length;
         }
         catch (e) {
             delete todo.task;
         }     
     }
+
     const todos = (await dbTasks.find({
         selector: {
             deleted: null,
             done: null
         }
-    })).docs;
+    })).docs.filter(
+        task => tags.filter(tag => task.tags.includes(tag)).length === tags.length
+    );
 
     if (force || !todo.task || todo.task.deleted || todo.task.done) {
         if (todos.length) {
@@ -69,26 +71,49 @@ async function getTODO (force) {
     return todo;
 }
 
-// === DB Sprints functions ===
-export const addSprint = async sprint => {
-    await dbSprint.post(sprint);
-    return task;
-}
+async function setTODO (task) {
+    let todo;
 
+    try {
+        todo = await dbTODOs.get("todo");
+    }
+    catch (e) {
+        todo = {tags: [], _id: "todo"};
+    }
+
+    const todos = (await dbTasks.find({
+        selector: {
+            deleted: null,
+            done: null
+        }
+    })).docs;
+
+    todo.task = task;
+
+    todo.total = todos.length;
+
+    await dbTODOs.put(todo);
+
+    return todo;
+
+
+}
 
 // === DB Tasks functions ===
 export const addTask = async task => {
+    task.createdAt = new Date();
     await dbTasks.post(task);
 
     return task;
 }
 
-export const doneTask = task => dbTasks.put({...task, done: true});
-export const deleteTask = task => dbTasks.put({...task, deleted: true});
+export const doneTask = task => dbTasks.put({...task, done: true, closedAt: new Date()});
+export const deleteTask = task => dbTasks.put({...task, deleted: true, closedAt: new Date()});
 export const dismissTask = () => getTODO(true);
+export const selectTask = task => setTODO(task);
 
 // === Subscriptions ===
-export function subscribeTODO (fn) {
+export function subscribeTODO (fn, tags) {
     // let todo;
     const todoListener = dbTODOs.changes({
         since: 'now',
@@ -107,9 +132,9 @@ export function subscribeTODO (fn) {
         live: true,
         include_docs: true,
         // filter: t => !todo || !todo.task || (t._id === todo.task._id)
-    }).on("change", () => getTODO());
+    }).on("change", () => getTODO(false, tags));
 
-    getTODO().then(fn);
+    getTODO(false, tags).then(fn);
 
     return () => {
         todoListener.cancel();
@@ -125,7 +150,7 @@ export async function getActiveTasks () {
         }
     });
 
-    tasks.docs.sort((a, b) => new Date(a.createAt).getTime() - new Date(b.createAt).getTime());
+    tasks.docs.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
     return tasks.docs;
 }
 
@@ -175,47 +200,27 @@ export function subscribeActiveTags(fn) {
     return () => listener.cancel();
 }
 
-// --- Sprints 
-export async function getActiveSprints () {
-    const sprints = await dbSprints.find();
-    return sprints.docs;
-}
-
-export function subscribeActiveSprints (fn) {
-    let listener;
-
-    getActiveSprints().then(fn);
-
-    listener = dbSprints.changes({
-        since: 'now',
-        live: true,
-        include_docs: true
-    })
-    .on("change", async () => {
-        fn(await getActiveSprints());
-    });
-
-    return () => listener.cancel();
-}
-
-
 // === Hooks,
-export const useTODO = tags => {
+export const useTODO = () => {
     const [todo, setTODO] = useState({});
+    const [tags, setTags] = useState([]);
 
-    function handleTODOChange(todo) {
+    function handleTODOChange(todo, tags) {
         setTODO(todo);
+        setTags(tags);
     }
 
     useEffect(() => {
-        return subscribeTODO(handleTODOChange);
-    }, [todo?todo._id:todo]);
+        return subscribeTODO(handleTODOChange, tags);
+    }, [(todo?todo._id:todo) + "::" + JSON.stringify(tags)]);
 
     return {
         todo,
         doneTask,
         dismissTask: (todo && todo.total > 1)?dismissTask:undefined,
-        deleteTask
+        deleteTask,
+        tags,
+        setTags
     };
 }
 
@@ -235,7 +240,8 @@ export const useTasks = () => {
     return {
         tasks,
         doneTask,
-        deleteTask
+        deleteTask,
+        selectTask
     };
 }
 
@@ -252,19 +258,4 @@ export const useActiveTags = () => {
     );
   
     return tags;
-}
-
-export const useActiveSprints = () => {
-    const [sprints, setSprints] = useState([]);
-  
-    const handleSprintsChange = sprints => {
-        setSprints(sprints);
-    }
-
-    useEffect(
-        () => subscribeActiveSprints(handleSprintsChange), 
-        [true]
-    );
-  
-    return {sprints, addSprint};
 }

@@ -11,7 +11,7 @@ import {
 
 import "@blueprintjs/core/lib/css/blueprint.css";
 
-import Sprints from "./components/Sprints";
+import Sprints from "./components/Sprints/Sprints";
 
 import Work from "./panel/Work";
 import Tasks from "./panel/Tasks";
@@ -69,7 +69,7 @@ class App extends Component {
           <NavbarGroup align={Alignment.LEFT}>
             <NavbarHeading>
               <Icon 
-                icon='timeline-events' 
+                icon='walk' 
                 iconSize={Icon.SIZE_LARGE} 
                 intent={Intent.PRIMARY} 
                 onClick={() => this.openDrawer(Drawers.SPRINTS)}
@@ -92,7 +92,7 @@ class App extends Component {
               content!==Content.TASKS && 
               <NavbarHeading>
                   <Icon 
-                    icon='clipboard' 
+                    icon='projects' 
                     iconSize={Icon.SIZE_LARGE}
                     intent={Intent.PRIMARY} 
                     onClick={() => this.openContent(Content.TASKS)}
