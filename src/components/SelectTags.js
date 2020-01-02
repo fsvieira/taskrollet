@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useActiveTags } from "../db/tasks";
+import { useActiveTags } from "../db/tasks/hooks";
 import { useState } from 'react';
 
 import {
@@ -12,10 +12,39 @@ import {
 
 // https://blueprintjs.com/docs/#select/multi-select
 
-export default function SelectTags ({onChange, label}) {    
+export default function SelectTags ({onChange, label, filterTags={}}) {
     const tags = useActiveTags();
-    const [selectedTags, setSelectedTags] = useState([]);
+    // const [selectedTags, setSelectedTags] = useState(filterTags || {});
 
+    const checks = [];
+    for (let tag in tags) {
+        checks.push(
+            <Checkbox 
+                label={tag} 
+                checked={filterTags[tag]}
+                disabled={tag === 'all'}
+                key={tag}
+                onChange={() => onChange && onChange(filterTags)}
+                    /*
+                    const index = selectedTags.indexOf(tag);
+                    let s = selectedTags.slice();
+                    
+                    if (index !== -1) {
+                        s.splice(index, 1);
+                    }
+                    else {
+                        s.push(tag);
+                    }
+
+                    onChange && onChange(s);
+                    setSelectedTags(s);
+                }
+                }*/
+            />
+        );
+    }
+
+    /*
     const checks = Object.keys(tags).map(
         tag => {
             return (
@@ -40,7 +69,7 @@ export default function SelectTags ({onChange, label}) {
                 />
             );
         }
-    );
+    );*/
 
     const tagsSelector = <div style={{padding: "0.5em"}}>{checks}</div>;
 

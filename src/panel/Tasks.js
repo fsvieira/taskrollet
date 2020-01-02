@@ -1,6 +1,6 @@
 import React from "react";
 
-import {useTasks} from "../db/tasks";
+import { useActiveTasks } from "../db/tasks/hooks";
 import Task from "../components/Task";
 import { AppToaster } from '../components/Notification';
 import {
@@ -16,14 +16,14 @@ export default function Tasks () {
         tasks,
         doneTask,
         deleteTask,
-        selectTask
-    } = useTasks();
+        selectTodo
+    } = useActiveTasks();
 
     const selectTaskNotification = async (task) => {
         const msg = task.description.length > 10?task.description.substring(0, 10) + "...":task.description;
 
         try {
-            await selectTask(task);
+            await selectTodo(task);
 
             AppToaster.show({
                 message: `Task ${msg} is set TODO.`,
@@ -61,7 +61,7 @@ export default function Tasks () {
                 position: "fixed", 
                 left: "50%",
                 transform: "translateX(-50%)",
-                zIndex: 100,
+                zIndex: 1,
                 padding: "0.2em",
                 backgroundColor: Colors.BLUE5
             }}>
