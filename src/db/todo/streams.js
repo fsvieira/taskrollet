@@ -3,7 +3,7 @@ import {$activeTasks, $activeTags} from "../tasks/streams";
 import {fromBinder} from "baconjs"
 
 export const $todo = () =>
-    fromBinder(async sink => {
+    fromBinder(sink => {
         const todoChanges = dbTodo.changes({
           since: 'now',
           live: true,
@@ -13,12 +13,10 @@ export const $todo = () =>
           sink(todo)
         );
     
-        try {
-            sink(await dbTodo.get("todo"));
-        }
-        catch (e) {
-            sink({tags: {all: true}});
-        }
+        dbTodo.get("todo").then(
+            sink,
+            () => sink({tags: {all: true}})
+        );
     
         return () => todoChanges.cancel();
     });  

@@ -7,7 +7,11 @@ export const useActiveTags = () => {
     const [tags, setTags] = useState({all: true});
     
     useEffect(
-        () => {$activeTags().forEach(setTags)},
+        () => {
+            const cancel = $activeTags().onValue(setTags);
+
+            return () => cancel();
+        },
         [true]
     );
   
@@ -18,7 +22,11 @@ export const useActiveTasks = () => {
     const [tasks, setTasks] = useState([]);
     
     useEffect(
-        () => {$activeTasks().forEach(setTasks)},
+        () => {
+            const cancel = $activeTasks().forEach(setTasks);
+
+            return () => cancel();
+        },
         [true]
     );
   

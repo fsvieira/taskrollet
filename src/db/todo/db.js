@@ -14,7 +14,6 @@ export const selectTodo = async task => {
         console.log(e);
         return dbTodo.put({_id: "todo", task: task._id});
     }
-
 }
 
 export const dimissTodo = async () => {

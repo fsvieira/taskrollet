@@ -2,7 +2,7 @@ import {dbTasks} from "./db";
 import {fromBinder} from "baconjs"
 
 export const $tasks = (tags={all: true}, selector) => 
-    fromBinder(async sink => {
+    fromBinder(sink => {
         const queryFields = [];
         const queryTagsSelector = selector || {
             done,
@@ -15,7 +15,7 @@ export const $tasks = (tags={all: true}, selector) =>
             queryTagsSelector[field] = true;
         }
     
-        await dbTasks.createIndex({
+        dbTasks.createIndex({
             index: {
             fields: queryFields
             }
@@ -31,9 +31,14 @@ export const $tasks = (tags={all: true}, selector) =>
             })).docs)
         );
     
+        /*
         sink((await dbTasks.find({
             selector: queryTagsSelector
-        })).docs);
+        })).docs);*/
+
+        dbTasks.find({
+            selector: queryTagsSelector
+        }).then(({docs}) => sink(docs));
     
         return () => taskChanges.cancel();
     });

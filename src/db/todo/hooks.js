@@ -8,7 +8,11 @@ export const useTodo = () => {
     const [todo, setTodo] = useState({});
     
     useEffect(
-        () => {$activeTodo().forEach(setTodo)},
+        () => {
+            const cancel = $activeTodo().onValue(setTodo);
+
+            return () => cancel();
+        },
         [true]
     );
   
