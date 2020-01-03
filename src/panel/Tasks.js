@@ -19,7 +19,7 @@ export default function Tasks () {
         selectTodo
     } = useActiveTasks();
 
-    const selectTaskNotification = async (task) => {
+    const selectTodoNotification = async (task) => {
         const msg = task.description.length > 10?task.description.substring(0, 10) + "...":task.description;
 
         try {
@@ -50,7 +50,7 @@ export default function Tasks () {
                 task={task}
                 doneTask={doneTask}
                 deleteTask={deleteTask}
-                selectTask={selectTaskNotification}
+                selectTodo={selectTodoNotification}
                 key={task._id}
             ></Task>
     );

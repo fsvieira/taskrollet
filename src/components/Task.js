@@ -34,9 +34,9 @@ export function PrettyDescription ({description}) {
 export default function Task ({
   task,
   doneTask,
-  dismissTask,
+  dismissTodo,
   deleteTask,
-  selectTask,
+  selectTodo,
   children
 }) {
   const description = task?task.description:"There is no tasks, please add some!!";
@@ -76,8 +76,8 @@ export default function Task ({
       <Divider />
           <ButtonGroup>
             {doneTask && <Button icon="tick" onClick={() => doneTask(task)} disabled={!task}>Done</Button>}
-            {dismissTask && <Button icon="swap-vertical" onClick={() => dismissTask(task)} disabled={!task}>Dismiss</Button>}
-            {selectTask && <Button icon="pin" onClick={() => selectTask(task)} disabled={!task}>To do</Button>}
+            {dismissTodo && <Button icon="swap-vertical" onClick={() => dismissTodo(task)} disabled={!task}>Dismiss</Button>}
+            {selectTodo && <Button icon="pin" onClick={() => selectTodo(task)} disabled={!task}>To do</Button>}
             {deleteTask && <Button icon="trash" onClick={() => deleteTask(task)} disabled={!task}>Delete</Button>}
           </ButtonGroup>
 

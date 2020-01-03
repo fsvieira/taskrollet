@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import { setTodoFilterTags, dimissTodo } from "./db";
+import { setTodoFilterTags, dismissTodo } from "./db";
 import { $activeTodo } from "./streams";
 import { deleteTask, doneTask } from "./../tasks/db";
 
@@ -22,7 +22,7 @@ export const useTodo = () => {
         todo,
         setTags,
         doneTask,
-        dimissTodo,
+        dismissTodo,
         deleteTask
     };
 }

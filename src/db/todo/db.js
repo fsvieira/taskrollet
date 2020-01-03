@@ -16,9 +16,9 @@ export const selectTodo = async task => {
     }
 }
 
-export const dimissTodo = async () => {
+export const dismissTodo = async () => {
     try {
-        const todo = await dbTodos.get("todo");
+        const todo = await dbTodo.get("todo");
         return dbTodo.put({tags: todo.tags});
     }
     catch (e) {
@@ -28,7 +28,7 @@ export const dimissTodo = async () => {
 
 export const setTodoFilterTags = async tags => {
     try {
-        const todo = await dbTodos.get("todo");
+        const todo = await dbTodo.get("todo");
         return dbTodo.put({...todo, tags});
     }
     catch (e) {

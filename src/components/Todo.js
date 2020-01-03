@@ -2,15 +2,13 @@ import React from "react";
 
 import Task from "./Task";
 import SelectTags from "./SelectTags";
-import {useTodo} from "../db/todo/hooks";
+import { useTodo } from "../db/todo/hooks";
 
 import "@blueprintjs/core/lib/css/blueprint.css";
 
 
 export default function Todo () {
-  const {todo, setTags, doneTask, dismissTask, deleteTask} = useTodo();
-
-  console.log("TODO", todo);
+  const {todo, setTags, doneTask, dismissTodo, deleteTask} = useTodo();
 
   const taskHeader = (
     <div>
@@ -26,7 +24,7 @@ export default function Todo () {
   return (<Task 
         task={todo.task}
         doneTask={doneTask}
-        dismissTask={dismissTask}
+        dismissTodo={todo.total > 1?dismissTodo:undefined}
         deleteTask={deleteTask}
       >
         {taskHeader}
