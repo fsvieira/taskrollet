@@ -20,7 +20,7 @@ export function $activeSprints (tags) {
     }).on("change", () => find());
 
     find();
-    
+
     return () => sprintChanges.cancel();
   });
 }
@@ -69,8 +69,8 @@ export function $activeSprintsTasks (tags) {
 
           if (sprint.openTasks.length) {
             openAvg = sprint.openTasks.reduce((avg, task) => {
-              const t = now - new Date(task.createdAt).getTime();
-              return avg===null?t:(avg + t) / 2;
+              const delta = now - new Date(task.createdAt).getTime();
+              return avg===null?delta:(avg + delta) / 2;
             }, null);
 
             const dueTime = new Date(sprint.date).getTime() - now;

@@ -5,7 +5,8 @@
   "author": "Filipe Vieira",
   "license": "MIT",
   "scripts": {
-    "start": "parcel index.html"
+    "start": "parcel index.html",
+    "ghpages": "parcel build index.html --public-url ./ --out-dir ./docs"
   },
   "browserslist": [
     "last 1 Chrome versions"
@@ -18,6 +19,7 @@
     "babel-polyfill": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
+    "cssnano": "^4.1.10",
     "pegjs": "^0.10.0"
   },
   "dependencies": {
