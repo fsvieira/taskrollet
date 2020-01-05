@@ -23,7 +23,7 @@ export const useActiveTasks = () => {
     
     useEffect(
         () => {
-            const cancel = $activeTasks().forEach(setTasks);
+            const cancel = $activeTasks().onValue(setTasks);
 
             return () => cancel();
         },

@@ -1,58 +1,69 @@
 import {dbTasks} from "./db";
 import {fromBinder} from "baconjs"
 
-export const $tasks = (tags={all: true}, selector) => 
+export const $tasks = (tags={all: true}, selector) =>
     fromBinder(sink => {
-        const queryFields = [];
-        const queryTagsSelector = selector || {
-            done,
-            deleted,
+        let {done, deleted} = selector || {
+            done: false,
+            deleted: false
         };
-    
-        for (let tag in tags) {
-            const field = `tags.${tag}`;
-            queryFields.push(field);
-            queryTagsSelector[field] = true;
-        }
-    
-        dbTasks.createIndex({
-            index: {
-            fields: queryFields
-            }
-        });
-    
+
+        done = done===undefined?undefined:!!done;
+        deleted = deleted===undefined?undefined:!!deleted;
+
+        async function find () {
+            const docs = await dbTasks.allDocs({include_docs: true});
+
+            const tasks = docs.rows.map(({doc}) => doc).filter(task => {
+                if (!task.tags) return false;
+                
+                const taskDone = !!task.done;
+                const taskDeleted = !!task.deleted;
+
+                if (done !== undefined && taskDone !== done) {
+                    return false;
+                }
+
+                if (deleted !== undefined && taskDeleted !== deleted) {
+                    return false;
+                }
+
+                for (let tag in tags) {
+                    if (!task.tags[tag]) {
+                        return false;
+                    }
+                }
+
+                return true;
+            });
+
+            return tasks; 
+        };
+
         const taskChanges = dbTasks.changes({
             since: 'now',
             live: true,
             include_docs: true
         }).on("change", async () => 
-            sink((await dbTasks.find({
-            selector: queryTagsSelector
-            })).docs)
+            sink(await find())
         );
-    
-        /*
-        sink((await dbTasks.find({
-            selector: queryTagsSelector
-        })).docs);*/
 
-        dbTasks.find({
-            selector: queryTagsSelector
-        }).then(({docs}) => sink(docs));
+        find().then(sink);
     
         return () => taskChanges.cancel();
     });
   
 export const $activeTasks = tags => $tasks(tags, {done: null, deleted: null});
 
-export const $activeTags = () => $activeTasks().scan({}, (tags, tasks) => {
-      for (let i=0; i<tasks.length; i++) {
+export const $activeTags = () => $activeTasks().map(tasks => {
+    const tags = {};
+    for (let i=0; i<tasks.length; i++) {
         const task = tasks[i];
         for (let tag in task.tags) {
-          tags[tag] = true;
+            tags[tag] = true;
         }
-      }
-  
-      return tags;
-    });
+    }
+
+    return tags;
+});
   

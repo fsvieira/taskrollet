@@ -1,5 +1,5 @@
-import {dbTodo, selectTodo} from "./db";
-import {$activeTasks, $activeTags} from "../tasks/streams";
+import {dbTodo, selectTodo, setTodoFilterTags} from "./db";
+import {$activeTasks} from "../tasks/streams";
 import {fromBinder} from "baconjs"
 
 export const $todo = () =>
@@ -21,10 +21,13 @@ export const $todo = () =>
         return () => todoChanges.cancel();
     });  
 
-export const $activeTodo = () => 
-    $todo().combine($activeTasks(), (todo, tasks) => {
-        console.log(todo, tasks);
+export const $activeTodo = (tags) => 
+    $todo().combine($activeTasks(tags), (todo, tasks) => {
         const t = {...todo};
+
+        if (tasks.length === 0 && Object.keys(todo.tags).length > 1) {
+            setTodoFilterTags({all: true});
+        }
 
         if (t.task) {
             const task = tasks.find(task => task._id === t.task);

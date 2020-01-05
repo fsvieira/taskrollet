@@ -17,7 +17,7 @@ import "@blueprintjs/core/lib/css/blueprint.css";
 import SprintEditor from "./SprintEditor";
 import Sprint from "./Sprint";
 
-import {useActiveSprints} from "../../db/sprints";
+import {useActiveSprints} from "../../db/sprints/hooks";
 
 export default function Sprints ({onClose, isOpen}) {
   const {

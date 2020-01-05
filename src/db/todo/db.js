@@ -8,11 +8,10 @@ export const dbTodo = new PouchDB('todo');
 export const selectTodo = async task => {
     try {
         const todo = await dbTodo.get("todo");
-        return dbTodo.put({...todo, task: task._id});
+        return dbTodo.put({...todo, task: task._id, tags: {all: true}});
     }
     catch (e) {
-        console.log(e);
-        return dbTodo.put({_id: "todo", task: task._id});
+        return dbTodo.put({_id: "todo", task: task._id, tags: {all: true}});
     }
 }
 
@@ -28,6 +27,17 @@ export const dismissTodo = async () => {
 
 export const setTodoFilterTags = async tags => {
     try {
+        // remove strange values before going to db,
+        for (let tag in tags) {
+            
+            if (!tags[tag]) {
+                delete tags[tag];
+            }
+            else {
+                tags[tag] = !!tags[tag];
+            }
+        }
+
         const todo = await dbTodo.get("todo");
         return dbTodo.put({...todo, tags});
     }

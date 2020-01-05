@@ -9,14 +9,14 @@ export const useTodo = () => {
     
     useEffect(
         () => {
-            const cancel = $activeTodo().onValue(setTodo);
+            const cancel = $activeTodo(todo.tags).onValue(setTodo);
 
             return () => cancel();
         },
-        [true]
+        [JSON.stringify(todo.tags)]
     );
   
-    const setTags = tags => setTodoFilterTags({...todo, tags});
+    const setTags = tags => setTodoFilterTags(tags);
 
     return {
         todo,
