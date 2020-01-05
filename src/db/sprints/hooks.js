@@ -3,7 +3,7 @@ import { $activeSprintsTasks } from "./streams";
 import { useState, useEffect } from 'react';
 
 export const useActiveSprints = () => {
-    const [sprints, setSprints] = useState([]);
+    const [sprints, setSprints] = useState({});
   
     useEffect(
         () => {

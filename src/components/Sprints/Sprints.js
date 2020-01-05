@@ -3,13 +3,7 @@ import React from "react";
 import {
   Classes,
   Drawer,
-  Position,
-  Callout,
-  Intent,
-  Divider,
-  Button,
-  Popover,
-  H5
+  Position
 } from "@blueprintjs/core";
 
 import "@blueprintjs/core/lib/css/blueprint.css";
@@ -21,12 +15,12 @@ import {useActiveSprints} from "../../db/sprints/hooks";
 
 export default function Sprints ({onClose, isOpen}) {
   const {
-    sprints,
+    sprints: {sprints, tasksSprintsCounter},
     addSprint,
     deleteSprint
   } = useActiveSprints();
 
-  const sprintsList = sprints.map((sprint, i) => <Sprint key={i} sprint={sprint} deleteSprint={deleteSprint} />);
+  const sprintsList = (sprints || []).map((sprint, i) => <Sprint key={i} sprint={sprint} deleteSprint={deleteSprint} />);
 
   return (
     <Drawer
