@@ -5,14 +5,17 @@ import {
 } from "@blueprintjs/core";
 
 
-function toHours (d) {
+function duration (d) {
     if (d) {
-        return (d / (1000 * 60 * 60)).toFixed(2) + " hours";
+        const md = moment.duration(d);
+        return md.humanize();
     }
     else {
         return "None";
     }
 }
+
+import moment from "moment";
 
 export default function SprintStats ({
     sprint: {
@@ -36,13 +39,13 @@ export default function SprintStats ({
         <div>
             {chart}
             <p>Open Tasks: {openTasksTotal}</p>
-            <p>Estimated Due Date: {new Date(estimatedDueDate).toISOString().substring(0, 10)}</p>
+            <p>Estimated Due Date: {moment(estimatedDueDate).format("DD-MM-YYYY hh:mm")}</p>
             <p>Total Tasks: {total}</p>
-            <p>Ideal Close Task Time: {toHours(taskDueAvg)}</p>
-            <p>Avg Close Task Time: {toHours(doneAvg)}</p>
-            <p>Next Todo Time: {toHours(nextTodoAvgDueTime)}</p>
-            <p>Oldest Open Task: {oldestOpenTask?new Date(oldestOpenTask).toISOString().substring(0, 10):"None"}</p>
-            <p>Time Remaning: {toHours(new Date(date).getTime() - new Date().getTime())}</p>
+            <p>Ideal Close Task Time: {duration(taskDueAvg)}</p>
+            <p>Avg Close Task Time: {duration(doneAvg)}</p>
+            <p>Next Todo Time: {duration(nextTodoAvgDueTime)}</p>
+            <p>Oldest Open Task: {oldestOpenTask?moment(oldestOpenTask).format("DD-MM-YYYY"):"None"}</p>
+            <p>Time Remaning: {duration(moment(date).valueOf() - moment().valueOf())}</p>
         </div>
     );
 }

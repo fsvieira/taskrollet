@@ -8,8 +8,9 @@ import {
   Elevation,
   Colors
 } from "@blueprintjs/core";
-
 import "@blueprintjs/core/lib/css/blueprint.css";
+
+import moment from "moment";
 
 export function PrettyDescription ({description}) {
   const tokens = description.match(/([^\s]+)|(\s)/g);
@@ -40,7 +41,7 @@ export default function Task ({
   children
 }) {
   const description = task?task.description:"There is no tasks, please add some!!";
-  const date = (task?new Date(task.createdAt):new Date()).toLocaleDateString();
+  const date = (task?moment(task.createdAt):moment()).calendar();
 
   return (<Card 
       interactive={true} 

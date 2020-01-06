@@ -2,6 +2,8 @@ import { fromBinder } from "baconjs";
 import { dbSprints } from "./db";
 import { $tasks } from "../tasks/streams";
 
+import moment from "moment";
+
 export function $activeSprints (tags) {
   // TODO: filter by tags
   return fromBinder(sink => {
@@ -29,7 +31,7 @@ export function $activeSprintsTasks (tags) {
     return $activeSprints(tags).combine(
       $tasks(tags, {deleted: null}),
       (sprints, tasks) => {
-        const now = new Date().getTime();
+        const now = moment().valueOf();
 
         const tasksSprintsCounter = {};
 
@@ -47,7 +49,7 @@ export function $activeSprintsTasks (tags) {
           });
 
           sprint.openTasks = sprint.tasks.filter(task => !(task.deleted || task.done))
-            .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+            .sort((a, b) => moment(a.createdAt).valueOf() - moment(b.createdAt).valueOf());
           ;
 
           sprint.doneTasksTotal = 0;
@@ -60,8 +62,8 @@ export function $activeSprintsTasks (tags) {
                   return r;
                 }
               )
-            .filter(task => new Date(task.closedAt).getTime() > new Date().getTime() - (1000 * 60 * 60 * 24 * 30 * 4))
-            .sort((a, b) => new Date(a.closedAt).getTime() - new Date(b.closedAt).getTime());
+            .filter(task => moment(task.closedAt).valueOf() > moment().valueOf() - (1000 * 60 * 60 * 24 * 30 * 4))
+            .sort((a, b) => moment(a.closedAt).valueOf() - moment(b.closedAt).valueOf());
 
           let openAvg = 0;
 
@@ -69,11 +71,11 @@ export function $activeSprintsTasks (tags) {
 
           if (sprint.openTasks.length) {
             openAvg = sprint.openTasks.reduce((avg, task) => {
-              const delta = now - new Date(task.createdAt).getTime();
+              const delta = now - moment(task.createdAt).valueOf();
               return avg===null?delta:(avg + delta) / 2;
             }, null);
 
-            const dueTime = new Date(sprint.date).getTime() - now;
+            const dueTime = moment(sprint.date).valueOf() - now;
             sprint.taskDueAvg = dueTime / sprint.openTasks.length;
 
             sprint.openTasks.forEach(task => {
@@ -84,7 +86,7 @@ export function $activeSprintsTasks (tags) {
           }
 
           if (sprint.doneTasks.length) {
-            const latestDoneTime = new Date(sprint.doneTasks[0].closedAt).getTime();
+            const latestDoneTime = moment(sprint.doneTasks[0].closedAt).valueOf();
             const time = now - latestDoneTime;
             const t = (time + openAvg) / sprint.doneTasks.length;
             sprint.doneAvg = t;
@@ -92,7 +94,7 @@ export function $activeSprintsTasks (tags) {
           else {
             sprint.doneAvg = openAvg;
           }
-
+          
           sprint.nextTodoAvgDueTime = (sprint.doneAvg + sprint.taskDueAvg) / 2;
           sprint.estimatedDueDate = now + sprint.doneAvg * sprint.openTasks.length;
 

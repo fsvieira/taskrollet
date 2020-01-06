@@ -18,6 +18,8 @@ import "@blueprintjs/datetime/lib/css/blueprint-datetime.css";
 
 import TagsList from "../Tags/TagsList";
 
+import moment from "moment";
+
 // import { ItemRenderer, MultiSelect } from "@blueprintjs/select";
 
 // https://blueprintjs.com/docs/#select/multi-select
@@ -27,10 +29,10 @@ export default function SprintEditor ({addSprint}) {
     const [date, setDate] = useState(new Date());
     const [tags, setTags] = useState([]);
 
-    const datePicker = <DatePicker onChange={date => setDate(date)} />;
+    const datePicker = <DatePicker onChange={date => setDate(moment(date).endOf("day"))} />;
 
     return (
-        <Callout intent={Intent.PRIMARY} title={date.toISOString().substring(0, 10)} icon="insert">
+        <Callout intent={Intent.PRIMARY} title={moment(date).format("DD-MM-YYYY")} icon="insert">
             <div>
                 <Divider />
                 <SelectTags
@@ -38,9 +40,9 @@ export default function SprintEditor ({addSprint}) {
                     onChange={tags => setTags(tags)}
                 />
                 <Popover content={datePicker} position={Position.BOTTOM}>
-                    <Button icon="timeline-events" text={date.toISOString().substring(0, 10)} />
+                    <Button icon="timeline-events" text={moment(date).format("DD-MM-YYYY")} />
                 </Popover>
-                <Button icon="add" onClick={() => addSprint({tags, date})} />
+                <Button icon="add" onClick={() => addSprint({tags, date: moment(date).endOf("day").toDate()})} />
             </div>
             <div>
                 <Divider />

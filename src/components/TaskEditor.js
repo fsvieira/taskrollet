@@ -16,7 +16,7 @@ import { useActiveTags } from "../db/tasks/hooks";
 
 import TextInput from 'react-autocomplete-input';
 import 'react-autocomplete-input/dist/bundle.css';
-
+import moment from "moment";
 
 export default function TaskEditor () {
 
@@ -30,8 +30,7 @@ export default function TaskEditor () {
       tags: tags.reduce((acc, tag) => {
         acc[tag] = true;
         return acc;
-      }, {}),
-      createdAt: new Date()
+      }, {})
     };
 
     const msg = task.description.length > 10?task.description.substring(0, 10) + "...":task.description;

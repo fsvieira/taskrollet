@@ -10,6 +10,7 @@ import {
 } from "@blueprintjs/core";
 
 import { saveAs } from 'file-saver';
+import moment from 'moment';
 
 export default function Tasks () {
     const {
@@ -42,7 +43,7 @@ export default function Tasks () {
 
     function exportTasks () {
         var tasksBlob = new Blob([JSON.stringify(tasks, null, '\t')], {type: "text/plain;charset=utf-8"});
-        saveAs(tasksBlob, `tasks-${new Date().toISOString()}.json`);
+        saveAs(tasksBlob, `tasks-${moment().toISOString()}.json`);
     }
 
     const tasksList = tasks.map(

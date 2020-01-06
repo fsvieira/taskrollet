@@ -36,6 +36,8 @@
     "db": "^1.1.1",
     "file-saver": "^2.0.2",
     "filesaver": "0.0.13",
+    "import": "0.0.6",
+    "moment": "^2.24.0",
     "pouchdb": "^7.1.1",
     "pouchdb-find": "^7.1.1",
     "react": "^16.12.0",
