@@ -39,7 +39,7 @@ export default function SprintStats ({
         <div>
             {chart}
             <p>Open Tasks: {openTasksTotal}</p>
-            <p>Estimated Due Date: {moment(estimatedDueDate).format("DD-MM-YYYY hh:mm")}</p>
+            <p>Estimated Due Date: {moment(estimatedDueDate).format("DD-MM-YYYY HH:mm")}</p>
             <p>Total Tasks: {total}</p>
             <p>Ideal Close Task Time: {duration(taskDueAvg)}</p>
             <p>Avg Close Task Time: {duration(doneAvg)}</p>

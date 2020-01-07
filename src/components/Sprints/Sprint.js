@@ -64,7 +64,7 @@ export default function Sprint ({sprint, deleteSprint}) {
       }
       else {
         // get 15% of remaining time.
-        const time = (moment().valueOf() - endDateTime) * 0.15;
+        const time = (endDateTime - moment().valueOf()) * 0.15;
   
         if (sprint.estimatedDueDate > endDateTime - time) {
           intent = Intent.WARNING;
