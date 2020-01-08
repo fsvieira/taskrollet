@@ -17,8 +17,8 @@ export const selectTodo = async task => {
 
 export const dismissTodo = async () => {
     try {
-        const todo = await dbTodo.get("todo");
-        return dbTodo.put({tags: todo.tags});
+        const {_id, _rev, tags} = await dbTodo.get("todo");
+        return dbTodo.put({_id, _rev, tags});
     }
     catch (e) {
         return dbTodo.put({tags: {all: true}});

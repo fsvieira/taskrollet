@@ -47,11 +47,13 @@ export default function Sprint ({sprint, deleteSprint}) {
               position={Position.BOTTOM}
               style={{float: "right"}}
             >
+            {!sprint.empty && 
               <Button 
                 icon="trash" 
                 intent={Intent.DANGER} 
                 style={{float: "right"}}
               />
+            }
             </Popover>
           </span>
         </p>

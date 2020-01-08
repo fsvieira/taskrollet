@@ -20,7 +20,9 @@ export default function Sprints ({onClose, isOpen}) {
     deleteSprint
   } = useActiveSprints();
 
-  const sprintsList = (sprints || []).map((sprint, i) => <Sprint key={i} sprint={sprint} deleteSprint={deleteSprint} />);
+  const renderSprints = (sprints || []).filter(s => !s.empty);
+
+  const sprintsList = renderSprints.map((sprint, i) => <Sprint key={i} sprint={sprint} deleteSprint={deleteSprint} />);
 
   return (
     <Drawer

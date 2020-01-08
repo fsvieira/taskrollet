@@ -27,10 +27,13 @@ export default function SprintStats ({
         nextTodoAvgDueTime,
         oldestOpenTask,
         estimatedDueDate,
-        date
-    }
+        date,
+        inSprints
+    },
+    date: sprintDate
 }) {
-    const chart = <div style={{width: "100%",  height: "0.5em"}}>
+    
+    const chart = <div style={{width: "100%",  height: "0.5em", clear: "both"}}>
         <div style={{ float: "left", backgroundColor: Colors.GREEN5, height: "100%", width: `${(doneTasksTotal / total) * 100}%` }} ></div>
         <div style={{ float: "left", backgroundColor: Colors.RED5, height: "100%", width: `${(openTasksTotal / total) * 100}%` }} ></div>
     </div>;
@@ -38,6 +41,8 @@ export default function SprintStats ({
     return (
         <div>
             {chart}
+            {sprintDate && <p>Due Date: {moment(sprintDate).format("DD-MM-YYYY")}</p>}
+            {inSprints > 0 && <p>In Sprints: {inSprints}</p>}
             <p>Open Tasks: {openTasksTotal}</p>
             <p>Estimated Due Date: {moment(estimatedDueDate).format("DD-MM-YYYY HH:mm")}</p>
             <p>Total Tasks: {total}</p>
