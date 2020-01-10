@@ -22,7 +22,7 @@ export default function Sprint ({sprint, deleteSprint}) {
       const confirmDelete = (
         <div style={{padding: "0.5em"}}>
           <H5>Confirm deletion</H5>
-          <p>Are you sure you want to delete these items? You won't be able to recover them.</p>
+          <p>Are you sure you want to delete these items?<br />You won't be able to recover them.</p>
           <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 15 }}>
             <Button className={Classes.POPOVER_DISMISS} style={{ marginRight: 10 }}>
               Cancel

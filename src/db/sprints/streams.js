@@ -4,9 +4,8 @@ import { $tasks } from "../tasks/streams";
 
 import moment from "moment";
 
-export function $activeSprints (tags) {
-  // TODO: filter by tags
-  return fromBinder(sink => {
+export const $activeSprints  = tags => 
+  fromBinder(sink => {
     const find = () => {
       dbSprints.allDocs({
         include_docs: true
@@ -25,10 +24,9 @@ export function $activeSprints (tags) {
 
     return () => sprintChanges.cancel();
   });
-}
   
-export function $activeSprintsTasks (tags, filter={deleted: null}) {
-    return $activeSprints(tags).combine(
+export const $activeSprintsTasks = (tags, filter={deleted: null}) => 
+  $activeSprints(tags).combine(
       $tasks(tags, filter),
       (sprints, tasks) => {
         const now = moment().valueOf();
@@ -119,7 +117,3 @@ export function $activeSprintsTasks (tags, filter={deleted: null}) {
         return {sprints, tasks: tasks.filter(task => !(task.deleted || task.done))};
       }
     );
-  }
-  
-  
-  

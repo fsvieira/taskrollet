@@ -23,7 +23,7 @@ export const $todo = () =>
         return () => todoChanges.cancel();
     });  
 
-export const $activeTodo = (tags) => 
+export const $activeTodo = (tags) =>
     $todo().combine($activeSprintsTasks(tags), (todo, {sprints, tasks}) => {
         const t = {...todo};
 
@@ -84,35 +84,6 @@ export const $activeTodo = (tags) =>
                     accum = a;
                 }
             }
-        }
-        
-        return t;
-    });
-
-export const $__activeTodo = (tags) => 
-    $todo().combine($activeTasks(tags), (todo, tasks) => {
-        const t = {...todo};
-
-        if (tasks.length === 0 && Object.keys(todo.tags).length > 1) {
-            setTodoFilterTags({all: true});
-        }
-
-        if (t.task) {
-            const task = tasks.find(task => task._id === t.task);
-
-            if (!task || task.deleted || task.done) {
-                delete t.task;
-            }
-            else {
-                t.task = task;
-            }
-
-            t.total = tasks.length;
-        }
-
-        if (!t.task && tasks.length) {
-            t.task = tasks[Math.floor(Math.random() * tasks.length)];
-            selectTodo(t.task);
         }
         
         return t;

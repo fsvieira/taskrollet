@@ -15,7 +15,7 @@ import {useActiveSprints} from "../../db/sprints/hooks";
 
 export default function Sprints ({onClose, isOpen}) {
   const {
-    sprints: {sprints, tasksSprintsCounter},
+    sprints: {sprints},
     addSprint,
     deleteSprint
   } = useActiveSprints();
