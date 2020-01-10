@@ -12,4 +12,4 @@ export const addSprint = async sprint => {
     return sprint;
 }
 
-export const deleteSprint = async sprint => dbSprints.remove(sprint);
+export const deleteSprint = async ({_id, _rev}) => dbSprints.remove({_id, _rev});

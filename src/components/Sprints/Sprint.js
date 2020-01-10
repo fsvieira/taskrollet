@@ -17,7 +17,7 @@ import SprintStats from "./SprintStats";
 import moment from "moment";
 
 export default function Sprint ({sprint, deleteSprint}) {
-  const date = moment(sprint.date).format("DD-MM-YYYY") // .toISOString().substring(0, 10);
+  const date = moment(sprint.date).format("DD-MM-YYYY");
 
       const confirmDelete = (
         <div style={{padding: "0.5em"}}>

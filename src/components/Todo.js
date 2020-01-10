@@ -5,16 +5,17 @@ import SelectTags from "./SelectTags";
 import { useTodo } from "../db/todo/hooks";
 
 import {
-  Colors
+  Colors,
+  Button
 } from "@blueprintjs/core";
 
 
 import "@blueprintjs/core/lib/css/blueprint.css";
 import moment from "moment";
+import { addSprint } from "../db/sprints/db";
 
 export default function Todo () {
   const {todo, setTags, doneTask, dismissTodo, deleteTask} = useTodo();
-  // console.log(todo);
 
   let taskHeader;
   if (todo && todo.task) {
@@ -31,7 +32,22 @@ export default function Todo () {
 
     const {doneTasksTotal, openTasksTotal, total} = empty;
 
-    // TODO: make chart a componet!!
+    const estimatedDueDate = openTasksTotal * nextTodoAvgDueTime;
+    let sprintUI;
+    if (inSprints === 0 && openTasksTotal > 1 && estimatedDueDate > moment.duration(7, "days").valueOf()) {
+      const date = moment((moment().valueOf() + estimatedDueDate)).endOf("day");
+      const newSprint = {tags: todo.tags, date: date.toDate()};
+      sprintUI = <Button
+          onClick={() => addSprint(newSprint)}
+        >
+          Create Sprint {date.format("DD-MM-YYYY")}
+        </Button>;
+    }
+    else {
+      sprintUI = <p style={{marginLeft: "0.5em", marginRight: "0.5em"}}>In Sprints: {inSprints}</p>
+    }
+
+    // TODO: make chart a component!!
     const chart = (
       <div style={{width: "100%",  height: "0.5em", clear: "both"}}>
         <div style={{ float: "left", backgroundColor: Colors.GREEN5, height: "100%", width: `${(doneTasksTotal / total) * 100}%` }} ></div>
@@ -48,7 +64,7 @@ export default function Todo () {
           />
         </span>
         <p style={{marginLeft: "0.5em", marginRight: "0.5em"}}>Tasks: {openTasksTotal} Active, {doneTasksTotal} Done!</p>        
-        <p style={{marginLeft: "0.5em", marginRight: "0.5em"}}>In Sprints: {inSprints}</p>        
+        {sprintUI}
         <p style={{marginLeft: "0.5em", marginRight: "0.5em"}}>Suggested Time: {moment.duration(nextTodoAvgDueTime).humanize()}</p>
         <p style={{marginLeft: "0.5em", marginRight: "0.5em"}}>Ideal due Time: {moment.duration(taskDueAvg).humanize()}</p>
         {chart}
@@ -57,8 +73,6 @@ export default function Todo () {
   else {
     taskHeader = <div></div>;
   }
-
-  // {taskHeader}
 
   return (
       <Task 

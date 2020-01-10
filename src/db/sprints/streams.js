@@ -1,4 +1,4 @@
-import { fromBinder } from "baconjs";
+import { fromBinder, interval } from "baconjs";
 import { dbSprints } from "./db";
 import { $tasks } from "../tasks/streams";
 
@@ -25,18 +25,26 @@ export const $activeSprints  = tags =>
     return () => sprintChanges.cancel();
   });
   
+const $interval = delay => 
+  fromBinder(sink => {
+    sink(moment().valueOf());
+
+    const id = setInterval(() => sink(moment().valueOf()), delay);
+
+    return () => clearInterval(id);
+  });
+
+
+
 export const $activeSprintsTasks = (tags, filter={deleted: null}) => 
-  $activeSprints(tags).combine(
-      $tasks(tags, filter),
+  $activeSprints(tags)
+    .combine(
+      $tasks(tags, filter).combine($interval(1000 * 60), tasks => tasks),
       (sprints, tasks) => {
         const now = moment().valueOf();
-        // const tasksSprintsCounter = {};
-        // const tasksSprints = {};
 
-        // tasks.forEach(task => tasksSprintsCounter[task._id] = []);
-
-        // add an empty sprint
-        sprints.push({tags: [], empty: true});
+        console.log(now);
+        sprints = sprints.concat([{tags: [], empty: true}]);
 
         tasks.forEach(t => t.computed = {sprints: []}); 
 
@@ -75,8 +83,26 @@ export const $activeSprintsTasks = (tags, filter={deleted: null}) =>
           sprint.taskDueAvg;
 
           if (sprint.openTasks.length) {
+            console.log(sprint.doneTasks);
+
+            const lastestClosedTask = moment(
+              sprint.doneTasks && sprint.doneTasks.length?
+              sprint.doneTasks[sprint.doneTasks.length - 1].closedAt:
+              sprint.openTasks[sprint.openTasks.length - 1].createdAt
+            ).valueOf();
+
             openAvg = sprint.openTasks.reduce((avg, task) => {
-              const delta = now - moment(task.createdAt).valueOf();
+              const createdAt = moment(task.createdAt).valueOf();
+
+              let delta;
+              if (lastestClosedTask > createdAt) {
+                delta = now - lastestClosedTask;
+              }
+              else {
+                delta = now - createdAt;
+              }
+
+              // const delta = now - moment(task.createdAt).valueOf();
               return avg===null?delta:(avg + delta) / 2;
             }, null);
 
