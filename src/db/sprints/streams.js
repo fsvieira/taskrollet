@@ -38,7 +38,7 @@ export const $activeSprintsTasks = (tags, filter={deleted: null}) =>
         // add an empty sprint
         sprints.push({tags: [], empty: true});
 
-        tasks.forEach(t => t.computed = {}); 
+        tasks.forEach(t => t.computed = {sprints: []}); 
 
         for (let i=0; i<sprints.length; i++) {
           const sprint = sprints[i];
@@ -84,8 +84,6 @@ export const $activeSprintsTasks = (tags, filter={deleted: null}) =>
             sprint.taskDueAvg = dueTime / sprint.openTasks.length;
 
             sprint.openTasks.forEach(task => {
-              task.computed = {};
-              task.computed.sprints = task.computed.sprints || [];
               task.computed.sprints.push(sprint);
             });
 
@@ -112,8 +110,6 @@ export const $activeSprintsTasks = (tags, filter={deleted: null}) =>
           sprint.date = sprint.date || moment(sprint.estimatedDueDate).endOf("month").toISOString();
         }
 
-        // console.log({sprints, tasksSprintsCounter});
-        // return {sprints, tasksSprintsCounter};
         return {sprints, tasks: tasks.filter(task => !(task.deleted || task.done))};
       }
     );
