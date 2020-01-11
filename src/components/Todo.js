@@ -76,7 +76,7 @@ export default function Todo () {
               fontWeight: "bold",
               color: diffTime >= 0?Colors.GREEN1:Colors.RED1
             }}>(
-            {diffTime >= 0?<Icon icon="trending-up" />:<Icon icon="trending-down" />} &nbsp;
+            {diffTime >= 0?<Icon icon="trending-down" />:<Icon icon="trending-up" />} &nbsp;
             {moment.duration(diffTime).humanize()}
           )</span>
         </p>
