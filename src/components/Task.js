@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 
 import {
   Button,
@@ -6,11 +6,14 @@ import {
   Divider,
   Card,
   Elevation,
-  Colors
+  Colors,
+  Dialog,
+  Classes
 } from "@blueprintjs/core";
 import "@blueprintjs/core/lib/css/blueprint.css";
 
 import moment from "moment";
+import TaskEditor from "./TaskEditor";
 
 export function PrettyDescription ({description}) {
   const tokens = description.match(/([^\s]+)|(\s)/g);
@@ -38,18 +41,36 @@ export default function Task ({
   dismissTodo,
   deleteTask,
   selectTodo,
+  canEditTask,
   children
 }) {
   const description = task?task.description:"There is no tasks, please add some!!";
   const date = (task?moment(task.createdAt):moment()).calendar();
+  const [editTaskIsOpen, setEditTaskIsOpen] = useState(false);
 
-  return (<Card 
+  const closeTaskEditor = () => setEditTaskIsOpen(false);
+
+  return (
+    <Card 
       interactive={true} 
       elevation={Elevation.TWO}
       style={{
         height: "100%"
       }}
     >
+      {canEditTask &&
+        <Dialog
+          icon="info-sign"
+          isOpen={editTaskIsOpen}
+          onClose={closeTaskEditor}
+          title="Edit Task!!"
+        >
+          <div className={Classes.DIALOG_BODY}>
+            <TaskEditor task={task} onSave={closeTaskEditor} ></TaskEditor>
+          </div>
+        </Dialog>
+      }
+
       <section
         style={{
           display: "flex",
@@ -78,6 +99,7 @@ export default function Task ({
           <ButtonGroup>
             {doneTask && <Button icon="tick" onClick={() => doneTask(task)} disabled={!task}>Done</Button>}
             {dismissTodo && <Button icon="swap-vertical" onClick={() => dismissTodo(task)} disabled={!task}>Dismiss</Button>}
+            {canEditTask && <Button icon='edit' onClick={() => setEditTaskIsOpen(true)} disabled={!task}>Edit</Button>}
             {selectTodo && <Button icon="pin" onClick={() => selectTodo(task)} disabled={!task}>To do</Button>}
             {deleteTask && <Button icon="trash" onClick={() => deleteTask(task)} disabled={!task}>Delete</Button>}
           </ButtonGroup>

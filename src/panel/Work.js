@@ -1,7 +1,7 @@
 import React from "react";
 
 import TaskEditor from "../components/TaskEditor";
-import Todo from "../components/Todo";
+import Todo from "../components/Todo";  
 
 export default function Work () {
     return (

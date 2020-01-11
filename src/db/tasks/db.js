@@ -7,6 +7,11 @@ PouchDB.plugin(PouchDBFind);
 
 export const dbTasks = new PouchDB("tasks");
 
-export const addTask = async ({computed, ...task}) => await dbTasks.post({...task, createdAt: moment().toDate()});
+export const addTask = async ({computed, ...task}) => 
+        task._id?
+        dbTasks.put({...task, createdAt: moment().toDate()}):
+        dbTasks.post({...task, createdAt: moment().toDate()})
+    ;
+
 export const doneTask = ({computed, ...task}) => dbTasks.put({...task, done: true, closedAt: moment().toDate()});
 export const deleteTask = ({computed, ...task}) => dbTasks.put({...task, deleted: true, closedAt: moment().toDate()});

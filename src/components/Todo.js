@@ -89,14 +89,15 @@ export default function Todo () {
   }
 
   return (
-      <Task 
+    <Task 
         task={todo.task}
         doneTask={doneTask}
         dismissTodo={todo.total > 1?dismissTodo:undefined}
+        canEditTask={true}
         deleteTask={deleteTask}
-      >
-        {taskHeader}
-      </Task>
+    >
+      {taskHeader}
+    </Task>
   );
 }
 

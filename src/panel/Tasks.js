@@ -52,6 +52,7 @@ export default function Tasks () {
                 doneTask={doneTask}
                 deleteTask={deleteTask}
                 selectTodo={selectTodoNotification}
+                canEditTask={true}
                 key={task._id}
             ></Task>
     );

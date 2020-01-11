@@ -16,37 +16,41 @@ import { useActiveTags } from "../db/tasks/hooks";
 
 import TextInput from 'react-autocomplete-input';
 import 'react-autocomplete-input/dist/bundle.css';
-import moment from "moment";
 
-export default function TaskEditor () {
+export default function TaskEditor ({task, onSave}) {
 
-  const [value, setValue] = useState()
+  const [value, setValue] = useState(task?task.description:"");
   const tags = useActiveTags();
 
   async function addTaskText (text) {
     const tags = (text.match(/#([^\s]+)/g) || []).concat(["all"]).map(t => t.replace("#", ""));
-    const task = {
+    const newTask = {
       description: text,
       tags: tags.reduce((acc, tag) => {
         acc[tag] = true;
         return acc;
-      }, {})
+      }, {}),
+      _id: task?task._id:undefined,
+      _rev: task?task._rev:undefined
     };
 
-    const msg = task.description.length > 10?task.description.substring(0, 10) + "...":task.description;
+    const msg = newTask.description.length > 10?newTask.description.substring(0, 10) + "...":newTask.description;
 
     try {
-      await addTask(task);
+      await addTask(newTask);
+
       setValue("");
 
       AppToaster.show({
-        message: `Task Added: ${msg}`,
+        message: `Task ${task?"Saved":"Added"}: ${msg}`,
         intent: Intent.SUCCESS
       });
+
+      onSave && onSave();
     }
     catch (e) {
       AppToaster.show({
-        message: `Fail to add Task: ${msg}`,
+        message: `Fail to ${task?"save":"add"} Task: ${msg}`,
         intent: Intent.DANGER
       });
     }
@@ -89,7 +93,7 @@ export default function TaskEditor () {
         <Button 
           position={Position.RIGHT} 
           onClick={() => addTaskText(value)}
-        >Add</Button>    
+        >{task?"Save":"Add"}</Button>    
     </Card>
   );
 
