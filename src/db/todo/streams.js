@@ -50,7 +50,6 @@ export const $activeTodo = (tags) =>
             let total = 0;
             for (let i=0; i<tasks.length; i++) {
                 const task = tasks[i];
-                console.log(task);
                 const rank = task.computed.sprints.length 
                     + (now - moment(task.createdAt).valueOf())
                     + task.computed.sprints.reduce((acc, sprint) => {
@@ -67,7 +66,6 @@ export const $activeTodo = (tags) =>
             });
 
             tasks.sort((a, b) => a.computed.rank - b.computed.rank);
-            console.log(tasks);
 
             const r = Math.random();
 

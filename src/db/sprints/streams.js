@@ -43,7 +43,6 @@ export const $activeSprintsTasks = (tags, filter={deleted: null}) =>
       (sprints, tasks) => {
         const now = moment().valueOf();
 
-        console.log(now);
         sprints = sprints.concat([{tags: [], empty: true}]);
 
         tasks.forEach(t => t.computed = {sprints: []}); 
@@ -83,8 +82,6 @@ export const $activeSprintsTasks = (tags, filter={deleted: null}) =>
           sprint.taskDueAvg;
 
           if (sprint.openTasks.length) {
-            console.log(sprint.doneTasks);
-
             const lastestClosedTask = moment(
               sprint.doneTasks && sprint.doneTasks.length?
               sprint.doneTasks[sprint.doneTasks.length - 1].closedAt:

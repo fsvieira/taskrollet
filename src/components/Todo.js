@@ -27,9 +27,6 @@ export default function Todo () {
     const doneAvg = sprints.reduce((avg, s) => (avg + s.doneAvg) / 2, empty.doneAvg);
     const nextTodoAvgDueTime = (taskDueAvg + doneAvg) / 2;
     const inSprints = todo.task.computed.sprints.length-1;
- 
-    console.log(todo.task.computed.sprints);
-
     const {doneTasksTotal, openTasksTotal, total} = empty;
 
     const estimatedDueDate = openTasksTotal * nextTodoAvgDueTime;

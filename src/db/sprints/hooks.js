@@ -9,10 +9,7 @@ export const useActiveSprints = () => {
         () => {
             const cancel = $activeSprintsTasks().onValue(setSprints);
 
-            return () => {
-                console.log("Cancel Sprints");
-                cancel();
-            }
+            return () => cancel();
         },
         [true]
     );
