@@ -6,7 +6,8 @@ import { useTodo } from "../db/todo/hooks";
 
 import {
   Colors,
-  Button
+  Button,
+  Icon
 } from "@blueprintjs/core";
 
 
@@ -52,6 +53,8 @@ export default function Todo () {
       </div>
     );
 
+    const diffTime = taskDueAvg - nextTodoAvgDueTime;
+
     taskHeader = (
       <div>
         <span style={{float: "right"}}>
@@ -62,7 +65,21 @@ export default function Todo () {
         </span>
         <p style={{marginLeft: "0.5em", marginRight: "0.5em"}}>Tasks: {openTasksTotal} Active, {doneTasksTotal} Done!</p>        
         {sprintUI}
-        <p style={{marginLeft: "0.5em", marginRight: "0.5em"}}>Suggested Time: {moment.duration(nextTodoAvgDueTime).humanize()}</p>
+        <p 
+          style={{
+            marginLeft: "0.5em", 
+            marginRight: "0.5em"
+          }}
+        >
+          Suggested Time: {moment.duration(nextTodoAvgDueTime).humanize()} &nbsp;
+          <span style={{
+              fontWeight: "bold",
+              color: diffTime >= 0?Colors.GREEN1:Colors.RED1
+            }}>(
+            {diffTime >= 0?<Icon icon="trending-up" />:<Icon icon="trending-down" />} &nbsp;
+            {moment.duration(diffTime).humanize()}
+          )</span>
+        </p>
         <p style={{marginLeft: "0.5em", marginRight: "0.5em"}}>Ideal due Time: {moment.duration(taskDueAvg).humanize()}</p>
         {chart}
       </div>);
