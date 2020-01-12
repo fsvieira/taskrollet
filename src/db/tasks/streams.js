@@ -44,9 +44,7 @@ export const $tasks = (tags={all: true}, selector) =>
             since: 'now',
             live: true,
             include_docs: true
-        }).on("change", async () => 
-            sink(await find())
-        );
+        }).on("change", () => find().then(sink));
 
         find().then(sink);
     

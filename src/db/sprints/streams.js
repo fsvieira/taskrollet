@@ -13,7 +13,7 @@ export const $activeSprints  = tags =>
         ({rows}) => sink(rows.map(r => r.doc))
       );
     };
-  
+
     const sprintChanges = dbSprints.changes({
       since: 'now',
       live: true,
@@ -22,7 +22,7 @@ export const $activeSprints  = tags =>
 
     find();
 
-    return () => sprintChanges.cancel();
+    return () =>  sprintChanges.cancel();
   });
   
 const $interval = delay => 

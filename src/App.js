@@ -60,10 +60,10 @@ class App extends Component {
             height: "100%"
           }}
         >
-        <Sprints 
-          isOpen={drawer === Drawers.SPRINTS}
-          onClose={this.onDrawerClose()}
-        />
+          <Sprints 
+            isOpen={drawer === Drawers.SPRINTS}
+            onClose={this.onDrawerClose()}
+          />
           <header>
           <Navbar style={{flexGrow: 1}}>
           <NavbarGroup align={Alignment.LEFT}>
@@ -100,23 +100,6 @@ class App extends Component {
               </NavbarHeading>
             }
           </NavbarGroup>
-
-          {
-            /*
-            <NavbarGroup align={Alignment.LEFT}>
-              <NavbarHeading>
-                <Icon icon='timeline-events' iconSize={Icon.SIZE_LARGE} intent={Intent.PRIMARY} 
-                  onClick={() => this.openDrawer(Drawers.SPRINTS)}
-                />
-              </NavbarHeading>
-            </NavbarGroup>
-
-            <NavbarGroup align={Alignment.RIGHT}>
-              <NavbarDivider />
-              <Button className={Classes.MINIMAL} icon="home" text="Home" />
-              <Button className={Classes.MINIMAL} icon="document" text="Files" />
-            </NavbarGroup>
-        */ }
           </Navbar>
           </header>
             {content === Content.WORK && <Work />}

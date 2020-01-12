@@ -20,7 +20,7 @@ export default function Tasks () {
         selectTodo
     } = useActiveTasks();
 
-    const selectTodoNotification = async (task) => {
+    const selectTodoNotification = async task => {
         const msg = task.description.length > 10?task.description.substring(0, 10) + "...":task.description;
 
         try {
