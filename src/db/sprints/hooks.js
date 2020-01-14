@@ -1,23 +1,23 @@
 import { addSprint, deleteSprint } from "./db";
 import { $activeSprintsTasks } from "./streams";
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 export const useActiveSprints = () => {
-    const [sprints, setSprints] = useState({});
-  
-    useEffect(
-        () => {
-            const cancel = $activeSprintsTasks().onValue(setSprints);
+	const [sprints, setSprints] = useState({});
 
-            return () => cancel();
-        },
-        [true]
-    );
-  
-    return {
-        sprints,
-        addSprint,
-        deleteSprint
-    };
-}
+	useEffect(
+		() => {
+			const cancel = $activeSprintsTasks().onValue(setSprints);
+
+			return () => cancel();
+		},
+		[true]
+	);
+
+	return {
+		sprints,
+		addSprint,
+		deleteSprint
+	};
+};
 
