@@ -11,17 +11,19 @@ import {
 
 import { saveAs } from 'file-saver';
 import moment from 'moment';
+import SelectTags from '../components/SelectTags';
 
-export default function Tasks () {
+export default function Tasks() {
     const {
         tasks,
         doneTask,
         deleteTask,
-        selectTodo
+        selectTodo,
+        setTags
     } = useActiveTasks();
 
     const selectTodoNotification = async task => {
-        const msg = task.description.length > 10?task.description.substring(0, 10) + "...":task.description;
+        const msg = task.description.length > 10 ? task.description.substring(0, 10) + "..." : task.description;
 
         try {
             await selectTodo(task);
@@ -38,29 +40,29 @@ export default function Tasks () {
             });
 
         }
-    
+
     };
 
-    function exportTasks () {
-        var tasksBlob = new Blob([JSON.stringify(tasks, null, '\t')], {type: "text/plain;charset=utf-8"});
+    function exportTasks() {
+        var tasksBlob = new Blob([JSON.stringify(tasks, null, '\t')], { type: "text/plain;charset=utf-8" });
         saveAs(tasksBlob, `tasks-${moment().toISOString()}.json`);
     }
 
     const tasksList = tasks.map(
-        task => <Task 
-                task={task}
-                doneTask={doneTask}
-                deleteTask={deleteTask}
-                selectTodo={selectTodoNotification}
-                canEditTask={true}
-                key={task._id}
-            ></Task>
+        task => <Task
+            task={task}
+            doneTask={doneTask}
+            deleteTask={deleteTask}
+            selectTodo={selectTodoNotification}
+            canEditTask={true}
+            key={task._id}
+        ></Task>
     );
 
     return (
-        <section style={{overflow: "auto"}}>
+        <section style={{ overflow: "auto" }}>
             <div style={{
-                position: "fixed", 
+                position: "fixed",
                 left: "50%",
                 transform: "translateX(-50%)",
                 zIndex: 1,
@@ -68,8 +70,11 @@ export default function Tasks () {
                 backgroundColor: Colors.BLUE5
             }}>
                 <Button icon="download" onClick={exportTasks}>Export</Button>
+                <SelectTags
+                    onChange={tags => setTags(tags)}
+                />
             </div>
-            <article style={{marginTop: "3em"}}>
+            <article style={{ marginTop: "3em" }}>
                 {tasksList}
             </article>
         </section>
