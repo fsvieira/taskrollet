@@ -1,11 +1,11 @@
-import React, { Component} from "react";
+import React, { useState } from "react";
 
 import {
   Alignment,
   Navbar,
   NavbarGroup,
   NavbarHeading,
-  Icon, 
+  Icon,
   Intent
 } from "@blueprintjs/core";
 
@@ -26,87 +26,65 @@ const Content = {
   TASKS: 2
 };
 
-class App extends Component {
-  constructor () {
-    super();
+export default function App() {
+  const [drawer, setDrawer] = useState(Drawers.CLOSED);
+  const [content, setContent] = useState(Content.WORK);
 
-    this.state = {
-      drawer: Drawers.CLOSED,
-      content: Content.WORK
-    };
-  }
+  const openDrawer = drawer => setDrawer(drawer);
+  const onDrawerClose = () => setDrawer(Drawers.CLOSED);
+  const openContent = content => setContent(content);
 
-  openDrawer (drawer) {
-    this.setState({...this.state, drawer});
-  }
-
-  onDrawerClose () {
-    return () => this.openDrawer(Drawers.CLOSED);
-  }
-
-  openContent (content) {
-    this.setState({...this.state, content});
-  }
-
-  render () {
-    const {drawer, content} = this.state;
-
-    return (
-        <section 
-          className="App"
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            height: "100%"
-          }}
-        >
-          <Sprints 
-            isOpen={drawer === Drawers.SPRINTS}
-            onClose={this.onDrawerClose()}
-          />
-          <header>
-          <Navbar style={{flexGrow: 1}}>
+  return (
+    <section
+      className="App"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%"
+      }}
+    >
+      <Sprints
+        isOpen={drawer === Drawers.SPRINTS}
+        onClose={onDrawerClose}
+      />
+      <header>
+        <Navbar style={{ flexGrow: 1 }}>
           <NavbarGroup align={Alignment.LEFT}>
             <NavbarHeading>
-              <Icon 
-                icon='walk' 
-                iconSize={Icon.SIZE_LARGE} 
-                intent={Intent.PRIMARY} 
-                onClick={() => this.openDrawer(Drawers.SPRINTS)}
+              <Icon
+                icon='walk'
+                iconSize={Icon.SIZE_LARGE}
+                intent={Intent.NONE}
+                onClick={() => openDrawer(Drawers.SPRINTS)}
               />
             </NavbarHeading>
 
             {
-              content!==Content.WORK && 
               <NavbarHeading>
-                <Icon 
-                  icon='build' 
+                <Icon
+                  icon='build'
                   iconSize={Icon.SIZE_LARGE}
-                  intent={Intent.PRIMARY} 
-                  onClick={() => this.openContent(Content.WORK)}
+                  intent={content === Content.WORK ? Intent.PRIMARY : Intent.NONE}
+                  onClick={() => openContent(Content.WORK)}
                 />
               </NavbarHeading>
             }
 
             {
-              content!==Content.TASKS && 
               <NavbarHeading>
-                  <Icon 
-                    icon='projects' 
-                    iconSize={Icon.SIZE_LARGE}
-                    intent={Intent.PRIMARY} 
-                    onClick={() => this.openContent(Content.TASKS)}
-                  />
+                <Icon
+                  icon='projects'
+                  iconSize={Icon.SIZE_LARGE}
+                  intent={content === Content.TASKS ? Intent.PRIMARY : Intent.NONE}
+                  onClick={() => openContent(Content.TASKS)}
+                />
               </NavbarHeading>
             }
           </NavbarGroup>
-          </Navbar>
-          </header>
-            {content === Content.WORK && <Work />}
-            {content === Content.TASKS && <Tasks />}
-        </section>
-    );
-  }
+        </Navbar>
+      </header>
+      {content === Content.WORK && <Work />}
+      {content === Content.TASKS && <Tasks />}
+    </section>
+  );
 }
-
-export default App;

@@ -23,8 +23,6 @@ export const useActiveTasks = () => {
 	const [tasks, setTasks] = useState([]);
 	const [tags, setTags] = useState(null);
 
-	console.log(tags);
-
 	useEffect(
 		() => {
 			const cancel = $activeTasks(tags).onValue(setTasks);

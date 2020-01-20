@@ -6,12 +6,15 @@ import { AppToaster } from '../components/Notification';
 import {
     Intent,
     Button,
-    Colors
+    Colors,
+    Elevation,
+    Card
 } from "@blueprintjs/core";
 
 import { saveAs } from 'file-saver';
 import moment from 'moment';
 import SelectTags from '../components/SelectTags';
+import TaskEditor from "../components/TaskEditor";
 
 export default function Tasks() {
     const {
@@ -21,6 +24,12 @@ export default function Tasks() {
         selectTodo,
         setTags
     } = useActiveTasks();
+
+    if (tasks.length === 0) {
+        return (<Card interactive={true} elevation={Elevation.TWO} style={{ margin: '1em' }}>
+            <p>Your task list is empty, please add a task.</p>
+        </Card>);
+    }
 
     const selectTodoNotification = async task => {
         const msg = task.description.length > 10 ? task.description.substring(0, 10) + "..." : task.description;
@@ -40,7 +49,6 @@ export default function Tasks() {
             });
 
         }
-
     };
 
     function exportTasks() {
@@ -49,14 +57,14 @@ export default function Tasks() {
     }
 
     const tasksList = tasks.map(
-        task => <Task
+        task => (<Task
             task={task}
             doneTask={doneTask}
             deleteTask={deleteTask}
             selectTodo={selectTodoNotification}
             canEditTask={true}
             key={task._id}
-        ></Task>
+        ></Task>)
     );
 
     return (
