@@ -11,57 +11,24 @@ import {
 
 // https://blueprintjs.com/docs/#select/multi-select
 
-/*
-export default function SelectTags ({onChange, label, filterTags={}}) {
-    const tags = useActiveTags();
-    
-    filterTags["all"] = true;
-    
+export default function SelectTags({ onChange, label, filterTags = { all: true } }) {
+    const { tags, selectedTags, setSelectedTags } = useActiveTags();
+    // const [selectedTags, setSelectedTags] = useState(filterTags);
+
     const checks = [];
     const orderTags = Object.keys(tags).sort();
-    for (let i=0; i<orderTags.length; i++) {
+    for (let i = 0; i < orderTags.length; i++) {
         const tag = orderTags[i];
 
         checks.push(
-            <Checkbox 
-                label={tag}
-                checked={filterTags[tag]}
-                disabled={tag === 'all'}
-                key={tag}
-                onChange={e => onChange && onChange({...filterTags, [tag]: e.target.checked})}
-            />
-        );
-    }
-
-    const tagsSelector = <div style={{padding: "0.5em"}}>{checks}</div>;
-
-    return (
-        <Popover content={tagsSelector} position={Position.BOTTOM}>
-            <Button icon="tag" text={label || "filter"} />
-        </Popover>
-    );
-}*/
-
-export default function SelectTags ({onChange, label, filterTags={all: true}}) {
-    const tags = useActiveTags();
-    const [selectedTags, setSelectedTags] = useState(filterTags);
-    
-    // filterTags["all"] = true;
-    
-    const checks = [];
-    const orderTags = Object.keys(tags).sort();
-    for (let i=0; i<orderTags.length; i++) {
-        const tag = orderTags[i];
-
-        checks.push(
-            <Checkbox 
+            <Checkbox
                 label={tag}
                 defaultChecked={selectedTags[tag]}
                 disabled={tag === 'all'}
                 key={tag}
                 onChange={
                     e => {
-                        const tags = {...selectedTags, [tag]: e.target.checked};
+                        const tags = { ...selectedTags, [tag]: e.target.checked };
 
                         if (!e.target.checked) {
                             delete tags[tag];
@@ -75,7 +42,7 @@ export default function SelectTags ({onChange, label, filterTags={all: true}}) {
         );
     }
 
-    const tagsSelector = <div style={{padding: "0.5em"}}>{checks}</div>;
+    const tagsSelector = <div style={{ padding: "0.5em" }}>{checks}</div>;
 
     return (
         <Popover content={tagsSelector} position={Position.BOTTOM}>

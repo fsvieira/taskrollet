@@ -53,7 +53,7 @@ export const $tasks = (tags = { all: true }, selector) =>
 
 export const $activeTasks = tags => $tasks(tags, { done: null, deleted: null });
 
-export const $activeTags = () => $activeTasks().map(tasks => {
+export const $activeTags = tags => $activeTasks(tags).map(tasks => {
 	const tags = {};
 	for (let i = 0; i < tasks.length; i++) {
 		const task = tasks[i];

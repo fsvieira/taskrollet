@@ -5,17 +5,18 @@ import { selectTodo } from "../todo/db";
 
 export const useActiveTags = () => {
 	const [tags, setTags] = useState({ all: true });
+	const [selectedTags, setSelectedTags] = useState({});
 
 	useEffect(
 		() => {
-			const cancel = $activeTags().onValue(setTags);
+			const cancel = $activeTags(selectedTags).onValue(setTags);
 
 			return () => cancel();
 		},
-		[true]
+		[JSON.stringify(selectedTags)]
 	);
 
-	return tags;
+	return { tags, selectedTags, setSelectedTags };
 };
 
 export const useActiveTasks = () => {
