@@ -1,19 +1,23 @@
-import PouchDB from "pouchdb";
-import PouchDBFind from "pouchdb-find";
-
+import { db, genID, changes } from "../db";
 import moment from "moment";
 
-PouchDB.plugin(PouchDBFind);
+const dbTasks = db.tasks;
 
-export const dbTasks = new PouchDB("tasks");
+export { dbTasks, changes };
 
-dbTasks.setMaxListeners(100);
+export const addTask = ({ computed, ...task }) => {
+    const now = moment.utc().toDate();
 
-export const addTask = ({computed, ...task}) => 
-    task._id?
-    dbTasks.put({...task, createdAt: moment().toDate()}):
-    dbTasks.post({...task, createdAt: moment().toDate()})
-;
+    return dbTasks.add({
+        taskID: genID(),
+        ...task,
+        done: 0,
+        deleted: 0,
+        createdAt: now,
+        updatedAt: now
+    });
+}
 
-export const doneTask = ({computed, ...task}) => dbTasks.put({...task, done: true, closedAt: moment().toDate()});
-export const deleteTask = ({computed, ...task}) => dbTasks.put({...task, deleted: true, closedAt: moment().toDate()});
+export const editTask = ({ computed, ...task }) => dbTasks.put({ ...task, updatedAt: moment().toDate() });
+export const doneTask = ({ computed, ...task }) => dbTasks.put({ ...task, done: 1, updatedAt: moment().toDate() });
+export const deleteTask = ({ computed, ...task }) => dbTasks.put({ ...task, deleted: 1, updatedAt: moment().toDate() });

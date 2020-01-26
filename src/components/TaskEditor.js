@@ -29,9 +29,7 @@ export default function TaskEditor({ task, onSave }) {
       tags: tags.reduce((acc, tag) => {
         acc[tag] = true;
         return acc;
-      }, {}),
-      _id: task ? task._id : undefined,
-      _rev: task ? task._rev : undefined
+      }, {})
     };
 
     const msg = newTask.description.length > 10 ? newTask.description.substring(0, 10) + "..." : newTask.description;

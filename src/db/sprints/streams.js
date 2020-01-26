@@ -1,28 +1,18 @@
 import { fromBinder, interval } from "baconjs";
-import { dbSprints } from "./db";
+import { dbSprints, changes } from "./db";
 import { $tasks } from "../tasks/streams";
 
 import moment from "moment";
 
 export const $activeSprints = tags =>
 	fromBinder(sink => {
-		const find = () => {
-			dbSprints.allDocs({
-				include_docs: true
-			}).then(
-				({ rows }) => sink(rows.map(r => r.doc))
-			);
-		};
+		const find = () => dbSprints.toArray().then(sink);
 
-		const sprintChanges = dbSprints.changes({
-			since: "now",
-			live: true,
-			include_docs: true
-		}).on("change", () => find());
+		const cancel = changes(find);
 
 		find();
 
-		return () => sprintChanges.cancel();
+		return cancel;
 	});
 
 const $interval = delay =>
@@ -35,8 +25,7 @@ const $interval = delay =>
 	});
 
 
-
-export const $activeSprintsTasks = (tags, filter = { deleted: null }) =>
+export const $activeSprintsTasks = (tags, filter = { deleted: 0 }) =>
 	$activeSprints(tags)
 		.combine(
 			$tasks(tags, filter).combine($interval(1000 * 60), tasks => tasks),
@@ -62,9 +51,9 @@ export const $activeSprintsTasks = (tags, filter = { deleted: null }) =>
 
 					sprint.openTasks = sprint.tasks.filter(task => !(task.deleted || task.done))
 						.sort((a, b) => moment(a.createdAt).valueOf() - moment(b.createdAt).valueOf());
-          
 
-          sprint.doneTasksTotal = 0;
+
+					sprint.doneTasksTotal = 0;
 					sprint.doneTasks = sprint.tasks.filter(
 						task => {
 							const r = !task.deleted && task.done;

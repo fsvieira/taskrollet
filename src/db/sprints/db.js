@@ -1,15 +1,14 @@
-import PouchDB from 'pouchdb';
-import PouchDBFind from 'pouchdb-find';
+import { db, genID, changes } from "../db";
+import moment from "moment";
 
-PouchDB.plugin(PouchDBFind);
+const dbSprints = db.sprints;
 
-export const dbSprints = new PouchDB('sprints');
+export { dbSprints, changes };
 
-export const addSprint = async sprint => {
-    const r = await dbSprints.post(sprint);
-    sprint._id = r.id;
-    sprint._rev = r.rev;
-    return sprint;
-}
+export const addSprint = async sprint => dbSprints.add({
+    sprintID: genID(),
+    createdAt: moment.utc().toDate(),
+    ...sprint
+});
 
-export const deleteSprint = ({_id, _rev}) => dbSprints.remove({_id, _rev});
+export const deleteSprint = ({ sprintID }) => dbSprints.delete(sprintID);

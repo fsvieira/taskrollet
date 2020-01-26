@@ -1,27 +1,27 @@
-import PouchDB from 'pouchdb';
-import PouchDBFind from 'pouchdb-find';
+import { db, changes } from "../db";
 
-PouchDB.plugin(PouchDBFind);
+const dbTodo = db.todo;
 
-export const dbTodo = new PouchDB('todo');
+export { dbTodo, changes };
+
 
 export const selectTodo = async task => {
     try {
         const todo = await dbTodo.get("todo");
-        return dbTodo.put({...todo, task: task._id, tags: {all: true}});
+        return dbTodo.put({ todoID: "todo", ...todo, task: task.taskID, tags: { all: true } });
     }
     catch (e) {
-        return dbTodo.put({_id: "todo", task: task._id, tags: {all: true}});
+        return dbTodo.put({ todoID: "todo", taskID: task.taskID, tags: { all: true } });
     }
 }
 
 export const dismissTodo = async () => {
     try {
-        const {_id, _rev, tags} = await dbTodo.get("todo");
-        return dbTodo.put({_id, _rev, tags});
+        const { tags } = await dbTodo.get("todo");
+        return dbTodo.put({ todoID: "todo", tags });
     }
     catch (e) {
-        return dbTodo.put({tags: {all: true}});
+        return dbTodo.put({ todoID: "todo", tags: { all: true } });
     }
 }
 
@@ -29,7 +29,7 @@ export const setTodoFilterTags = async tags => {
     try {
         // remove strange values before going to db,
         for (let tag in tags) {
-            
+
             if (!tags[tag]) {
                 delete tags[tag];
             }
@@ -39,9 +39,10 @@ export const setTodoFilterTags = async tags => {
         }
 
         const todo = await dbTodo.get("todo");
-        return dbTodo.put({...todo, tags});
+        return dbTodo.put({ todoID: "todo", ...todo, tags });
     }
     catch (e) {
-        return dbTodo.put({tags});
+        return dbTodo.put({ todoID: "todo", tags });
     }
 }
+

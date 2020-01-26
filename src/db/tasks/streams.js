@@ -1,57 +1,28 @@
-import { dbTasks } from "./db";
+import { dbTasks, changes } from "./db";
 import { fromBinder } from "baconjs";
 
 export const $tasks = (tags = { all: true }, selector) =>
 	fromBinder(sink => {
-		let { done, deleted } = selector || {
-			done: false,
-			deleted: false
-		};
 
-		done = done === undefined ? undefined : !!done;
-		deleted = deleted === undefined ? undefined : !!deleted;
-
-		async function find() {
-			const docs = await dbTasks.allDocs({ include_docs: true });
-
-			const tasks = docs.rows.map(({ doc }) => doc).filter(task => {
-				if (!task.tags) return false;
-
-				const taskDone = !!task.done;
-				const taskDeleted = !!task.deleted;
-
-				if (done !== undefined && taskDone !== done) {
+		const find = () => dbTasks.where(selector).filter(task => {
+			for (let tag in tags) {
+				if (!task.tags[tag]) {
 					return false;
 				}
+			}
 
-				if (deleted !== undefined && taskDeleted !== deleted) {
-					return false;
-				}
+			return true;
+		}).toArray().then(sink);
 
-				for (let tag in tags) {
-					if (!task.tags[tag]) {
-						return false;
-					}
-				}
+		const cancel = changes(find);
 
-				return true;
-			});
+		find();
 
-			return tasks;
-		}
-
-		const taskChanges = dbTasks.changes({
-			since: "now",
-			live: true,
-			include_docs: true
-		}).on("change", () => find().then(sink));
-
-		find().then(sink);
-
-		return () => taskChanges.cancel();
+		return cancel;
 	});
 
-export const $activeTasks = tags => $tasks(tags, { done: null, deleted: null });
+
+export const $activeTasks = tags => $tasks(tags, { done: 0, deleted: 0 });
 
 export const $activeTags = tags => $activeTasks(tags).map(tasks => {
 	const tags = {};
