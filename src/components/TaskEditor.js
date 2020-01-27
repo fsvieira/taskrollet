@@ -11,7 +11,7 @@ import {
 
 import "@blueprintjs/core/lib/css/blueprint.css";
 import { AppToaster } from './Notification';
-import { addTask } from '../db/tasks/db';
+import { addTask, editTask } from '../db/tasks/db';
 import { useActiveTags } from "../db/tasks/hooks";
 
 import TextInput from 'react-autocomplete-input';
@@ -25,6 +25,7 @@ export default function TaskEditor({ task, onSave }) {
   async function addTaskText(text) {
     const tags = (text.match(/#([^\s]+)/g) || []).concat(["all"]).map(t => t.replace("#", ""));
     const newTask = {
+      ...(task || {}),
       description: text,
       tags: tags.reduce((acc, tag) => {
         acc[tag] = true;
@@ -35,7 +36,12 @@ export default function TaskEditor({ task, onSave }) {
     const msg = newTask.description.length > 10 ? newTask.description.substring(0, 10) + "..." : newTask.description;
 
     try {
-      await addTask(newTask);
+      if (task) {
+        await editTask(newTask);
+      }
+      else {
+        await addTask(newTask);
+      }
 
       setValue("");
 

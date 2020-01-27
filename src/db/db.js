@@ -18,8 +18,6 @@ export const genID = uuidv4;
 const listenners = new Set();
 
 db.on("changes", changes => {
-	console.log("changes", changes);
-
 	for (let fn of listenners) {
 		fn(changes);
 	}

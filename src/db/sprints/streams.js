@@ -63,8 +63,8 @@ export const $activeSprintsTasks = (tags, filter = { deleted: 0 }) =>
 							return r;
 						}
 					)
-						.filter(task => moment(task.closedAt).valueOf() > moment().valueOf() - (1000 * 60 * 60 * 24 * 30 * 4))
-						.sort((a, b) => moment(a.closedAt).valueOf() - moment(b.closedAt).valueOf());
+						.filter(task => moment(task.uodatedAt).valueOf() > moment().valueOf() - (1000 * 60 * 60 * 24 * 30 * 4))
+						.sort((a, b) => moment(a.updatedAt).valueOf() - moment(b.updatedAt).valueOf());
 
 					let openAvg = 0;
 
@@ -73,7 +73,7 @@ export const $activeSprintsTasks = (tags, filter = { deleted: 0 }) =>
 					if (sprint.openTasks.length) {
 						const lastestClosedTask = moment(
 							sprint.doneTasks && sprint.doneTasks.length ?
-								sprint.doneTasks[sprint.doneTasks.length - 1].closedAt :
+								sprint.doneTasks[sprint.doneTasks.length - 1].updatedAt :
 								sprint.openTasks[sprint.openTasks.length - 1].createdAt
 						).valueOf();
 
@@ -103,7 +103,7 @@ export const $activeSprintsTasks = (tags, filter = { deleted: 0 }) =>
 					}
 
 					if (sprint.doneTasks.length) {
-						const latestDoneTime = moment(sprint.doneTasks[0].closedAt).valueOf();
+						const latestDoneTime = moment(sprint.doneTasks[0].updatedAt).valueOf();
 						const time = now - latestDoneTime;
 						const t = (time + openAvg) / sprint.doneTasks.length;
 						sprint.doneAvg = t;

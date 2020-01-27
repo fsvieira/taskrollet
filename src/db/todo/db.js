@@ -8,7 +8,7 @@ export { dbTodo, changes };
 export const selectTodo = async task => {
     try {
         const todo = await dbTodo.get("todo");
-        return dbTodo.put({ todoID: "todo", ...todo, task: task.taskID, tags: { all: true } });
+        return dbTodo.put({ todoID: "todo", ...todo, taskID: task.taskID, tags: { all: true } });
     }
     catch (e) {
         return dbTodo.put({ todoID: "todo", taskID: task.taskID, tags: { all: true } });
