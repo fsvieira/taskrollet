@@ -1,10 +1,10 @@
 import Dexie from "dexie";
 
-import "dexie-observable";
-import "dexie-syncable";
+import dexieObservable from "dexie-observable";
+import dexieSyncable from "dexie-syncable";
 import uuidv4 from "uuid/v4";
 
-export const db = new Dexie("taskroulette");
+export const db = new Dexie("taskroulette", { addons: [dexieObservable, dexieSyncable] });
 
 db.version(1).stores({
 	tasks: "&taskID,createdAt,updatedAt,description,tags,deleted,done,[deleted+done]",
@@ -13,7 +13,6 @@ db.version(1).stores({
 });
 
 export const genID = uuidv4;
-
 
 const listenners = new Set();
 
