@@ -1,15 +1,22 @@
 import Dexie from "dexie";
 
-import dexieObservable from "dexie-observable";
-import dexieSyncable from "dexie-syncable";
+// import dexieObservable from "dexie-observable";
+// import dexieSyncable from "dexie-syncable";
+import "dexie-observable";
+import "dexie-syncable";
+
+import sync from "./sync";
 import uuidv4 from "uuid/v4";
 
-export const db = new Dexie("taskroulette", { addons: [dexieObservable, dexieSyncable] });
+Dexie.Syncable.registerSyncProtocol("websocket", { sync });
+
+export const db = new Dexie("taskroulette" /*, { addons: [dexieObservable, dexieSyncable] }*/);
+
 
 db.version(1).stores({
 	tasks: "&taskID,createdAt,updatedAt,description,tags,deleted,done,[deleted+done]",
 	sprints: "&sprintID,createdAt,dueDate,tags",
-	todo: "&todoID,taskID,filterTags"
+	todo: "&todoID,taskID,tags"
 });
 
 export const genID = uuidv4;
@@ -28,3 +35,8 @@ export const changes = fn => {
 	return () => listenners.delete(fn);
 };
 
+db.syncable.connect("websocket", "https://localhost/sync");
+
+db.syncable.on("statusChanged", function (newStatus, url) {
+	console.log("Sync Status changed: " + Dexie.Syncable.StatusTexts[newStatus], url);
+});

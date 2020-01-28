@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 
 import {
   Button,
@@ -15,19 +15,23 @@ import "@blueprintjs/core/lib/css/blueprint.css";
 import moment from "moment";
 import TaskEditor from "./TaskEditor";
 
-export function PrettyDescription ({description}) {
+export function PrettyDescription({ description }) {
   const tokens = description.match(/([^\s]+)|(\s)/g);
+
+  if (!tokens) {
+    return "";
+  }
 
   return tokens.map(
     (elem, i) => {
       if (elem.startsWith("#")) {
-        return <span key={i} style={{color: Colors.BLUE3}}>{elem}</span>
+        return <span key={i} style={{ color: Colors.BLUE3 }}>{elem}</span>
       }
       else if (elem === '\n') {
         return <br key={i} />
       }
       else if (elem === '\t') {
-        return <span key={i} style={{width: "3em"}}></span>
+        return <span key={i} style={{ width: "3em" }}></span>
       }
 
       return <span key={i}>{elem}</span>;
@@ -35,7 +39,7 @@ export function PrettyDescription ({description}) {
   );
 }
 
-export default function Task ({
+export default function Task({
   task,
   doneTask,
   dismissTodo,
@@ -44,15 +48,15 @@ export default function Task ({
   canEditTask,
   children
 }) {
-  const description = task?task.description:"There is no tasks, please add some!!";
-  const date = (task?moment(task.createdAt):moment()).calendar();
+  const description = task ? task.description : "There is no tasks, please add some!!";
+  const date = (task ? moment(task.createdAt) : moment()).calendar();
   const [editTaskIsOpen, setEditTaskIsOpen] = useState(false);
 
   const closeTaskEditor = () => setEditTaskIsOpen(false);
 
   return (
-    <Card 
-      interactive={true} 
+    <Card
+      interactive={true}
       elevation={Elevation.TWO}
       style={{
         height: "100%"
@@ -78,24 +82,24 @@ export default function Task ({
           height: "100%"
         }}
       >
-        {children &&         
-        <header>
-          {children}
-          <div style={{clear: "both"}}></div> 
-          <Divider />
-        </header>
+        {children &&
+          <header>
+            {children}
+            <div style={{ clear: "both" }}></div>
+            <Divider />
+          </header>
         }
         <article
-            style={{
-              flex: "1 1 auto",
-              overflowY: "auto",
-              height: "100px"
-            }}
+          style={{
+            flex: "1 1 auto",
+            overflowY: "auto",
+            height: "100px"
+          }}
         >
-        <PrettyDescription description={description}></PrettyDescription>
-      </article>
-    <footer>
-      <Divider />
+          <PrettyDescription description={description}></PrettyDescription>
+        </article>
+        <footer>
+          <Divider />
           <ButtonGroup>
             {doneTask && <Button icon="tick" onClick={() => doneTask(task)} disabled={!task}>Done</Button>}
             {dismissTodo && <Button icon="swap-vertical" onClick={() => dismissTodo(task)} disabled={!task}>Dismiss</Button>}
@@ -104,8 +108,8 @@ export default function Task ({
             {deleteTask && <Button icon="trash" onClick={() => deleteTask(task)} disabled={!task}>Delete</Button>}
           </ButtonGroup>
 
-          <div style={{float: "right", color: Colors.BLUE3}}>{date}</div>
-      </footer>
+          <div style={{ float: "right", color: Colors.BLUE3 }}>{date}</div>
+        </footer>
       </section>
     </Card>
   );
