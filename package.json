@@ -38,6 +38,7 @@
     "dexie": "^2.0.4",
     "dexie-observable": "^1.0.0-beta.5",
     "dexie-syncable": "^1.0.0-beta.4",
+    "faye": "^1.2.4",
     "file-saver": "^2.0.2",
     "filesaver": "0.0.13",
     "import": "0.0.6",

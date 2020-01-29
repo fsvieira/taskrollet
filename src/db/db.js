@@ -35,7 +35,9 @@ export const changes = fn => {
 	return () => listenners.delete(fn);
 };
 
-db.syncable.connect("websocket", "https://localhost/sync");
+const url = `${process.env.REACT_APP_API_URL}/bayeux`;
+console.log(url);
+db.syncable.connect("websocket", url);
 
 db.syncable.on("statusChanged", function (newStatus, url) {
 	console.log("Sync Status changed: " + Dexie.Syncable.StatusTexts[newStatus], url);
