@@ -9,7 +9,7 @@ export const addTask = ({ computed, ...task }) => {
     const now = moment.utc().toDate();
 
     return dbTasks.add({
-        taskID: genID(),
+        // taskID: genID(),
         ...task,
         done: 0,
         deleted: 0,
