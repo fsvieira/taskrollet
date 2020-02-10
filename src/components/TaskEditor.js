@@ -53,6 +53,7 @@ export default function TaskEditor({ task, onSave }) {
       onSave && onSave();
     }
     catch (e) {
+      console.log(e);
       AppToaster.show({
         message: `Fail to ${task ? "save" : "add"} Task: ${msg}`,
         intent: Intent.DANGER

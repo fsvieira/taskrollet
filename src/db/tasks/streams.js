@@ -1,10 +1,30 @@
-import { dbTasks, changes } from "./db";
+import { db, changes } from "./db";
 import { fromBinder } from "baconjs";
 
 export const $tasks = (tags = { all: true }, selector) =>
 	fromBinder(sink => {
 
-		const find = () => dbTasks.where(selector).filter(task => {
+		console.log(selector);
+		const find = () => db.query(
+			q => q.findRecords("task")
+				.filter(
+					{ attribute: "deleted", value: false },
+					{ attribute: "done", value: false }
+				) // .filter(selector)
+		).then(
+			tasks => sink(tasks.filter(
+				task => {
+					for (let tag in tags) {
+						if (!task.tags[tag]) {
+							return false;
+						}
+					}
+
+					return true;
+				}
+			))
+		);
+		/* selector).filter(task => {
 			for (let tag in tags) {
 				if (!task.tags[tag]) {
 					return false;
@@ -12,7 +32,7 @@ export const $tasks = (tags = { all: true }, selector) =>
 			}
 
 			return true;
-		}).toArray().then(sink);
+		}).toArray().then(sink);*/
 
 		const cancel = changes(find);
 

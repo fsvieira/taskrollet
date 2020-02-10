@@ -1,12 +1,12 @@
 import { fromBinder, interval } from "baconjs";
-import { dbSprints, changes } from "./db";
+import { db, changes } from "./db";
 import { $tasks } from "../tasks/streams";
 
 import moment from "moment";
 
 export const $activeSprints = tags =>
 	fromBinder(sink => {
-		const find = () => dbSprints.toArray().then(sink);
+		const find = () => db.query(q => q.findRecords("sprint")).then(sink);
 
 		const cancel = changes(find);
 

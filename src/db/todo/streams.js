@@ -1,11 +1,11 @@
-import { dbTodo, selectTodo, setTodoFilterTags, changes } from "./db";
+import { db, selectTodo, setTodoFilterTags, changes } from "./db";
 import { $activeSprintsTasks } from "../sprints/streams";
 import { fromBinder } from "baconjs"
 import moment from "moment";
 
 export const $todo = () =>
     fromBinder(sink => {
-        const find = () => dbTodo.get("todo").then(
+        const find = () => db.query(q => q.findRecord({ type: "todo", id: "todo" })).then(
             todo => {
                 if (todo) {
                     sink(todo);
