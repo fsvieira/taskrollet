@@ -6,13 +6,16 @@ export const $tasks = (tags = { all: true }, selector) =>
 
 		console.log(selector);
 		const find = () => db.query(
-			q => q.findRecords("task")
-				.filter(
-					{ attribute: "deleted", value: false },
-					{ attribute: "done", value: false }
-				) // .filter(selector)
+			q => q.findRecords("task").filter(
+				...selector
+				/*
+				{ attribute: "deleted", value: false },
+				{ attribute: "done", value: false }*/
+			)
 		).then(
-			tasks => sink(tasks.filter(
+			tasks => sink(tasks),
+			err => console.log("TASKS ERROR _> " + err)
+			/*tasks => sink(tasks.filter(
 				task => {
 					for (let tag in tags) {
 						if (!task.tags[tag]) {
@@ -22,17 +25,8 @@ export const $tasks = (tags = { all: true }, selector) =>
 
 					return true;
 				}
-			))
+			))*/
 		);
-		/* selector).filter(task => {
-			for (let tag in tags) {
-				if (!task.tags[tag]) {
-					return false;
-				}
-			}
-
-			return true;
-		}).toArray().then(sink);*/
 
 		const cancel = changes(find);
 
@@ -42,10 +36,18 @@ export const $tasks = (tags = { all: true }, selector) =>
 	});
 
 
-export const $activeTasks = tags => $tasks(tags, { done: 0, deleted: 0 });
+export const $activeTasks = tags => $tasks(
+	tags,
+	// { done: false, deleted: false }
+	[
+		{ attribute: "deleted", value: false },
+		{ attribute: "done", value: false }
+	]
+);
 
 export const $activeTags = tags => $activeTasks(tags).map(tasks => {
 	const tags = {};
+
 	for (let i = 0; i < tasks.length; i++) {
 		const task = tasks[i];
 		for (let tag in task.tags) {

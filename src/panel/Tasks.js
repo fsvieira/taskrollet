@@ -31,7 +31,7 @@ export default function Tasks() {
     }
 
     const selectTodoNotification = async task => {
-        const msg = task.description.length > 10 ? task.description.substring(0, 10) + "..." : task.description;
+        const msg = task.attributes.description.length > 10 ? task.attributes.description.substring(0, 10) + "..." : task.attributes.description;
 
         try {
             await selectTodo(task);
@@ -62,7 +62,7 @@ export default function Tasks() {
             deleteTask={deleteTask}
             selectTodo={selectTodoNotification}
             canEditTask={true}
-            key={task.taskID}
+            key={task.id}
         ></Task>)
     );
 

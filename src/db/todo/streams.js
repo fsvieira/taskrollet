@@ -5,6 +5,7 @@ import moment from "moment";
 
 export const $todo = () =>
     fromBinder(sink => {
+        /*
         const find = () => db.query(q => q.findRecord({ type: "todo", id: "todo" })).then(
             todo => {
                 if (todo) {
@@ -14,7 +15,8 @@ export const $todo = () =>
                     sink({ tags: { all: true } });
                 }
             }
-        );
+        );*/
+        const find = () => sink({ tags: { all: true } });
 
         const cancel = changes(find);
 

@@ -6,7 +6,8 @@ import moment from "moment";
 
 export const $activeSprints = tags =>
 	fromBinder(sink => {
-		const find = () => db.query(q => q.findRecords("sprint")).then(sink);
+		// const find = () => db.query(q => q.findRecords("sprint")).then(sink);
+		const find = () => sink([]);
 
 		const cancel = changes(find);
 
@@ -25,7 +26,9 @@ const $interval = delay =>
 	});
 
 
-export const $activeSprintsTasks = (tags, filter = { deleted: 0 }) =>
+export const $activeSprintsTasks = (tags, filter = [{ attribute: "deleted", value: false }]
+
+/*{ deleted: false }*/) =>
 	$activeSprints(tags)
 		.combine(
 			$tasks(tags, filter).combine($interval(1000 * 60), tasks => tasks),

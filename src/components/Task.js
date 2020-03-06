@@ -48,8 +48,8 @@ export default function Task({
   canEditTask,
   children
 }) {
-  const description = task ? task.description : "There is no tasks, please add some!!";
-  const date = (task ? moment(task.createdAt) : moment()).calendar();
+  const description = task ? task.attributes.description : "There is no tasks, please add some!!";
+  const date = (task ? moment(task.attributes.createdAt) : moment()).calendar();
   const [editTaskIsOpen, setEditTaskIsOpen] = useState(false);
 
   const closeTaskEditor = () => setEditTaskIsOpen(false);

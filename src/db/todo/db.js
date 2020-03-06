@@ -14,14 +14,17 @@ export const selectTodo = async task => {
     }*/
     // try {
     console.log("Select todo");
+    /*
     const todo = await db.query(
-        q => q.findRecord({ type: "todo", id: "todo" }).then(
-            todo => console.log("Found TODO: ", todo),
-            err => console.log("Error TODO: ", err)
-        )
+        q => q.findRecord({ type: "todo", id: "todo" })
+    ).then(
+        todo => console.log("Found TODO: ", todo),
+        err => console.log("Error TODO: ", err)
     );
 
-    return todo;
+    return todo;*/
+    return { todoID: "todo", taskID: task.taskID, tags: { all: true } };
+
     /*
         return dbTodo.put({ id: "todo", ...todo, taskID: task.taskID, tags: { all: true } });
     }
