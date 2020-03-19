@@ -62,9 +62,9 @@ export const $activeSprintsTasks = (tags, filter = { deleted: null }) =>
 
 					sprint.openTasks = sprint.tasks.filter(task => !(task.deleted || task.done))
 						.sort((a, b) => moment(a.createdAt).valueOf() - moment(b.createdAt).valueOf());
-          
 
-          sprint.doneTasksTotal = 0;
+
+					sprint.doneTasksTotal = 0;
 					sprint.doneTasks = sprint.tasks.filter(
 						task => {
 							const r = !task.deleted && task.done;
