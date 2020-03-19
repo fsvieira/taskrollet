@@ -4,13 +4,21 @@ import { fromBinder } from "baconjs";
 export const $tasks = (tags = { all: true }, selector) =>
 	fromBinder(sink => {
 
-		console.log(selector);
+		const filterTags = [];
+		for (let tag in tags) {
+			if (tags[tag]) {
+				filterTags.push({ type: "tag", id: tag });
+			}
+		}
+
+		console.log("---> " + JSON.stringify({ relation: "tags", records: filterTags }));
 		const find = () => db.query(
 			q => q.findRecords("task").filter(
-				...selector
+				...selector,
 				/*
 				{ attribute: "deleted", value: false },
 				{ attribute: "done", value: false }*/
+				{ relation: "tags", records: filterTags }
 			)
 		).then(
 			tasks => sink(tasks),

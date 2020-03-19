@@ -5,10 +5,19 @@ export { db, changes };
 
 export const addTask = ({ computed, tags, ...task }) => {
     const now = moment.utc().toDate();
+    const nTags = [];
 
-    console.log("ADD: " + JSON.stringify(task));
+    for (let tag in tags) {
+        if (tags[tag]) {
+            nTags.push(tag);
+        }
+    }
 
     return db.update(tx => [
+        ...nTags.map(tag => (tx.addRecord({
+            type: "tag",
+            id: tag
+        }))),
         tx.addRecord({
             type: "task",
             id: genID(),
@@ -18,6 +27,16 @@ export const addTask = ({ computed, tags, ...task }) => {
                 deleted: false,
                 createdAt: now,
                 updatedAt: now
+            },
+            relationships: {
+                tags: {
+                    data: nTags.map(
+                        tag => ({
+                            type: "tag",
+                            id: tag
+                        })
+                    )
+                }
             }
         })
     ]);

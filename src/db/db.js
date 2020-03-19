@@ -15,16 +15,17 @@ const schema = new Schema({
 				updatedAt: { type: "date-time" }
 			},
 			relationships: {
-				tags: { type: "hasMany", model: "tag", inverse: "task" }
+				tags: { type: "hasMany", model: "tag" /*, inverse: "task"*/ }
 			}
 		},
 		tag: {
+			/*
 			attributes: {
 				name: { type: "string" }
 			},
 			relationships: {
 				task: { type: "hasOne", model: "task", inverse: "tags" }
-			}
+			}*/
 		},
 		sprint: {
 			attributes: {
@@ -32,12 +33,12 @@ const schema = new Schema({
 				dueDate: { type: "date-time" },
 			},
 			relationships: {
-				tags: { type: "hasMany", model: "tag", inverse: "sprint" }
+				tags: { type: "hasMany", model: "tag" /*, inverse: "sprint"*/ }
 			}
 		},
 		todo: {
 			relationships: {
-				tags: { type: "hasMany", model: "tag", inverse: "todo" },
+				tags: { type: "hasMany", model: "tag" /*, inverse: "todo"*/ },
 				taskID: { type: "hasOne", model: "task" }
 			}
 		}
