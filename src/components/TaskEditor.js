@@ -19,21 +19,28 @@ import 'react-autocomplete-input/dist/bundle.css';
 
 export default function TaskEditor({ task, onSave }) {
 
-  const [value, setValue] = useState(task ? task.description : "");
+  console.log("Edit form task => ", task);
+
+  const [value, setValue] = useState(task ? task.attributes.description : "");
   const { tags } = useActiveTags();
 
   async function addTaskText(text) {
     const tags = (text.match(/#([^\s]+)/g) || []).concat(["all"]).map(t => t.replace("#", ""));
     const newTask = {
-      ...(task || {}),
-      description: text,
+      /*...(task || {}),
+      description: text,*/
+      id: task ? task.id : undefined,
+      attributes: {
+        ...(task ? task.attributes : {}),
+        description: text
+      },
       tags: tags.reduce((acc, tag) => {
         acc[tag] = true;
         return acc;
       }, {})
     };
 
-    const msg = newTask.description.length > 10 ? newTask.description.substring(0, 10) + "..." : newTask.description;
+    const msg = newTask.attributes.description.length > 10 ? newTask.attributes.description.substring(0, 10) + "..." : newTask.attributes.description;
 
     try {
       if (task) {

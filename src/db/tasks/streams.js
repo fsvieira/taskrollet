@@ -18,7 +18,7 @@ export const $tasks = (tags = { all: true }, selector) =>
 				/*
 				{ attribute: "deleted", value: false },
 				{ attribute: "done", value: false }*/
-				{ relation: "tags", records: filterTags }
+				// { relation: "tags", records: filterTags }
 			)
 		).then(
 			tasks => sink(tasks),
