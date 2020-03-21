@@ -4,14 +4,15 @@ import { fromBinder } from "baconjs";
 export const $tasks = (tags = { all: true }, selector) =>
 	fromBinder(sink => {
 
+		/*
+		TODO: when we get orbit relationships filter subset working:
 		const filterTags = [];
 		for (let tag in tags) {
 			if (tags[tag]) {
 				filterTags.push({ type: "tag", id: tag });
 			}
-		}
+		}*/
 
-		console.log("---> " + JSON.stringify({ relation: "tags", records: filterTags }));
 		const find = () => db.query(
 			q => q.findRecords("task").filter(
 				...selector,
@@ -21,7 +22,21 @@ export const $tasks = (tags = { all: true }, selector) =>
 				// { relation: "tags", records: filterTags }
 			)
 		).then(
-			tasks => sink(tasks),
+			tasks => {
+				sink(tasks.filter(
+					({ relationships: { tags: { data } } }) => {
+						const s = new Set(data.map(({ id }) => id));
+
+						for (let tag in tags) {
+							if (!s.has(tag)) {
+								return false;
+							}
+						}
+
+						return true;
+					}
+				));
+			},
 			err => console.log("TASKS ERROR _> " + err)
 			/*tasks => sink(tasks.filter(
 				task => {
@@ -58,9 +73,7 @@ export const $activeTags = tags => $activeTasks(tags).map(tasks => {
 
 	for (let i = 0; i < tasks.length; i++) {
 		const task = tasks[i];
-		for (let tag in task.tags) {
-			tags[tag] = true;
-		}
+		task.relationships.tags.data.forEach(({ id: tag }) => tags[tag] = true);
 	}
 
 	return tags;

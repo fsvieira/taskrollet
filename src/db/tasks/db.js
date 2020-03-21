@@ -89,9 +89,25 @@ export const editTask = ({ computed, tags, ...task }) => {
 }
 
 export const doneTask = ({ computed, ...task }) => db.update(
-    tx => tx.updateRecord({ ...task, done: true, updatedAt: moment().toDate() })
+    tx => tx.updateRecord({
+        id: task.id,
+        attributes: {
+            ...task.attributes,
+            done: true,
+            updatedAt: moment().toDate()
+        },
+        relationships: task.relationships
+    })
 );
 
 export const deleteTask = ({ computed, ...task }) => db.update(
-    tx => tx.updateRecord({ ...task, deleted: true, updatedAt: moment().toDate() })
+    tx => tx.updateRecord({
+        id: task.id,
+        attributes: {
+            ...task.attributes,
+            deleted: true,
+            updatedAt: moment().toDate()
+        },
+        relationships: task.relationships
+    })
 );
