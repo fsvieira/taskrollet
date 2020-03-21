@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 
 import {
   Button,
@@ -8,26 +8,28 @@ import {
   Elevation,
   Colors,
   Dialog,
-  Classes
+  Classes,
+  RadioGroup,
+  Radio
 } from "@blueprintjs/core";
 import "@blueprintjs/core/lib/css/blueprint.css";
 
 import moment from "moment";
 import TaskEditor from "./TaskEditor";
 
-export function PrettyDescription ({description}) {
+export function PrettyDescription({ description }) {
   const tokens = description.match(/([^\s]+)|(\s)/g);
 
   return tokens.map(
     (elem, i) => {
       if (elem.startsWith("#")) {
-        return <span key={i} style={{color: Colors.BLUE3}}>{elem}</span>
+        return <span key={i} style={{ color: Colors.BLUE3 }}>{elem}</span>
       }
       else if (elem === '\n') {
         return <br key={i} />
       }
       else if (elem === '\t') {
-        return <span key={i} style={{width: "3em"}}></span>
+        return <span key={i} style={{ width: "3em" }}></span>
       }
 
       return <span key={i}>{elem}</span>;
@@ -35,7 +37,7 @@ export function PrettyDescription ({description}) {
   );
 }
 
-export default function Task ({
+export default function Task({
   task,
   doneTask,
   dismissTodo,
@@ -44,15 +46,31 @@ export default function Task ({
   canEditTask,
   children
 }) {
-  const description = task?task.description:"There is no tasks, please add some!!";
-  const date = (task?moment(task.createdAt):moment()).calendar();
+  const description = task ? task.description : "There is no tasks, please add some!!";
+  const date = (task ? moment(task.createdAt) : moment()).calendar();
   const [editTaskIsOpen, setEditTaskIsOpen] = useState(false);
+  const [doneUntilIsOpen, setDoneUntilIsOpen] = useState(false);
 
   const closeTaskEditor = () => setEditTaskIsOpen(false);
+  const closeDoneUntil = () => setDoneUntilIsOpen(false);
+
+  const doneUntilTask = (task, time) => {
+    alert(task.attributes.description + " :: " + time);
+  }
+
+  const doneUntilSelectTime = (e) => {
+    const value = e.target.value;
+    console.log("TODO: Value ==> ", value);
+
+    closeDoneUntil();
+  }
+
+  const now = moment.utc();
+
 
   return (
-    <Card 
-      interactive={true} 
+    <Card
+      interactive={true}
       elevation={Elevation.TWO}
       style={{
         height: "100%"
@@ -71,6 +89,28 @@ export default function Task ({
         </Dialog>
       }
 
+      {doneUntilTask &&
+        <Dialog
+          icon="info-sign"
+          isOpen={doneUntilIsOpen}
+          onClose={closeDoneUntil}
+          title="Done Until!!"
+        >
+          <div className={Classes.DIALOG_BODY}>
+            <RadioGroup
+              label="Done Until"
+              onChange={doneUntilSelectTime}
+            >
+              <Radio label="4 hours" value="4hours" />
+              <Radio label="Tomorrow" value="tomorrow" />
+              <Radio label="Next week" value="next week" />
+              <Radio label={`Next ${now.format('dddd')}`} value='next weekday' />
+              <Radio label="Next month" value="Next month" />
+            </RadioGroup>
+          </div>
+        </Dialog>
+      }
+
       <section
         style={{
           display: "flex",
@@ -78,34 +118,35 @@ export default function Task ({
           height: "100%"
         }}
       >
-        {children &&         
-        <header>
-          {children}
-          <div style={{clear: "both"}}></div> 
-          <Divider />
-        </header>
+        {children &&
+          <header>
+            {children}
+            <div style={{ clear: "both" }}></div>
+            <Divider />
+          </header>
         }
         <article
-            style={{
-              flex: "1 1 auto",
-              overflowY: "auto",
-              height: "100px"
-            }}
+          style={{
+            flex: "1 1 auto",
+            overflowY: "auto",
+            height: "100px"
+          }}
         >
-        <PrettyDescription description={description}></PrettyDescription>
-      </article>
-    <footer>
-      <Divider />
+          <PrettyDescription description={description}></PrettyDescription>
+        </article>
+        <footer>
+          <Divider />
           <ButtonGroup>
             {doneTask && <Button icon="tick" onClick={() => doneTask(task)} disabled={!task}>Done</Button>}
+            {doneUntilTask && <Button icon="tick" onClick={() => setDoneUntilIsOpen(true)} disabled={!task}>Done Until</Button>}
             {dismissTodo && <Button icon="swap-vertical" onClick={() => dismissTodo(task)} disabled={!task}>Dismiss</Button>}
             {canEditTask && <Button icon='edit' onClick={() => setEditTaskIsOpen(true)} disabled={!task}>Edit</Button>}
             {selectTodo && <Button icon="pin" onClick={() => selectTodo(task)} disabled={!task}>To do</Button>}
             {deleteTask && <Button icon="trash" onClick={() => deleteTask(task)} disabled={!task}>Delete</Button>}
           </ButtonGroup>
 
-          <div style={{float: "right", color: Colors.BLUE3}}>{date}</div>
-      </footer>
+          <div style={{ float: "right", color: Colors.BLUE3 }}>{date}</div>
+        </footer>
       </section>
     </Card>
   );
