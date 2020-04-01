@@ -14,7 +14,6 @@ import {
 import { saveAs } from 'file-saver';
 import moment from 'moment';
 import SelectTags from '../components/SelectTags';
-import TaskEditor from "../components/TaskEditor";
 
 export default function Tasks() {
     const {

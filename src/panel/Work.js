@@ -1,9 +1,9 @@
 import React from "react";
 
-import TaskEditor from "../components/TaskEditor";
-import Todo from "../components/Todo";  
+import TaskEditor from "../components/Editor/TaskEditor";
+import Todo from "../components/Todo";
 
-export default function Work () {
+export default function Work() {
     return (
         <>
             <article
@@ -17,7 +17,7 @@ export default function Work () {
             >
                 <Todo />
             </article>
-            <footer style={{padding: "0.5em"}}>
+            <footer style={{ padding: "0.5em" }}>
                 <TaskEditor />
             </footer>
         </>

@@ -35,6 +35,7 @@
     "baconjs": "^3.0.12",
     "components": "^0.1.0",
     "db": "^1.1.1",
+    "editor": "^1.0.0",
     "file-saver": "^2.0.2",
     "filesaver": "0.0.13",
     "import": "0.0.6",

@@ -15,7 +15,8 @@ import {
 import "@blueprintjs/core/lib/css/blueprint.css";
 
 import moment from "moment";
-import TaskEditor from "./TaskEditor";
+import TaskEditor from "./Editor/TaskEditor";
+import TaskSplit from "./Editor/TaskSplit";
 
 export function PrettyDescription({ description }) {
   const tokens = description.match(/([^\s]+)|(\s)/g);
@@ -44,17 +45,28 @@ export default function Task({
   deleteTask,
   selectTodo,
   canEditTask,
+  canSplitTask,
+  doneUntilTask,
   children
 }) {
   const description = task ? task.description : "There is no tasks, please add some!!";
   const date = (task ? moment(task.createdAt) : moment()).calendar();
+
   const [editTaskIsOpen, setEditTaskIsOpen] = useState(false);
+  const [splitTaskIsOpen, setSplitTaskIsOpen] = useState(false);
   const [doneUntilIsOpen, setDoneUntilIsOpen] = useState(false);
 
   const closeTaskEditor = () => setEditTaskIsOpen(false);
+  const closeTaskSplit = () => setSplitTaskIsOpen(false);
   const closeDoneUntil = () => setDoneUntilIsOpen(false);
 
+
+  /*
   const doneUntilTask = (task, time) => {
+    alert(task.attributes.description + " :: " + time);
+  }*/
+
+  canSplitTask = task => {
     alert(task.attributes.description + " :: " + time);
   }
 
@@ -85,6 +97,19 @@ export default function Task({
         >
           <div className={Classes.DIALOG_BODY}>
             <TaskEditor task={task} onSave={closeTaskEditor} ></TaskEditor>
+          </div>
+        </Dialog>
+      }
+
+      {canSplitTask &&
+        <Dialog
+          icon="info-sign"
+          isOpen={splitTaskIsOpen}
+          onClose={closeTaskSplit}
+          title="Split Task!!"
+        >
+          <div className={Classes.DIALOG_BODY}>
+            <TaskSplit task={task} onSave={closeTaskSplit} ></TaskSplit>
           </div>
         </Dialog>
       }
@@ -141,6 +166,7 @@ export default function Task({
             {doneUntilTask && <Button icon="tick" onClick={() => setDoneUntilIsOpen(true)} disabled={!task}>Done Until</Button>}
             {dismissTodo && <Button icon="swap-vertical" onClick={() => dismissTodo(task)} disabled={!task}>Dismiss</Button>}
             {canEditTask && <Button icon='edit' onClick={() => setEditTaskIsOpen(true)} disabled={!task}>Edit</Button>}
+            {canSplitTask && <Button icon='edit' onClick={() => setSplitTaskIsOpen(true)} disabled={!task}>Split</Button>}
             {selectTodo && <Button icon="pin" onClick={() => selectTodo(task)} disabled={!task}>To do</Button>}
             {deleteTask && <Button icon="trash" onClick={() => deleteTask(task)} disabled={!task}>Delete</Button>}
           </ButtonGroup>
