@@ -23,6 +23,9 @@ export function PrettyDescription({ description }) {
       if (elem.startsWith("#")) {
         return <span key={i} style={{ color: Colors.BLUE3 }}>{elem}</span>
       }
+      else if (elem.startsWith("http://") || elem.startsWith("https://")) {
+        return <a href={elem} target="_blank">{elem}</a>
+      }
       else if (elem === '\n') {
         return <br key={i} />
       }
