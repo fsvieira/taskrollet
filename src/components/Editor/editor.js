@@ -19,7 +19,7 @@ export async function addTaskText(task, text, onSave) {
     try {
         await addTask(newTask);
 
-        setValue("");
+        // setValue("");
 
         AppToaster.show({
             message: `Task ${task ? "Saved" : "Added"}: ${msg}`,
@@ -29,11 +29,16 @@ export async function addTaskText(task, text, onSave) {
         onSave && onSave();
     }
     catch (e) {
+        console.log(e);
         AppToaster.show({
             message: `Fail to ${task ? "save" : "add"} Task: ${msg}`,
             intent: Intent.DANGER
         });
+
+        return false;
     }
+
+    return true;
 }
 
 export function parseValue(value, tags) {
