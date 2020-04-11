@@ -50,7 +50,11 @@ export default function TaskSplit({ task, onSave }) {
       <Divider />
       <Button
         position={Position.RIGHT}
-        onClick={() => addTaskText(task, value, onSave)}
+        onClick={() => {
+          if (addTaskText(task, value, onSave)) {
+            setValue("");
+          }
+        }}
       >{task ? "Save" : "Add"}</Button>
     </Card>
   );
