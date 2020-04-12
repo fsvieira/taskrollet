@@ -37,9 +37,11 @@ export function PrettyDescription({ description }) {
   );
 }
 
+
 export default function Task({
   task,
   doneTask,
+  doneTaskUntil,
   dismissTodo,
   deleteTask,
   selectTodo,
@@ -49,24 +51,49 @@ export default function Task({
   const description = task ? task.description : "There is no tasks, please add some!!";
   const date = (task ? moment(task.createdAt) : moment()).calendar();
   const [editTaskIsOpen, setEditTaskIsOpen] = useState(false);
-  const [doneUntilIsOpen, setDoneUntilIsOpen] = useState(false);
+  const [doneTaskUntilIsOpen, setDoneTaskUntilIsOpen] = useState(false);
 
   const closeTaskEditor = () => setEditTaskIsOpen(false);
-  const closeDoneUntil = () => setDoneUntilIsOpen(false);
+  const closeDoneTaskUntil = () => setDoneTaskUntilIsOpen(false);
 
-  const doneUntilTask = (task, time) => {
+  /*const doneUntilTask = (task, time) => {
     alert(task.attributes.description + " :: " + time);
-  }
+  }*/
 
-  const doneUntilSelectTime = (e) => {
+  const doneTaskUntilSelectTime = async e => {
     const value = e.target.value;
     console.log("TODO: Value ==> ", value);
 
-    closeDoneUntil();
+    let time;
+
+    switch (value) {
+      case "4hours":
+        time = moment().add(4, "hours").toDate();
+        break;
+
+      case "tomorrow":
+        time = moment().endOf("days").toDate();
+        break;
+
+      case "next week":
+        time = moment().add(1, "weeks").startOf("week").toDate();
+        break;
+
+      case 'next weekday':
+        time = moment().add(7, "days").startOf("day").toDate();
+        break;
+
+      case "Next month":
+        time = moment().add(1, "months").startOf("month").toDate();
+        break;
+    }
+
+    await doneTaskUntil(task, time);
+
+    closeDoneTaskUntil();
   }
 
   const now = moment.utc();
-
 
   return (
     <Card
@@ -89,17 +116,17 @@ export default function Task({
         </Dialog>
       }
 
-      {doneUntilTask &&
+      {doneTaskUntil &&
         <Dialog
           icon="info-sign"
-          isOpen={doneUntilIsOpen}
-          onClose={closeDoneUntil}
+          isOpen={doneTaskUntilIsOpen}
+          onClose={closeDoneTaskUntil}
           title="Done Until!!"
         >
           <div className={Classes.DIALOG_BODY}>
             <RadioGroup
               label="Done Until"
-              onChange={doneUntilSelectTime}
+              onChange={doneTaskUntilSelectTime}
             >
               <Radio label="4 hours" value="4hours" />
               <Radio label="Tomorrow" value="tomorrow" />
@@ -138,7 +165,7 @@ export default function Task({
           <Divider />
           <ButtonGroup>
             {doneTask && <Button icon="tick" onClick={() => doneTask(task)} disabled={!task}>Done</Button>}
-            {doneUntilTask && <Button icon="tick" onClick={() => setDoneUntilIsOpen(true)} disabled={!task}>Done Until</Button>}
+            {doneTaskUntil && <Button icon="tick" onClick={() => setDoneTaskUntilIsOpen(true)} disabled={!task}>Done Until</Button>}
             {dismissTodo && <Button icon="swap-vertical" onClick={() => dismissTodo(task)} disabled={!task}>Dismiss</Button>}
             {canEditTask && <Button icon='edit' onClick={() => setEditTaskIsOpen(true)} disabled={!task}>Edit</Button>}
             {selectTodo && <Button icon="pin" onClick={() => selectTodo(task)} disabled={!task}>To do</Button>}

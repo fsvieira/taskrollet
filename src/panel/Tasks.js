@@ -14,12 +14,13 @@ import {
 import { saveAs } from 'file-saver';
 import moment from 'moment';
 import SelectTags from '../components/SelectTags';
-import TaskEditor from "../components/TaskEditor";
+/* import TaskEditor from "../components/TaskEditor"; */
 
 export default function Tasks() {
     const {
         tasks,
         doneTask,
+        doneTaskUntil,
         deleteTask,
         selectTodo,
         setTags
@@ -60,6 +61,7 @@ export default function Tasks() {
         task => (<Task
             task={task}
             doneTask={doneTask}
+            doneTaskUntil={doneTaskUntil}
             deleteTask={deleteTask}
             selectTodo={selectTodoNotification}
             canEditTask={true}

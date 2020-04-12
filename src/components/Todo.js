@@ -16,7 +16,7 @@ import moment from "moment";
 import { addSprint } from "../db/sprints/db";
 
 export default function Todo() {
-  const { todo, setTags, doneTask, dismissTodo, deleteTask } = useTodo();
+  const { todo, setTags, doneTask, doneTaskUntil, dismissTodo, deleteTask } = useTodo();
 
   let taskHeader;
   if (todo && todo.task) {
@@ -92,6 +92,7 @@ export default function Todo() {
     <Task
       task={todo.task}
       doneTask={doneTask}
+      doneTaskUntil={doneTaskUntil}
       dismissTodo={todo.total > 1 ? dismissTodo : undefined}
       canEditTask={true}
       deleteTask={deleteTask}
