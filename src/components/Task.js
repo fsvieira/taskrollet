@@ -166,7 +166,7 @@ export default function Task({
             {doneUntilTask && <Button icon="tick" onClick={() => setDoneUntilIsOpen(true)} disabled={!task}>Done Until</Button>}
             {dismissTodo && <Button icon="swap-vertical" onClick={() => dismissTodo(task)} disabled={!task}>Dismiss</Button>}
             {canEditTask && <Button icon='edit' onClick={() => setEditTaskIsOpen(true)} disabled={!task}>Edit</Button>}
-            {canSplitTask && <Button icon='edit' onClick={() => setSplitTaskIsOpen(true)} disabled={!task}>Split</Button>}
+            {canSplitTask && <Button icon='fork' onClick={() => setSplitTaskIsOpen(true)} disabled={!task}>Split</Button>}
             {selectTodo && <Button icon="pin" onClick={() => selectTodo(task)} disabled={!task}>To do</Button>}
             {deleteTask && <Button icon="trash" onClick={() => deleteTask(task)} disabled={!task}>Delete</Button>}
           </ButtonGroup>

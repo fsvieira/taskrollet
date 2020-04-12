@@ -9,8 +9,6 @@ import {
 } from "@blueprintjs/core";
 
 import "@blueprintjs/core/lib/css/blueprint.css";
-/*import { AppToaster } from '../Notification';
-import { addTask } from '../../db/tasks/db';*/
 import { useActiveTags } from "../../db/tasks/hooks";
 import { addTaskText, parseValue } from "./editor";
 

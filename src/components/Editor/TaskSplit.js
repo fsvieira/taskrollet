@@ -10,17 +10,19 @@ import {
 
 import "@blueprintjs/core/lib/css/blueprint.css";
 import { useActiveTags } from "../../db/tasks/hooks";
-import { addTaskText, parseValue } from "./editor";
+import { splitTask, parseValue } from "./editor";
 
 import TextInput from 'react-autocomplete-input';
 import 'react-autocomplete-input/dist/bundle.css';
 
 export default function TaskSplit({ task, onSave }) {
 
-  const [value, setValue] = useState(task ? task.description : "");
+  const [valueA, setValueA] = useState(task ? task.description : "");
+  const [valueB, setValueB] = useState(task ? task.description : "");
+
   const { tags } = useActiveTags();
 
-  const newTags = parseValue(value, tags);
+  const newTags = parseValue(valueA, tags).concat(parseValue(valueB, tags));
 
   return (
     <Card
@@ -33,8 +35,8 @@ export default function TaskSplit({ task, onSave }) {
         offsetY={-50}
         offsetX={15}
         style={{ width: "100%", height: "8em" }}
-        value={value}
-        onChange={setValue}
+        value={valueA}
+        onChange={setValueA}
         placeholder={" Write here the task description, use # to add #tags!!"}
       />
       <TextInput
@@ -43,18 +45,14 @@ export default function TaskSplit({ task, onSave }) {
         offsetY={-50}
         offsetX={15}
         style={{ width: "100%", height: "8em" }}
-        value={value}
-        onChange={setValue}
+        value={valueB}
+        onChange={setValueB}
         placeholder={" Write here the task description, use # to add #tags!!"}
       />
       <Divider />
       <Button
         position={Position.RIGHT}
-        onClick={() => {
-          if (addTaskText(task, value, onSave)) {
-            setValue("");
-          }
-        }}
+        onClick={() => splitTask(task, valueA, valueB, onSave)}
       >{task ? "Save" : "Add"}</Button>
     </Card>
   );
