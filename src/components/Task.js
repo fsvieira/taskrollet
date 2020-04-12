@@ -26,6 +26,9 @@ export function PrettyDescription({ description }) {
       if (elem.startsWith("#")) {
         return <span key={i} style={{ color: Colors.BLUE3 }}>{elem}</span>
       }
+      else if (elem.startsWith("http://") || elem.startsWith("https://")) {
+        return <a href={elem} target="_blank">{elem}</a>
+      }
       else if (elem === '\n') {
         return <br key={i} />
       }
@@ -90,26 +93,38 @@ export default function Task({
     >
       {canEditTask &&
         <Dialog
+          style={{
+            maxWidth: "100%",
+            width: "980px",
+            height: "620px",
+            maxHeight: "90vh"
+          }}
           icon="info-sign"
           isOpen={editTaskIsOpen}
           onClose={closeTaskEditor}
           title="Edit Task!!"
         >
           <div className={Classes.DIALOG_BODY}>
-            <TaskEditor task={task} onSave={closeTaskEditor} ></TaskEditor>
+            <TaskEditor height="90%" task={task} onSave={closeTaskEditor} ></TaskEditor>
           </div>
         </Dialog>
       }
 
       {canSplitTask &&
         <Dialog
+          style={{
+            maxWidth: "100%",
+            width: "980px",
+            height: "620px",
+            maxHeight: "90vh"
+          }}
           icon="info-sign"
           isOpen={splitTaskIsOpen}
           onClose={closeTaskSplit}
           title="Split Task!!"
         >
           <div className={Classes.DIALOG_BODY}>
-            <TaskSplit task={task} onSave={closeTaskSplit} ></TaskSplit>
+            <TaskSplit height="45%" task={task} onSave={closeTaskSplit} ></TaskSplit>
           </div>
         </Dialog>
       }
