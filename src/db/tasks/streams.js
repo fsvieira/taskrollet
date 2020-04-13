@@ -6,12 +6,15 @@ export const $tasks = (tags = { all: true }, selector) =>
 
 		/*
 		TODO: when we get orbit relationships filter subset working:
+		// TODO : we can try the some operator, https://github.com/orbitjs/orbit/issues/741
 		const filterTags = [];
 		for (let tag in tags) {
 			if (tags[tag]) {
 				filterTags.push({ type: "tag", id: tag });
 			}
 		}*/
+
+
 
 		const find = () => db.query(
 			q => q.findRecords("task").filter(

@@ -13,6 +13,8 @@ export const addTask = ({ computed, tags, ...task }) => {
         }
     }
 
+    console.log("ADD TASK ", task, nTags);
+
     return db.update(tx => [
         ...nTags.map(tag => (tx.addRecord({
             type: "tag",
@@ -50,8 +52,6 @@ export const editTask = ({ computed, ...task }) => db.update(
 export const editTask = ({ computed, tags, ...task }) => {
     const now = moment.utc().toDate();
 
-    console.log("Update Task => ", task);
-
     const nTags = [];
 
     for (let tag in tags) {
@@ -59,8 +59,6 @@ export const editTask = ({ computed, tags, ...task }) => {
             nTags.push(tag);
         }
     }
-
-    console.log("TASK ID => ", task.id);
 
     return db.update(tx => [
         ...nTags.map(tag => (tx.addRecord({

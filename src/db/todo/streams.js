@@ -5,18 +5,35 @@ import moment from "moment";
 
 export const $todo = () =>
     fromBinder(sink => {
+        const find = () => db.query(q => q.findRecord({ type: "todo", id: "todo" })).then(
+            todo => { console.log("TODO::: ", todo); sink(todo); },
+            err => {
+                db.requestQueue.skip();
+
+                console.log("TODO", err);
+                sink({
+                    relationships: {
+                        tags: {
+                            data: [{ type: "tag", id: "all" }]
+                        }
+                    }
+                })
+            }
+        );
+
         /*
         const find = () => db.query(q => q.findRecord({ type: "todo", id: "todo" })).then(
             todo => {
-                if (todo) {
-                    sink(todo);
-                }
-                else {
-                    sink({ tags: { all: true } });
-                }
+                console.log(todo);
+                return sink({ tags: { all: true } });
+            },
+            err => {
+                console.log(err);
+                return sink({ tags: { all: true } });
             }
         );*/
-        const find = () => sink({ tags: { all: true } });
+
+        // const find = () => sink({ tags: { all: true } });
 
         const cancel = changes(find);
 
@@ -27,17 +44,19 @@ export const $todo = () =>
 
 export const $activeTodo = tags =>
     $todo().combine($activeSprintsTasks(tags), (todo, { sprints, tasks }) => {
+        console.log("TODO: ", todo);
         const t = { ...todo };
 
-        if (tasks.length === 0 && Object.keys(todo.tags).length > 1) {
+        console.log("ACTIVE TODO", t.relationships, tasks.length);
+
+        if (tasks.length === 0 && Object.keys(todo.relationships.tags.data).length > 1) {
             setTodoFilterTags({ all: true });
         }
 
-        if (t.taskID) {
-            const task = tasks.find(task => task.taskID === t.taskID);
+        if (t.relationships.task) {
+            const task = tasks.find(task => task.id === t.relationships.task.id);
 
             if (!task || task.deleted || task.done) {
-                delete t.taskID;
                 delete t.task;
             }
             else {
@@ -47,9 +66,10 @@ export const $activeTodo = tags =>
             t.total = tasks.length;
         }
 
-        if (!t.taskID && tasks.length) {
+        if (!t.relationships.task && tasks.length) {
             const now = moment().valueOf();
             let total = 0;
+
             for (let i = 0; i < tasks.length; i++) {
                 const task = tasks[i];
                 const rank = task.computed.sprints.length
@@ -77,7 +97,6 @@ export const $activeTodo = tags =>
                 const a = accum + task.computed.rank;
                 if (a >= r) {
                     t.task = task;
-                    t.taskID = task.taskID;
                     selectTodo(task);
                     break;
                 }

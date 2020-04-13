@@ -18,15 +18,7 @@ const schema = new Schema({
 				tags: { type: "hasMany", model: "tag" /*, inverse: "task"*/ }
 			}
 		},
-		tag: {
-			/*
-			attributes: {
-				name: { type: "string" }
-			},
-			relationships: {
-				task: { type: "hasOne", model: "task", inverse: "tags" }
-			}*/
-		},
+		tag: {},
 		sprint: {
 			attributes: {
 				createdAt: { type: "date-time" },
@@ -39,7 +31,7 @@ const schema = new Schema({
 		todo: {
 			relationships: {
 				tags: { type: "hasMany", model: "tag" /*, inverse: "todo"*/ },
-				taskID: { type: "hasOne", model: "task" }
+				task: { type: "hasOne", model: "task" }
 			}
 		}
 	}
@@ -74,7 +66,7 @@ const coordinator = new Coordinator({
 const backupMemorySync = new SyncStrategy({
 	source: "memory",
 	target: "backup",
-	blocking: true
+	blocking: false
 });
 
 coordinator.addStrategy(backupMemorySync);
