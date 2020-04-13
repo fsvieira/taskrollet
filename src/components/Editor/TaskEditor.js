@@ -51,6 +51,7 @@ export default function TaskEditor({
             setValue("");
           }
         }}
+        disabled={value.trim() === ''}
       >{task ? "Save" : "Add"}</Button>
     </Card>
   );

@@ -57,6 +57,7 @@ export default function TaskSplit({
       <Button
         position={Position.RIGHT}
         onClick={() => splitTask(task, valueA, valueB, onSave)}
+        disabled={valueA.trim() === '' || valueB.trim() === ''}
       >Split</Button>
     </Card>
   );

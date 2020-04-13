@@ -21,24 +21,29 @@ import TaskSplit from "./Editor/TaskSplit";
 export function PrettyDescription({ description }) {
   const tokens = description.match(/([^\s]+)|(\s)/g);
 
-  return tokens.map(
-    (elem, i) => {
-      if (elem.startsWith("#")) {
-        return <span key={i} style={{ color: Colors.BLUE3 }}>{elem}</span>
-      }
-      else if (elem.startsWith("http://") || elem.startsWith("https://")) {
-        return <a href={elem} target="_blank">{elem}</a>
-      }
-      else if (elem === '\n') {
-        return <br key={i} />
-      }
-      else if (elem === '\t') {
-        return <span key={i} style={{ width: "3em" }}></span>
-      }
+  if (tokens) {
+    return tokens.map(
+      (elem, i) => {
+        if (elem.startsWith("#")) {
+          return <span key={i} style={{ color: Colors.BLUE3 }}>{elem}</span>
+        }
+        else if (elem.startsWith("http://") || elem.startsWith("https://")) {
+          return <a href={elem} target="_blank">{elem}</a>
+        }
+        else if (elem === '\n') {
+          return <br key={i} />
+        }
+        else if (elem === '\t') {
+          return <span key={i} style={{ width: "3em" }}></span>
+        }
 
-      return <span key={i}>{elem}</span>;
-    }
-  );
+        return <span key={i}>{elem}</span>;
+      }
+    );
+  }
+  else {
+    return <span></span>;
+  }
 }
 
 export default function Task({
@@ -62,12 +67,6 @@ export default function Task({
   const closeTaskEditor = () => setEditTaskIsOpen(false);
   const closeTaskSplit = () => setSplitTaskIsOpen(false);
   const closeDoneUntil = () => setDoneUntilIsOpen(false);
-
-
-  /*
-  const doneUntilTask = (task, time) => {
-    alert(task.attributes.description + " :: " + time);
-  }*/
 
   canSplitTask = task => {
     alert(task.attributes.description + " :: " + time);
