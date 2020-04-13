@@ -79,7 +79,7 @@ export async function addTaskText(task, text, onSave) {
         _id: task ? task._id : undefined,
         _rev: task ? task._rev : undefined
     };*/
-    const newTask = getTask(getTags(text), task);
+    const newTask = getTask(text, task);
 
     const msg = newTask.description.length > 10 ? newTask.description.substring(0, 10) + "..." : newTask.description;
 
