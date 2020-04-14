@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { $activeTags, $activeTasks } from "./streams";
-import { doneTask, deleteTask } from "./db";
+import { doneTask, doneTaskUntil, deleteTask } from "./db";
 import { selectTodo } from "../todo/db";
 
 export const useActiveTags = () => {
@@ -35,6 +35,7 @@ export const useActiveTasks = () => {
 	return {
 		tasks,
 		doneTask,
+		doneTaskUntil,
 		deleteTask,
 		selectTodo,
 		setTags

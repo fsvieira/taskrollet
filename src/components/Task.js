@@ -16,6 +16,7 @@ import "@blueprintjs/core/lib/css/blueprint.css";
 
 import moment from "moment";
 import TaskEditor from "./TaskEditor";
+import { isTimeSameOrAfter } from "@blueprintjs/datetime/lib/esm/common/dateUtils";
 
 export function PrettyDescription({ description }) {
   const tokens = description.match(/([^\s]+)|(\s)/g);
@@ -50,6 +51,12 @@ export default function Task({
 }) {
   const description = task ? task.description : "There is no tasks, please add some!!";
   const date = (task ? moment(task.createdAt) : moment()).calendar();
+
+  const now = moment();
+
+  const dateUntil = task && task.doneUntil && moment(task.doneUntil).isAfter(now)
+    ? moment(task.doneUntil).calendar() : undefined;
+
   const [editTaskIsOpen, setEditTaskIsOpen] = useState(false);
   const [doneTaskUntilIsOpen, setDoneTaskUntilIsOpen] = useState(false);
 
@@ -93,14 +100,13 @@ export default function Task({
     closeDoneTaskUntil();
   }
 
-  const now = moment.utc();
-
   return (
     <Card
       interactive={true}
       elevation={Elevation.TWO}
       style={{
-        height: "100%"
+        height: "100%",
+        backgroundColor: dateUntil ? "#CFF3D2" : undefined
       }}
     >
       {canEditTask &&
@@ -168,14 +174,24 @@ export default function Task({
             {doneTaskUntil && <Button icon="tick" onClick={() => setDoneTaskUntilIsOpen(true)} disabled={!task}>Done Until</Button>}
             {dismissTodo && <Button icon="swap-vertical" onClick={() => dismissTodo(task)} disabled={!task}>Dismiss</Button>}
             {canEditTask && <Button icon='edit' onClick={() => setEditTaskIsOpen(true)} disabled={!task}>Edit</Button>}
-            {selectTodo && <Button icon="pin" onClick={() => selectTodo(task)} disabled={!task}>To do</Button>}
+            {!dateUntil && selectTodo && <Button icon="pin" onClick={() => selectTodo(task)} disabled={!task}>To do</Button>}
             {deleteTask && <Button icon="trash" onClick={() => deleteTask(task)} disabled={!task}>Delete</Button>}
           </ButtonGroup>
 
-          <div style={{ float: "right", color: Colors.BLUE3 }}>{date}</div>
+          {!dateUntil &&
+            < div style={{ float: "right", color: Colors.BLUE3 }}>
+              {date}
+            </div>
+          }
+          {dateUntil &&
+            <div style={{ float: "right", color: Colors.BLUE3 }}>
+              Done Until: {dateUntil}
+            </div>
+          }
+
         </footer>
       </section>
-    </Card>
+    </Card >
   );
 }
 

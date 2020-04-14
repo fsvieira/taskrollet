@@ -8,7 +8,6 @@ import {
     Button,
     Callout,
     Intent,
-    Tag,
     Divider
 } from "@blueprintjs/core";
 
@@ -24,9 +23,9 @@ import moment from "moment";
 
 // https://blueprintjs.com/docs/#select/multi-select
 
-export default function SprintEditor ({addSprint}) {    
+export default function SprintEditor({ addSprint }) {
 
-    const [date, setDate] = useState(new Date());
+    const [date, setDate] = useState(moment().toDate());
     const [tags, setTags] = useState([]);
 
     const datePicker = <DatePicker onChange={date => setDate(moment(date).endOf("day"))} />;
@@ -42,7 +41,7 @@ export default function SprintEditor ({addSprint}) {
                 <Popover content={datePicker} position={Position.BOTTOM}>
                     <Button icon="timeline-events" text={moment(date).format("DD-MM-YYYY")} />
                 </Popover>
-                <Button icon="add" onClick={() => addSprint({tags, date: moment(date).endOf("day").toDate()})} />
+                <Button icon="add" onClick={() => addSprint({ tags, date: moment(date).endOf("day").toDate() })} />
             </div>
             <div>
                 <Divider />
