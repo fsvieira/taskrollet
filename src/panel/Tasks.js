@@ -19,6 +19,7 @@ export default function Tasks() {
     const {
         tasks,
         doneTask,
+        doneTaskUntil,
         deleteTask,
         selectTodo,
         setTags
@@ -59,6 +60,7 @@ export default function Tasks() {
         task => (<Task
             task={task}
             doneTask={doneTask}
+            doneTaskUntil={doneTaskUntil}
             deleteTask={deleteTask}
             selectTodo={selectTodoNotification}
             canEditTask={true}

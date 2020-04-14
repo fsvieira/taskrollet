@@ -1,5 +1,6 @@
 import PouchDB from 'pouchdb';
 import PouchDBFind from 'pouchdb-find';
+import { doneTaskUntil } from "../tasks/db";
 
 PouchDB.plugin(PouchDBFind);
 
@@ -7,6 +8,10 @@ export const dbTodo = new PouchDB('todo');
 
 export const selectTodo = async (task, tags) => {
     try {
+        if (task.doneUntil) {
+            await doneTaskUntil(task)
+        }
+
         const todo = await dbTodo.get("todo");
         return dbTodo.put({ ...todo, task: task._id, tags: tags || { all: true } });
     }

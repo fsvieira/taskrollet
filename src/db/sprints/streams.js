@@ -3,6 +3,21 @@ import { dbSprints } from "./db";
 import { $tasks } from "../tasks/streams";
 
 import moment from "moment";
+import { isTimeSameOrAfter } from "@blueprintjs/datetime/lib/esm/common/dateUtils";
+
+/*
+.map(tasks => {
+			console.log(tasks.filter(task => !task.doneUntil || moment().isAfter(moment(task.doneUntil))));
+			return tasks.filter(task => {
+				console.log(
+					task.doneUntil,
+					!task.doneUntil, moment().isAfter(moment(task.doneUntil)),
+				);
+				return !task.doneUntil || moment().isAfter(moment(task.doneUntil))
+			})
+		});
+
+*/
 
 export const $activeSprints = tags =>
 	fromBinder(sink => {
@@ -60,14 +75,16 @@ export const $activeSprintsTasks = (tags, filter = { deleted: null }) =>
 						return true;
 					});
 
-					sprint.openTasks = sprint.tasks.filter(task => !(task.deleted || task.done))
-						.sort((a, b) => moment(a.createdAt).valueOf() - moment(b.createdAt).valueOf());
+					sprint.openTasks = sprint.tasks.filter(
+						task => !(task.deleted || task.done || (task.doneUntil && moment(task.doneUntil).isAfter(moment())))
+					).sort((a, b) => moment(a.createdAt).valueOf() - moment(b.createdAt).valueOf());
 
 
 					sprint.doneTasksTotal = 0;
 					sprint.doneTasks = sprint.tasks.filter(
 						task => {
-							const r = !task.deleted && task.done;
+							const doneUntil = task.doneUntil && moment(task.doneUntil).isAfter(moment());
+							const r = !task.deleted && (task.done || doneUntil);
 
 							sprint.doneTasksTotal += r ? 1 : 0;
 
@@ -133,6 +150,6 @@ export const $activeSprintsTasks = (tags, filter = { deleted: null }) =>
 					sprint.date = sprint.date || moment(sprint.estimatedDueDate).endOf("month").toISOString();
 				}
 
-				return { sprints, tasks: tasks.filter(task => !(task.deleted || task.done)) };
+				return { sprints, tasks: tasks.filter(task => !(task.deleted || task.done || (task.doneUntil && moment(task.doneUntil).isAfter(moment())))) };
 			}
 		);

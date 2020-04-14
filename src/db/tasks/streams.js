@@ -1,5 +1,6 @@
 import { dbTasks } from "./db";
 import { fromBinder } from "baconjs";
+import moment from "moment";
 
 export const $tasks = (tags = { all: true }, selector) =>
 	fromBinder(sink => {
