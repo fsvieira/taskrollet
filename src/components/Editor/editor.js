@@ -69,16 +69,6 @@ export async function splitTask(task, textA, textB, onSave) {
 }
 
 export async function addTaskText(task, text, onSave) {
-    /*const tags = (text.match(/#([^\s]+)/g) || []).concat(["all"]).map(t => t.replace("#", ""));
-    const newTask = {
-        description: text,
-        tags: tags.reduce((acc, tag) => {
-            acc[tag] = true;
-            return acc;
-        }, {}),
-        _id: task ? task._id : undefined,
-        _rev: task ? task._rev : undefined
-    };*/
     const newTask = getTask(text, task);
 
     const msg = newTask.description.length > 10 ? newTask.description.substring(0, 10) + "..." : newTask.description;

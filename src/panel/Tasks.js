@@ -64,6 +64,7 @@ export default function Tasks() {
             deleteTask={deleteTask}
             selectTodo={selectTodoNotification}
             canEditTask={true}
+            canSplitTask={true}
             key={task._id}
         ></Task>)
     );

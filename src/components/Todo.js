@@ -95,6 +95,7 @@ export default function Todo() {
       doneTaskUntil={doneTaskUntil}
       dismissTodo={todo.total > 1 ? dismissTodo : undefined}
       canEditTask={true}
+      canSplitTask={true}
       deleteTask={deleteTask}
     >
       {taskHeader}
