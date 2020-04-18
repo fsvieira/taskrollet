@@ -3,8 +3,6 @@ import { dbTodo, selectTodo, setTodoFilterTags } from "./db";
 import { $activeSprintsTasks } from "../sprints/streams";
 import { fromBinder } from "baconjs"
 import moment from "moment";
-import { doneTaskUntil } from "../tasks/db";
-import { checkServerIdentity } from "tls";
 
 export const $todo = () =>
     fromBinder(sink => {
@@ -35,12 +33,12 @@ export const $activeTodo = tags =>
         }
 
         if (t.task) {
-            const dateUntil = t.task && t.task.doneUntil && moment(t.task.doneUntil).isAfter(moment())
-                ? moment(t.task.doneUntil).calendar() : undefined;
-
             console.log("There is alredy a selected task", t.task);
 
             const task = tasks.find(task => task._id === t.task);
+
+            const dateUntil = t.task && t.task.doneUntil && moment(t.task.doneUntil).isAfter(moment())
+                ? moment(t.task.doneUntil).calendar() : undefined;
 
             if (!task || task.deleted || task.done || dateUntil) {
                 console.log("Tasks is no longer available", dateUntil);
@@ -59,12 +57,16 @@ export const $activeTodo = tags =>
             let total = 0;
             for (let i = 0; i < tasks.length; i++) {
                 const task = tasks[i];
-                const rank = task.computed.sprints.length
-                    + (now - moment(task.createdAt).valueOf())
-                    + task.computed.sprints.reduce((acc, sprint) => {
-                        return acc + sprint.doneAvg - sprint.taskDueAvg
-                    }, 0)
-                    ;
+                const sprintLength = task.computed.sprints.length;
+                const time = (now - moment(task.createdAt).valueOf());
+                const sprintAvg = task.computed.sprints.reduce((acc, sprint) => {
+                    console.log("Sprint Calcs: ", sprint.doneAvg, sprint.taskDueAvg);
+                    return acc + Math.abs(sprint.doneAvg - sprint.taskDueAvg)
+                }, 0);
+
+                const rank = sprintLength + time + sprintAvg;
+
+                console.log(sprintLength, time, sprintAvg);
 
                 total += rank;
                 task.computed.rank = rank;

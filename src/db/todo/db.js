@@ -23,7 +23,7 @@ export const selectTodo = async (task, tags) => {
 export const dismissTodo = async () => {
     try {
         const { _id, _rev, tags } = await dbTodo.get("todo");
-        return dbTodo.put({ _id, _rev, tags });
+        return dbTodo.put({ _id, _rev, tags, task: null });
     }
     catch (e) {
         return dbTodo.put({ tags: { all: true } });
