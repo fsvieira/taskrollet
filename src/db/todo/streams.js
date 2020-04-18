@@ -3,6 +3,8 @@ import { dbTodo, selectTodo, setTodoFilterTags } from "./db";
 import { $activeSprintsTasks } from "../sprints/streams";
 import { fromBinder } from "baconjs"
 import moment from "moment";
+import { doneTaskUntil } from "../tasks/db";
+import { checkServerIdentity } from "tls";
 
 export const $todo = () =>
     fromBinder(sink => {
@@ -28,13 +30,20 @@ export const $activeTodo = tags =>
         const t = { ...todo };
 
         if (tasks.length === 0 && Object.keys(todo.tags).length > 1) {
+            console.log("There is no tasks!");
             setTodoFilterTags({ all: true });
         }
 
         if (t.task) {
+            const dateUntil = t.task && t.task.doneUntil && moment(t.task.doneUntil).isAfter(moment())
+                ? moment(t.task.doneUntil).calendar() : undefined;
+
+            console.log("There is alredy a selected task", t.task);
+
             const task = tasks.find(task => task._id === t.task);
 
-            if (!task || task.deleted || task.done) {
+            if (!task || task.deleted || task.done || dateUntil) {
+                console.log("Tasks is no longer available", dateUntil);
                 delete t.task;
             }
             else {
@@ -69,10 +78,15 @@ export const $activeTodo = tags =>
 
             const r = Math.random();
 
+            console.log("Select", tasks, r);
+
             let accum = 0;
             for (let i = 0; i < tasks.length; i++) {
                 const task = tasks[i];
                 const a = accum + task.computed.rank;
+
+                console.log(a, a >= r, task);
+
                 if (a >= r) {
                     t.task = task;
                     selectTodo(task, tags);
@@ -84,6 +98,7 @@ export const $activeTodo = tags =>
             }
         }
 
+        console.log("Return", t);
         return t;
     });
 
