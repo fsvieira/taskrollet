@@ -2,8 +2,11 @@ import { db, changes } from "../db";
 
 export { db, changes };
 
-
 export const selectTodo = async task => {
+    if (task.doneUntil) {
+        await doneTaskUntil(task)
+    }
+
     return db.update(tx => [
         tx.addRecord({
             type: "todo",
@@ -18,45 +21,9 @@ export const selectTodo = async task => {
             }
         })
     ]);
-
-    /*
-    try {
-        const todo = await dbTodo.get("todo");
-        return dbTodo.put({ todoID: "todo", ...todo, taskID: task.taskID, tags: { all: true } });
-    }
-    catch (e) {
-        return dbTodo.put({ todoID: "todo", taskID: task.taskID, tags: { all: true } });
-    }*/
-    // try {
-    // console.log("Select todo");
-    /*
-    const todo = await db.query(
-        q => q.findRecord({ type: "todo", id: "todo" })
-    ).then(
-        todo => console.log("Found TODO: ", todo),
-        err => console.log("Error TODO: ", err)
-    );
- 
-    return todo;*/
-    // return { todoID: "todo", taskID: task.taskID, tags: { all: true } };
-
-    /*
-        return dbTodo.put({ id: "todo", ...todo, taskID: task.taskID, tags: { all: true } });
-    }
-    catch (e) {
-        return dbTodo.put({ todoID: "todo", taskID: task.taskID, tags: { all: true } });
-    }*/
 }
 
 export const dismissTodo = async () => {
-    /*
-    try {
-        const { tags } = await dbTodo.get("todo");
-        return dbTodo.put({ todoID: "todo", tags });
-    }
-    catch (e) {
-        return dbTodo.put({ todoID: "todo", tags: { all: true } });
-    }*/
     try {
         const todo = await db.query(q => q.findRecord({ type: "todo", id: "todo" }));
 

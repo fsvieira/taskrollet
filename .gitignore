@@ -1,5 +1,4 @@
-/www
-/src/js/tags
 package-lock.json
 .env
+node_modules
 

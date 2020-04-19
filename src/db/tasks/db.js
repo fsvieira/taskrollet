@@ -3,7 +3,7 @@ import moment from "moment";
 
 export { db, changes };
 
-export const addTask = ({ computed, tags, ...task }) => {
+export const addTask = ({ computed, tags, ...task }, createdAt) => {
     const now = moment.utc().toDate();
     const nTags = [];
 
@@ -12,8 +12,6 @@ export const addTask = ({ computed, tags, ...task }) => {
             nTags.push(tag);
         }
     }
-
-    console.log("ADD TASK ", task, nTags);
 
     return db.update(tx => [
         ...nTags.map(tag => (tx.addRecord({
@@ -27,7 +25,7 @@ export const addTask = ({ computed, tags, ...task }) => {
                 ...task.attributes,
                 done: false,
                 deleted: false,
-                createdAt: now,
+                createdAt: createdAt || now,
                 updatedAt: now
             },
             relationships: {
@@ -43,11 +41,6 @@ export const addTask = ({ computed, tags, ...task }) => {
         })
     ]);
 }
-
-/*
-export const editTask = ({ computed, ...task }) => db.update(
-    tx => tx.updateRecord({ ...task, updatedAt: moment().toDate() })
-);*/
 
 export const editTask = ({ computed, tags, ...task }) => {
     const now = moment.utc().toDate();
@@ -98,6 +91,18 @@ export const doneTask = ({ computed, ...task }) => db.update(
     })
 );
 
+export const doneTaskUntil = ({ computed, ...task }, doneUntil) => db.update(
+    tx => tx.updateRecord({
+        id: task.id,
+        attributes: {
+            ...task.attributes,
+            doneUntil,
+            updatedAt: moment().toDate()
+        },
+        relationships: task.relationships
+    })
+);
+
 export const deleteTask = ({ computed, ...task }) => db.update(
     tx => tx.updateRecord({
         id: task.id,
@@ -109,3 +114,5 @@ export const deleteTask = ({ computed, ...task }) => db.update(
         relationships: task.relationships
     })
 );
+
+

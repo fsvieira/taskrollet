@@ -69,7 +69,6 @@ export const $activeTodo = tags =>
         if (!t.relationships.task && tasks.length) {
             const now = moment().valueOf();
             let total = 0;
-
             for (let i = 0; i < tasks.length; i++) {
                 const task = tasks[i];
                 const rank = task.computed.sprints.length
@@ -97,7 +96,7 @@ export const $activeTodo = tags =>
                 const a = accum + task.computed.rank;
                 if (a >= r) {
                     t.task = task;
-                    selectTodo(task);
+                    selectTodo(task, tags);
                     break;
                 }
                 else {
