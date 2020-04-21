@@ -23,6 +23,8 @@ export const $todo = () =>
         return () => todoChanges.cancel();
     });
 
+let selectedTasks = [];
+
 export const $activeTodo = tags =>
     $todo().combine($activeSprintsTasks(tags), (todo, { sprints, tasks }) => {
         const t = { ...todo };
@@ -32,16 +34,31 @@ export const $activeTodo = tags =>
             setTodoFilterTags({ all: true });
         }
 
+        if (selectedTasks.length > 10) {
+            selectedTasks.shift();
+        }
+
         if (t.task) {
             console.log("There is alredy a selected task", t.task);
 
             const task = tasks.find(task => task._id === t.task);
+
+            if (selectedTasks.indexOf(t.task) === -1) {
+                selectedTasks.push(t.task);
+            }
 
             const dateUntil = t.task && t.task.doneUntil && moment(t.task.doneUntil).isAfter(moment())
                 ? moment(t.task.doneUntil).calendar() : undefined;
 
             if (!task || task.deleted || task.done || dateUntil) {
                 console.log("Tasks is no longer available", dateUntil);
+
+                const index = selectedTasks.indexOf(t.task);
+
+                if (index !== -1) {
+                    selectedTasks.splice(index, 1);
+                }
+
                 delete t.task;
             }
             else {
@@ -55,6 +72,11 @@ export const $activeTodo = tags =>
             // t.task = tasks[Math.floor(Math.random() * tasks.length)];
             const now = moment().valueOf();
             let total = 0;
+
+            if (tasks.filter(t => !selectedTasks.includes(t._id)).length === 0) {
+                selectedTasks = [];
+            }
+
             for (let i = 0; i < tasks.length; i++) {
                 const task = tasks[i];
                 const sprintLength = task.computed.sprints.length;
@@ -64,13 +86,15 @@ export const $activeTodo = tags =>
                     return acc + Math.abs(sprint.doneAvg - sprint.taskDueAvg)
                 }, 0);
 
-                const rank = sprintLength + time + sprintAvg;
+                const rank = selectedTasks.includes(task._id) ? 0 : sprintLength + time + sprintAvg;
 
                 console.log(sprintLength, time, sprintAvg);
 
                 total += rank;
                 task.computed.rank = rank;
             }
+
+            selectedTasks.shift();
 
             tasks.forEach(task => {
                 task.computed.rank = task.computed.rank / total;
@@ -99,6 +123,8 @@ export const $activeTodo = tags =>
                 }
             }
         }
+
+        console.log(selectedTasks, t, selectedTasks.includes(t.task._id));
 
         console.log("Return", t);
         return t;
