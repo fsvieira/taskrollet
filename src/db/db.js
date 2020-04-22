@@ -11,6 +11,7 @@ const schema = new Schema({
 				description: { type: "string" },
 				done: { type: "boolean" },
 				deleted: { type: "boolean" },
+				doneUntil: { type: "date-time" },
 				createdAt: { type: "date-time" },
 				updatedAt: { type: "date-time" }
 			},
