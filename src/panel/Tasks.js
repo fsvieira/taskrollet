@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { useActiveTasks } from "../db/tasks/hooks";
 import Task from "../components/Task";
@@ -14,7 +14,6 @@ import {
 import { saveAs } from 'file-saver';
 import moment from 'moment';
 import SelectTags from '../components/SelectTags';
-import TaskEditor from "../components/TaskEditor";
 
 export default function Tasks() {
     const {
@@ -24,6 +23,8 @@ export default function Tasks() {
         selectTodo,
         setTags
     } = useActiveTasks();
+
+    const [showSearch, setShowSearch] = useState(false);
 
     if (tasks.length === 0) {
         return (<Card interactive={true} elevation={Elevation.TWO} style={{ margin: '1em' }}>
@@ -77,10 +78,25 @@ export default function Tasks() {
                 padding: "0.2em",
                 backgroundColor: Colors.BLUE5
             }}>
-                <Button icon="download" onClick={exportTasks}>Export</Button>
+                <Button
+                    icon="download"
+                    onClick={exportTasks}
+                    style={{ float: "left" }}
+                ></Button>
+
                 <SelectTags
                     onChange={tags => setTags(tags)}
+                    noText={true}
+                    style={{ float: "left" }}
                 />
+
+                <div style={{ float: "left" }}>
+                    <Button
+                        icon="search-template"
+                        onClick={() => setShowSearch(!showSearch)}
+                    ></Button>
+                    {showSearch && <input className="bp3-input" type="text" placeholder="Search" />}
+                </div>
             </div>
             <article style={{ marginTop: "3em" }}>
                 {tasksList}
