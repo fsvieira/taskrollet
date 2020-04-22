@@ -11,8 +11,8 @@ import {
 
 // https://blueprintjs.com/docs/#select/multi-select
 
-export default function SelectTags({ onChange, label, filterTags = { all: true } }) {
-    const { tags, selectedTags, setSelectedTags } = useActiveTags();
+export default function SelectTags({ onChange, label, filterTags = { all: true }, filterDoneUntil }) {
+    const { tags, selectedTags, setSelectedTags } = useActiveTags(filterDoneUntil);
     // const [selectedTags, setSelectedTags] = useState(filterTags);
 
     const checks = [];

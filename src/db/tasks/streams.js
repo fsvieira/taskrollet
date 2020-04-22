@@ -2,7 +2,7 @@ import { dbTasks } from "./db";
 import { fromBinder } from "baconjs";
 import moment from "moment";
 
-export const $tasks = (tags = { all: true }, selector) =>
+export const $tasks = (tags = { all: true }, selector, filterDoneUntil = false) =>
 	fromBinder(sink => {
 		let { done, deleted } = selector || {
 			done: false,
@@ -17,6 +17,12 @@ export const $tasks = (tags = { all: true }, selector) =>
 
 			const tasks = docs.rows.map(({ doc }) => doc).filter(task => {
 				if (!task.tags) return false;
+
+				const dateUntil = filterDoneUntil && task && task.doneUntil && moment(task.doneUntil).isAfter(moment());
+
+				if (dateUntil) {
+					return false;
+				}
 
 				const taskDone = !!task.done;
 				const taskDeleted = !!task.deleted;
@@ -52,12 +58,13 @@ export const $tasks = (tags = { all: true }, selector) =>
 		return () => taskChanges.cancel();
 	});
 
-export const $activeTasks = tags => $tasks(tags, { done: null, deleted: null });
+export const $activeTasks = (tags, filterDoneUntil) => $tasks(tags, { done: null, deleted: null }, filterDoneUntil);
 
-export const $activeTags = tags => $activeTasks(tags).map(tasks => {
+export const $activeTags = (tags, filterDoneUntil) => $activeTasks(tags, filterDoneUntil).map(tasks => {
 	const tags = {};
 	for (let i = 0; i < tasks.length; i++) {
 		const task = tasks[i];
+
 		for (let tag in task.tags) {
 			tags[tag] = true;
 		}
@@ -65,4 +72,3 @@ export const $activeTags = tags => $activeTasks(tags).map(tasks => {
 
 	return tags;
 });
-

@@ -61,6 +61,7 @@ export default function Todo() {
           <SelectTags
             onChange={tags => setTags(tags)}
             filterTags={todo.tags}
+            filterDoneUntil={true}
           />
         </span>
         <p style={{ marginLeft: "0.5em", marginRight: "0.5em" }}>Tasks: {openTasksTotal} Active, {doneTasksTotal} Done!</p>

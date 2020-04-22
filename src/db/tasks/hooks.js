@@ -3,13 +3,13 @@ import { $activeTags, $activeTasks } from "./streams";
 import { doneTask, doneTaskUntil, deleteTask } from "./db";
 import { selectTodo } from "../todo/db";
 
-export const useActiveTags = () => {
+export const useActiveTags = filterDoneUntil => {
 	const [tags, setTags] = useState({ all: true });
 	const [selectedTags, setSelectedTags] = useState({});
 
 	useEffect(
 		() => {
-			const cancel = $activeTags(selectedTags).onValue(setTags);
+			const cancel = $activeTags(selectedTags, filterDoneUntil).onValue(setTags);
 
 			return () => cancel();
 		},
