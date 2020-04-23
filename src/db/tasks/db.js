@@ -53,6 +53,8 @@ export const editTask = ({ computed, tags, ...task }) => {
         }
     }
 
+    console.log("TASK ID", task.id);
+
     return db.update(tx => [
         ...nTags.map(tag => (tx.addRecord({
             type: "tag",
@@ -81,6 +83,7 @@ export const editTask = ({ computed, tags, ...task }) => {
 
 export const doneTask = ({ computed, ...task }) => db.update(
     tx => tx.updateRecord({
+        type: "task",
         id: task.id,
         attributes: {
             ...task.attributes,
@@ -91,8 +94,8 @@ export const doneTask = ({ computed, ...task }) => db.update(
     })
 );
 
-export const doneTaskUntil = ({ computed, ...task }, doneUntil) => db.update(
-    tx => tx.updateRecord({
+export const doneTaskUntil = ({ computed, ...task }, doneUntil) => {
+    console.log({
         id: task.id,
         attributes: {
             ...task.attributes,
@@ -100,11 +103,25 @@ export const doneTaskUntil = ({ computed, ...task }, doneUntil) => db.update(
             updatedAt: moment().toDate()
         },
         relationships: task.relationships
-    })
-);
+    });
+
+    return db.update(
+        tx => tx.updateRecord({
+            type: "task",
+            id: task.id,
+            attributes: {
+                ...task.attributes,
+                doneUntil,
+                updatedAt: moment().toDate()
+            },
+            relationships: task.relationships
+        })
+    )
+};
 
 export const deleteTask = ({ computed, ...task }) => db.update(
     tx => tx.updateRecord({
+        type: "task",
         id: task.id,
         attributes: {
             ...task.attributes,

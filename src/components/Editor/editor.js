@@ -1,5 +1,5 @@
 import { AppToaster } from '../Notification';
-import { addTask } from '../../db/tasks/db';
+import { addTask, editTask } from '../../db/tasks/db';
 import { Intent } from "@blueprintjs/core";
 
 export function getTags(text) {
@@ -75,7 +75,7 @@ export async function addTaskText(task, text, onSave) {
     const msg = newTask.attributes.description.length > 10 ? newTask.attributes.description.substring(0, 10) + "..." : newTask.attributes.description;
 
     try {
-        await addTask(newTask);
+        await (newTask.id ? editTask(newTask) : addTask(newTask));
 
         AppToaster.show({
             message: `Task ${task ? "Saved" : "Added"}: ${msg}`,
