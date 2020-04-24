@@ -11,8 +11,9 @@ import {
 
 // https://blueprintjs.com/docs/#select/multi-select
 
-export default function SelectTags({ onChange, label, filterTags = { all: true }, filterDoneUntil }) {
+export default function SelectTags({ onChange, label, noText, filterTags = { all: true }, filterDoneUntil }) {
     const { tags, selectedTags, setSelectedTags } = useActiveTags(filterDoneUntil);
+
     // const [selectedTags, setSelectedTags] = useState(filterTags);
 
     const checks = [];
@@ -46,7 +47,7 @@ export default function SelectTags({ onChange, label, filterTags = { all: true }
 
     return (
         <Popover content={tagsSelector} position={Position.BOTTOM}>
-            <Button icon="tag" text={label || "filter"} />
+            <Button icon="tag" text={noText ? "" : label || "filter"} />
         </Popover>
     );
 }

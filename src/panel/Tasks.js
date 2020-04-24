@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { useActiveTasks } from "../db/tasks/hooks";
 import Task from "../components/Task";
@@ -24,6 +24,11 @@ export default function Tasks() {
         selectTodo,
         setTags
     } = useActiveTasks();
+
+    const [showSearch, setShowSearch] = useState(false);
+    const [searchText, setSearchText] = useState("");
+
+    console.log("ST", searchText);
 
     if (tasks.length === 0) {
         return (<Card interactive={true} elevation={Elevation.TWO} style={{ margin: '1em' }}>
@@ -56,7 +61,7 @@ export default function Tasks() {
         saveAs(tasksBlob, `tasks-${moment().toISOString()}.json`);
     }
 
-    const tasksList = tasks.map(
+    const tasksList = tasks.filter(t => t.description.toLowerCase().indexOf(searchText.toLocaleLowerCase()) !== -1).map(
         task => (<Task
             task={task}
             doneTask={doneTask}
@@ -79,10 +84,31 @@ export default function Tasks() {
                 padding: "0.2em",
                 backgroundColor: Colors.BLUE5
             }}>
-                <Button icon="download" onClick={exportTasks}>Export</Button>
+                <Button
+                    icon="download"
+                    onClick={exportTasks}
+                    style={{ float: "left" }}
+                ></Button>
+
                 <SelectTags
                     onChange={tags => setTags(tags)}
+                    noText={true}
+                    style={{ float: "left" }}
                 />
+
+                <div style={{ float: "left" }}>
+                    <Button
+                        icon="search-template"
+                        onClick={() => setShowSearch(!showSearch)}
+                    ></Button>
+                    {showSearch && <input
+                        className="bp3-input"
+                        type="text"
+                        placeholder="Search"
+                        value={searchText}
+                        onChange={e => setSearchText(e.target.value)}
+                    />}
+                </div>
             </div>
             <article style={{ marginTop: "3em" }}>
                 {tasksList}
