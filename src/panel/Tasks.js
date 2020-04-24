@@ -65,7 +65,7 @@ export default function Tasks() {
             selectTodo={selectTodoNotification}
             canEditTask={true}
             canSplitTask={true}
-            key={task._id}
+            key={task.id}
         ></Task>)
     );
 

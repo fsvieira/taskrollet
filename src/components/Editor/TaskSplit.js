@@ -20,8 +20,8 @@ export default function TaskSplit({
   onSave
 }) {
 
-  const [valueA, setValueA] = useState(task ? task.description : "");
-  const [valueB, setValueB] = useState(task ? task.description : "");
+  const [valueA, setValueA] = useState(task ? task.attributes.description : "");
+  const [valueB, setValueB] = useState(task ? task.attributes.description : "");
 
   const { tags } = useActiveTags();
 
