@@ -28,8 +28,6 @@ export default function Tasks() {
     const [showSearch, setShowSearch] = useState(false);
     const [searchText, setSearchText] = useState("");
 
-    console.log("ST", searchText);
-
     if (tasks.length === 0) {
         return (<Card interactive={true} elevation={Elevation.TWO} style={{ margin: '1em' }}>
             <p>Your task list is empty, please add a task.</p>

@@ -78,8 +78,6 @@ export default function Task({
 
   const doneTaskUntilSelectTime = async e => {
     const value = e.target.value;
-    console.log("TODO: Value ==> ", value);
-
     let time;
 
     switch (value) {

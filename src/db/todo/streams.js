@@ -30,7 +30,6 @@ export const $activeTodo = tags =>
         const t = { ...todo };
 
         if (tasks.length === 0 && Object.keys(todo.tags).length > 1) {
-            console.log("There is no tasks!");
             setTodoFilterTags({ all: true });
         }
 
@@ -39,8 +38,6 @@ export const $activeTodo = tags =>
         }
 
         if (t.task) {
-            console.log("There is alredy a selected task", t.task);
-
             const task = tasks.find(task => task._id === t.task);
 
             if (selectedTasks.indexOf(t.task) === -1) {
@@ -51,8 +48,6 @@ export const $activeTodo = tags =>
                 ? moment(t.task.doneUntil).calendar() : undefined;
 
             if (!task || task.deleted || task.done || dateUntil) {
-                console.log("Tasks is no longer available", dateUntil);
-
                 const index = selectedTasks.indexOf(t.task);
 
                 if (index !== -1) {
@@ -81,20 +76,16 @@ export const $activeTodo = tags =>
                 const task = tasks[i];
                 const sprintLength = task.computed.sprints.length;
                 const time = (now - moment(task.createdAt).valueOf());
-                const sprintAvg = task.computed.sprints.reduce((acc, sprint) => {
-                    console.log("Sprint Calcs: ", sprint.doneAvg, sprint.taskDueAvg);
-                    return acc + Math.abs(sprint.doneAvg - sprint.taskDueAvg)
-                }, 0);
+                const sprintAvg = task.computed.sprints.reduce((acc, sprint) =>
+                    acc + Math.abs(sprint.doneAvg - sprint.taskDueAvg)
+                    , 0
+                );
 
                 const rank = selectedTasks.includes(task._id) ? 0 : sprintLength + time + sprintAvg;
-
-                console.log(sprintLength, time, sprintAvg);
 
                 total += rank;
                 task.computed.rank = rank;
             }
-
-            selectedTasks.shift();
 
             tasks.forEach(task => {
                 task.computed.rank = task.computed.rank / total;
@@ -104,14 +95,19 @@ export const $activeTodo = tags =>
 
             const r = Math.random();
 
-            console.log("Select", tasks, r);
+            console.log("TASKS, SELECTED TASKS", tasks, selectedTasks);
 
             let accum = 0;
             for (let i = 0; i < tasks.length; i++) {
                 const task = tasks[i];
+
                 const a = accum + task.computed.rank;
 
-                console.log(a, a >= r, task);
+                console.log(
+                    `TASK ${i}`,
+                    task,
+                    `rank=${task.computed.rank}, accum=${a}, select=${r}`
+                );
 
                 if (a >= r) {
                     t.task = task;
@@ -124,9 +120,6 @@ export const $activeTodo = tags =>
             }
         }
 
-        console.log(selectedTasks, t, selectedTasks.includes(t.task._id));
-
-        console.log("Return", t);
         return t;
     });
 
