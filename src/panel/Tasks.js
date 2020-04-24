@@ -25,6 +25,9 @@ export default function Tasks() {
     } = useActiveTasks();
 
     const [showSearch, setShowSearch] = useState(false);
+    const [searchText, setSearchText] = useState("");
+
+    console.log("ST", searchText);
 
     if (tasks.length === 0) {
         return (<Card interactive={true} elevation={Elevation.TWO} style={{ margin: '1em' }}>
@@ -57,7 +60,7 @@ export default function Tasks() {
         saveAs(tasksBlob, `tasks-${moment().toISOString()}.json`);
     }
 
-    const tasksList = tasks.map(
+    const tasksList = tasks.filter(t => t.description.toLowerCase().indexOf(searchText.toLocaleLowerCase()) !== -1).map(
         task => (<Task
             task={task}
             doneTask={doneTask}
@@ -95,7 +98,13 @@ export default function Tasks() {
                         icon="search-template"
                         onClick={() => setShowSearch(!showSearch)}
                     ></Button>
-                    {showSearch && <input className="bp3-input" type="text" placeholder="Search" />}
+                    {showSearch && <input
+                        className="bp3-input"
+                        type="text"
+                        placeholder="Search"
+                        value={searchText}
+                        onChange={e => setSearchText(e.target.value)}
+                    />}
                 </div>
             </div>
             <article style={{ marginTop: "3em" }}>
