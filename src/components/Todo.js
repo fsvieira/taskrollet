@@ -19,15 +19,15 @@ export default function Todo() {
   const { todo, setTags, doneTask, doneTaskUntil, dismissTodo, deleteTask } = useTodo();
 
   let taskHeader;
-  if (todo && todo.task) {
+  if (todo && todo.relationships && todo.relationships.task) {
 
-    const empty = todo.task.computed.sprints.find(s => s.empty);
-    const sprints = todo.task.computed.sprints.filter(s => !s.empty);
+    const empty = todo.relationships.task.computed.sprints.find(s => s.empty);
+    const sprints = todo.relationships.task.computed.sprints.filter(s => !s.empty);
 
     const taskDueAvg = sprints.reduce((avg, s) => (avg + s.taskDueAvg) / 2, empty.taskDueAvg);
     const doneAvg = sprints.reduce((avg, s) => (avg + s.doneAvg) / 2, empty.doneAvg);
     const nextTodoAvgDueTime = (taskDueAvg + doneAvg) / 2;
-    const inSprints = todo.task.computed.sprints.length - 1;
+    const inSprints = todo.relationships.task.computed.sprints.length - 1;
     const { doneTasksTotal, openTasksTotal, total } = empty;
 
     const estimatedDueDate = openTasksTotal * nextTodoAvgDueTime;
@@ -90,7 +90,7 @@ export default function Todo() {
 
   return (
     <Task
-      task={todo.task}
+      task={todo.relationships ? todo.relationships.task : undefined}
       doneTask={doneTask}
       doneTaskUntil={doneTaskUntil}
       dismissTodo={todo.total > 1 ? dismissTodo : undefined}

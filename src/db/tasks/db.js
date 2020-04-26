@@ -1,7 +1,7 @@
-import { db, genID, changes } from "../db";
+import { db, genID, changes, onReady } from "../db";
 import moment from "moment";
 
-export { db, changes };
+export { db, changes, onReady };
 
 export const addTask = ({ computed, tags, ...task }, createdAt) => {
     const now = moment.utc().toDate();

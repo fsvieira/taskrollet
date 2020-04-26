@@ -1,4 +1,4 @@
-import { db, genID, changes } from "../db";
+import { db, changes } from "../db";
 import moment from "moment";
 
 export { db, changes };

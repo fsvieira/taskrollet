@@ -1,24 +1,26 @@
-import { db, selectTodo, setTodoFilterTags, changes } from "./db";
+import { db, selectTodo, setTodoFilterTags, changes, onReady } from "./db";
 import { $activeSprintsTasks } from "../sprints/streams";
 import { fromBinder } from "baconjs"
 import moment from "moment";
 
 export const $todo = () =>
     fromBinder(sink => {
-        const find = () => db.query(q => q.findRecord({ type: "todo", id: "todo" })).then(
-            todo => { console.log("TODO::: ", todo); sink(todo); },
-            err => {
-                db.requestQueue.skip();
+        const find = () => onReady().then(
+            () => db.query(q => q.findRecord({ type: "todo", id: "todo" })).then(
+                todo => { console.log("TODO::: ", todo); sink(todo); },
+                err => {
+                    db.requestQueue.skip();
 
-                console.log("TODO", err);
-                sink({
-                    relationships: {
-                        tags: {
-                            data: [{ type: "tag", id: "all" }]
+                    console.log("TODO", err);
+                    sink({
+                        relationships: {
+                            tags: {
+                                data: [{ type: "tag", id: "all" }]
+                            }
                         }
-                    }
-                })
-            }
+                    })
+                }
+            )
         );
 
         /*
@@ -57,10 +59,10 @@ export const $activeTodo = tags =>
             const task = tasks.find(task => task.id === t.relationships.task.id);
 
             if (!task || task.deleted || task.done) {
-                delete t.task;
+                delete t.relationships.task;
             }
             else {
-                t.task = task;
+                t.relationships.task = task;
             }
 
             t.total = tasks.length;
@@ -95,7 +97,7 @@ export const $activeTodo = tags =>
                 const task = tasks[i];
                 const a = accum + task.computed.rank;
                 if (a >= r) {
-                    t.task = task;
+                    t.relationships.task = task;
                     selectTodo(task, tags);
                     break;
                 }

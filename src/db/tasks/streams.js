@@ -1,4 +1,4 @@
-import { db, changes } from "./db";
+import { db, changes, onReady } from "./db";
 import { fromBinder } from "baconjs";
 import moment from "moment";
 
@@ -16,17 +16,21 @@ export const $tasks = (tags = { all: true }, selector) =>
 		}*/
 
 
+		console.log("Selector", selector);
 
-		const find = () => db.query(
-			q => q.findRecords("task").filter(
-				...selector,
-				/*
-				{ attribute: "deleted", value: false },
-				{ attribute: "done", value: false }*/
-				// { relation: "tags", records: filterTags }
+		const find = () => onReady().then(
+			() => db.query(
+				q => q.findRecords("task").filter(
+					...selector
+					// { attribute: "deleted", value: false },
+					// { attribute: "done", value: false }
+					// { relation: "tags", records: filterTags }
+				)
 			)
 		).then(
 			tasks => {
+				console.log(tasks.length, tasks);
+
 				sink(tasks.filter(
 					({ relationships: { tags: { data } } }) => {
 						const s = new Set(data.map(({ id }) => id));
@@ -58,6 +62,7 @@ export const $tasks = (tags = { all: true }, selector) =>
 		const cancel = changes(find);
 
 		find();
+		// setTimeout(find, 1000);
 
 		return cancel;
 	});

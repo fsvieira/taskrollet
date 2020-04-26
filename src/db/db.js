@@ -67,20 +67,30 @@ const coordinator = new Coordinator({
 const backupMemorySync = new SyncStrategy({
 	source: "memory",
 	target: "backup",
-	blocking: false
+	blocking: true
 });
 
 coordinator.addStrategy(backupMemorySync);
+
+let ready = false;
 
 async function setup() {
 	let transform = await backup.pull(q => q.findRecords());
 	await db.sync(transform);
 	await coordinator.activate();
+	ready = true;
 }
 
 setup();
 
 const genID = uuid;
 
-export { db, genID, changes };
+const onReady = () => new Promise(
+	resolve => {
+		const r = () => ready ? resolve(ready) : setTimeout(r, 1000);
+		r();
+	}
+);
+
+export { db, genID, changes, onReady };
 

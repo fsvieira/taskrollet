@@ -3,7 +3,6 @@ import { db, changes } from "./db";
 import { $tasks } from "../tasks/streams";
 
 import moment from "moment";
-import { isTimeSameOrAfter } from "@blueprintjs/datetime/lib/esm/common/dateUtils";
 
 /*
 .map(tasks => {

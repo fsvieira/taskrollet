@@ -1,7 +1,7 @@
-import { db, changes } from "../db";
+import { db, changes, onReady } from "../db";
 import { doneTaskUntil } from "../tasks/db"
 
-export { db, changes };
+export { db, changes, onReady };
 
 export const selectTodo = async task => {
     if (task.doneUntil) {
