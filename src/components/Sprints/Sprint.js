@@ -17,7 +17,7 @@ import SprintStats from "./SprintStats";
 import moment from "moment";
 
 export default function Sprint({ sprint, deleteSprint }) {
-  const date = moment(sprint.date).format("DD-MM-YYYY");
+  const date = moment(sprint.dueDate).format("DD-MM-YYYY");
 
   const confirmDelete = (
     <div style={{ padding: "0.5em" }}>
@@ -59,7 +59,7 @@ export default function Sprint({ sprint, deleteSprint }) {
     </p>
   );
 
-  const endDateTime = moment(sprint.date).valueOf();
+  const endDateTime = moment(sprint.dueDate).valueOf();
   let intent = Intent.SUCCESS;
   if (endDateTime < sprint.estimatedDueDate) {
     intent = Intent.DANGER;
@@ -73,6 +73,13 @@ export default function Sprint({ sprint, deleteSprint }) {
     }
   }
 
+  console.log(sprint);
+
+  const tags = sprint.relationships.tags.data.reduce((acc, tag) => {
+    acc[tag.id] = true;
+    return acc;
+  }, {});
+
   return (
     <Callout
       intent={intent}
@@ -81,7 +88,7 @@ export default function Sprint({ sprint, deleteSprint }) {
       style={{ marginBottom: "0.5em" }}
     >
       <Divider />
-      <TagsList tags={sprint.tags} />
+      <TagsList tags={tags} />
       <SprintStats sprint={sprint} />
     </Callout>
   );

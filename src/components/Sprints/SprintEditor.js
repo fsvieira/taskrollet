@@ -41,7 +41,7 @@ export default function SprintEditor({ addSprint }) {
                 <Popover content={datePicker} position={Position.BOTTOM}>
                     <Button icon="timeline-events" text={moment(date).format("DD-MM-YYYY")} />
                 </Popover>
-                <Button icon="add" onClick={() => addSprint({ tags, date: moment(date).endOf("day").toDate() })} />
+                <Button icon="add" onClick={() => addSprint({ tags, dueDate: moment(date).endOf("day").toDate() })} />
             </div>
             <div>
                 <Divider />

@@ -1,5 +1,5 @@
 import { fromBinder, interval } from "baconjs";
-import { db, changes } from "./db";
+import { db, changes, onReady } from "./db";
 import { $tasks } from "../tasks/streams";
 
 import moment from "moment";
@@ -20,8 +20,8 @@ import moment from "moment";
 
 export const $activeSprints = tags =>
 	fromBinder(sink => {
-		// const find = () => db.query(q => q.findRecords("sprint")).then(sink);
-		const find = () => sink([]);
+		const find = () => onReady().then(() => db.query(q => q.findRecords("sprint"))).then(sink);
+		// const find = () => sink([]);
 
 		const cancel = changes(find);
 
@@ -47,6 +47,8 @@ export const $activeSprintsTasks = (tags, filter = [{ attribute: "deleted", valu
 		.combine(
 			$tasks(tags, filter).combine($interval(1000 * 60), tasks => tasks),
 			(sprints, tasks) => {
+				console.log("SPRINTS", sprints);
+
 				const now = moment().valueOf();
 
 				sprints = sprints.concat([{ tags: [], empty: true }]);
@@ -111,7 +113,7 @@ export const $activeSprintsTasks = (tags, filter = [{ attribute: "deleted", valu
 							return avg === null ? delta : (avg + delta) / 2;
 						}, null);
 
-						const dueTime = moment(sprint.date).valueOf() - now;
+						const dueTime = moment(sprint.dueDate).valueOf() - now;
 						sprint.taskDueAvg = dueTime / sprint.openTasks.length;
 
 						sprint.openTasks.forEach(task => {
@@ -138,7 +140,7 @@ export const $activeSprintsTasks = (tags, filter = [{ attribute: "deleted", valu
 					// sprint.doneTasksTotal = sprint.doneTasks.length;
 					sprint.total = sprint.openTasksTotal + sprint.doneTasksTotal;
 
-					sprint.date = sprint.date || moment(sprint.estimatedDueDate).endOf("month").toISOString();
+					sprint.dueDate = sprint.dueDate || moment(sprint.estimatedDueDate).endOf("month").toISOString();
 				}
 
 				return { sprints, tasks: tasks.filter(task => !(task.deleted || task.done || (task.doneUntil && moment(task.doneUntil).isAfter(moment())))) };

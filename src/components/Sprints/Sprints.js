@@ -23,10 +23,10 @@ export default function Sprints({ onClose, isOpen }) {
   } = useActiveSprints();
 
   const renderSprints = (sprints || []).filter(s => !s.empty).sort((a, b) => {
-    const aEndDateTime = moment(a.date).valueOf();
+    const aEndDateTime = moment(a.dueDate).valueOf();
     const at = (aEndDateTime - a.estimatedDueDate);
 
-    const bEndDateTime = moment(b.date).valueOf();
+    const bEndDateTime = moment(b.dueDate).valueOf();
     const bt = (bEndDateTime - b.estimatedDueDate);
 
     return at - bt;
