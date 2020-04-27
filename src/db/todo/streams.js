@@ -76,7 +76,7 @@ export const $activeTodo = tags =>
                 const rank = task.computed.sprints.length
                     + (now - moment(task.createdAt).valueOf())
                     + task.computed.sprints.reduce((acc, sprint) => {
-                        return acc + sprint.doneAvg - sprint.taskDueAvg
+                        return acc + sprint.attributes.doneAvg - sprint.attributes.taskDueAvg
                     }, 0)
                     ;
 

@@ -21,11 +21,11 @@ export default function Todo() {
   let taskHeader;
   if (todo && todo.relationships && todo.relationships.task) {
 
-    const empty = todo.relationships.task.computed.sprints.find(s => s.empty);
-    const sprints = todo.relationships.task.computed.sprints.filter(s => !s.empty);
+    const empty = todo.relationships.task.computed.sprints.find(s => s.attributes.empty);
+    const sprints = todo.relationships.task.computed.sprints.filter(s => !s.attributes.empty);
 
-    const taskDueAvg = sprints.reduce((avg, s) => (avg + s.taskDueAvg) / 2, empty.taskDueAvg);
-    const doneAvg = sprints.reduce((avg, s) => (avg + s.doneAvg) / 2, empty.doneAvg);
+    const taskDueAvg = sprints.reduce((avg, s) => (avg + s.attributes.taskDueAvg) / 2, empty.attributes.taskDueAvg);
+    const doneAvg = sprints.reduce((avg, s) => (avg + s.attributes.doneAvg) / 2, empty.attributes.doneAvg);
     const nextTodoAvgDueTime = (taskDueAvg + doneAvg) / 2;
     const inSprints = todo.relationships.task.computed.sprints.length - 1;
     const { doneTasksTotal, openTasksTotal, total } = empty;

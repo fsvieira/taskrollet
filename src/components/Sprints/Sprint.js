@@ -17,7 +17,7 @@ import SprintStats from "./SprintStats";
 import moment from "moment";
 
 export default function Sprint({ sprint, deleteSprint }) {
-  const date = moment(sprint.dueDate).format("DD-MM-YYYY");
+  const date = moment(sprint.attributes.dueDate).format("DD-MM-YYYY");
 
   const confirmDelete = (
     <div style={{ padding: "0.5em" }}>
@@ -38,6 +38,7 @@ export default function Sprint({ sprint, deleteSprint }) {
     </div>
   );
 
+  console.log(sprint, !sprint.attributes.empty);
   const title = (
     <p>
       {date}
@@ -47,28 +48,26 @@ export default function Sprint({ sprint, deleteSprint }) {
           position={Position.BOTTOM}
           style={{ float: "right" }}
         >
-          {!sprint.empty &&
-            <Button
-              icon="trash"
-              intent={Intent.DANGER}
-              style={{ float: "right" }}
-            />
-          }
+          <Button
+            icon="trash"
+            intent={Intent.DANGER}
+            style={{ float: "right" }}
+          />
         </Popover>
       </span>
     </p>
   );
 
-  const endDateTime = moment(sprint.dueDate).valueOf();
+  const endDateTime = moment(sprint.attributes.dueDate).valueOf();
   let intent = Intent.SUCCESS;
-  if (endDateTime < sprint.estimatedDueDate) {
+  if (endDateTime < sprint.attributes.estimatedDueDate) {
     intent = Intent.DANGER;
   }
   else {
     // get 15% of remaining time.
     const time = (endDateTime - moment().valueOf()) * 0.15;
 
-    if (sprint.estimatedDueDate > endDateTime - time) {
+    if (sprint.attributes.estimatedDueDate > endDateTime - time) {
       intent = Intent.WARNING;
     }
   }

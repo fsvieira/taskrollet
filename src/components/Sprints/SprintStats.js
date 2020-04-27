@@ -19,16 +19,18 @@ import moment from "moment";
 
 export default function SprintStats({
     sprint: {
-        openTasksTotal,
-        doneTasksTotal,
-        total,
-        taskDueAvg,
-        doneAvg,
-        nextTodoAvgDueTime,
-        oldestOpenTask,
-        estimatedDueDate,
-        date,
-        inSprints
+        attributes: {
+            total,
+            taskDueAvg,
+            doneAvg,
+            nextTodoAvgDueTime,
+            oldestOpenTask,
+            estimatedDueDate,
+            date,
+            inSprints,
+            openTasksTotal,
+            doneTasksTotal
+        }
     },
     date: sprintDate
 }) {
