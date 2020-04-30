@@ -69,6 +69,7 @@ export const $activeSprintsTasks = (tags, filter = [{ attribute: "deleted", valu
 
 					sprint.relationships.tasks = tasks.filter(task => {
 						for (let tag in sprint.tags) {
+							debugger;
 							if (!task.tags[tag]) {
 								return false;
 							}
@@ -78,23 +79,23 @@ export const $activeSprintsTasks = (tags, filter = [{ attribute: "deleted", valu
 					});
 
 					sprint.relationships.openTasks = sprint.relationships.tasks.filter(
-						task => !(task.deleted || task.done || (task.doneUntil && moment(task.doneUntil).isAfter(moment())))
-					).sort((a, b) => moment(a.createdAt).valueOf() - moment(b.createdAt).valueOf());
+						task => !(task.attributes.deleted || task.attributes.done || (task.attributes.doneUntil && moment(task.attributes.doneUntil).isAfter(moment())))
+					).sort((a, b) => moment(a.attributes.createdAt).valueOf() - moment(b.attributes.createdAt).valueOf());
 
 
 					sprint.attributes.doneTasksTotal = 0;
 					sprint.relationships.doneTasks = sprint.relationships.tasks.filter(
 						task => {
-							const doneUntil = task.doneUntil && moment(task.doneUntil).isAfter(moment());
-							const r = !task.deleted && (task.done || doneUntil);
+							const doneUntil = task.attributes.doneUntil && moment(task.attributes.doneUntil).isAfter(moment());
+							const r = !task.attributes.deleted && (task.attributes.done || doneUntil);
 
 							sprint.attributes.doneTasksTotal += r ? 1 : 0;
 
 							return r;
 						}
 					)
-						.filter(task => moment(task.uodatedAt).valueOf() > moment().valueOf() - (1000 * 60 * 60 * 24 * 30 * 4))
-						.sort((a, b) => moment(a.updatedAt).valueOf() - moment(b.updatedAt).valueOf());
+						.filter(task => moment(task.attributes.updatedAt).valueOf() > moment().valueOf() - (1000 * 60 * 60 * 24 * 30 * 4))
+						.sort((a, b) => moment(a.attributes.updatedAt).valueOf() - moment(b.attributes.updatedAt).valueOf());
 
 					let openAvg = 0;
 
@@ -108,7 +109,7 @@ export const $activeSprintsTasks = (tags, filter = [{ attribute: "deleted", valu
 						).valueOf();
 
 						openAvg = sprint.relationships.openTasks.reduce((avg, task) => {
-							const createdAt = moment(task.createdAt).valueOf();
+							const createdAt = moment(task.attributes.createdAt).valueOf();
 
 							let delta;
 							if (lastestClosedTask > createdAt) {
@@ -154,7 +155,7 @@ export const $activeSprintsTasks = (tags, filter = [{ attribute: "deleted", valu
 
 				return {
 					sprints,
-					tasks: tasks.filter(task => !(task.deleted || task.done || (task.doneUntil && moment(task.doneUntil).isAfter(moment()))))
+					tasks: tasks.filter(task => !(task.attributes.deleted || task.attributes.done || (task.attributes.doneUntil && moment(task.attributes.doneUntil).isAfter(moment()))))
 				};
 			}
 		);

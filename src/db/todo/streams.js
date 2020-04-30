@@ -46,10 +46,7 @@ export const $todo = () =>
 
 export const $activeTodo = tags =>
     $todo().combine($activeSprintsTasks(tags), (todo, { sprints, tasks }) => {
-        console.log("TODO: ", todo);
         const t = { ...todo };
-
-        console.log("ACTIVE TODO", t.relationships, tasks.length);
 
         if (tasks.length === 0 && Object.keys(todo.relationships.tags.data).length > 1) {
             setTodoFilterTags({ all: true });
@@ -58,7 +55,7 @@ export const $activeTodo = tags =>
         if (t.relationships.task) {
             const task = tasks.find(task => task.id === t.relationships.task.id);
 
-            if (!task || task.deleted || task.done) {
+            if (!task || task.attributes.deleted || task.attributes.done) {
                 delete t.relationships.task;
             }
             else {
@@ -74,7 +71,7 @@ export const $activeTodo = tags =>
             for (let i = 0; i < tasks.length; i++) {
                 const task = tasks[i];
                 const rank = task.computed.sprints.length
-                    + (now - moment(task.createdAt).valueOf())
+                    + (now - moment(task.attributes.createdAt).valueOf())
                     + task.computed.sprints.reduce((acc, sprint) => {
                         return acc + sprint.attributes.doneAvg - sprint.attributes.taskDueAvg
                     }, 0)
@@ -88,7 +85,7 @@ export const $activeTodo = tags =>
                 task.computed.rank = task.computed.rank / total;
             });
 
-            tasks.sort((a, b) => a.computed.rank - b.computed.rank);
+            // tasks.sort((a, b) => a.computed.rank - b.computed.rank);
 
             const r = Math.random();
 

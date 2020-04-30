@@ -46,7 +46,7 @@ export async function splitTask(task, textA, textB, onSave) {
         (bTask.attributes.description.length > 8 ? bTask.attributes.description.substring(0, 8) + "..." : bTask.attributes.description);
 
     try {
-        await addTask(aTask);
+        await editTask(aTask);
         await addTask(bTask, aTask.attributes.createdAt);
 
         AppToaster.show({
