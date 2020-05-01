@@ -1,9 +1,13 @@
 import { Schema } from "@orbit/data";
 import IndexedDBSource from "@orbit/indexeddb";
 import MemorySource from "@orbit/memory";
-import Coordinator, { SyncStrategy } from "@orbit/coordinator";
+import Coordinator, { SyncStrategy, RequestStrategy } from "@orbit/coordinator";
 import { uuid } from "@orbit/utils";
+import JSONAPISource from "@orbit/jsonapi";
 
+/**
+ * Schema
+ */
 const schema = new Schema({
 	models: {
 		task: {
@@ -38,6 +42,9 @@ const schema = new Schema({
 	}
 });
 
+/**
+ * Sources,
+ */
 const db = new MemorySource({ schema });
 
 const backup = new IndexedDBSource({
@@ -46,13 +53,15 @@ const backup = new IndexedDBSource({
 	namespace: "taskroulette"
 });
 
-const listenners = [];
-const changes = fn => {
-	listenners.push(fn);
+const remote = new JSONAPISource({
+	schema,
+	name: "remote",
+	host: "http://localhost:9000/api/fsvieira"
+});
 
-	return () => listenners.splice(listenners.indexOf(fn), 1);
-};
-
+/**
+ * Tranform backup sync
+ */
 db.on("transform", transform => {
 	backup.sync(transform);
 
@@ -60,8 +69,11 @@ db.on("transform", transform => {
 	listenners.forEach(fn => fn());
 });
 
+/**
+ * Coordinator
+ */
 const coordinator = new Coordinator({
-	sources: [db, backup]
+	sources: [db, backup, remote]
 });
 
 const backupMemorySync = new SyncStrategy({
@@ -72,8 +84,97 @@ const backupMemorySync = new SyncStrategy({
 
 coordinator.addStrategy(backupMemorySync);
 
+// Query the remote server whenever the memory source is queried
+coordinator.addStrategy(
+	new RequestStrategy({
+		source: "memory",
+		on: "beforeQuery",
+
+		target: "remote",
+		action: "query",
+
+		blocking: false
+	})
+);
+
+// Update the remote server whenever the memory source is updated
+coordinator.addStrategy(
+	new RequestStrategy({
+		source: "memory",
+		on: "beforeUpdate",
+
+		target: "remote",
+		action: "update",
+
+		blocking: false
+	})
+);
+
+/*
+// Query the remote server whenever the memory source is queried
+coordinator.addStrategy(
+	new RequestStrategy({
+		source: "memory",
+		on: "beforeQuery",
+
+		target: "remote",
+		action: "pull",
+
+		blocking: true
+	})
+);
+
+// Update the remote server whenever the memory source is updated
+coordinator.addStrategy(
+	new RequestStrategy({
+		source: "memory",
+		on: "beforeUpdate",
+
+		target: "remote",
+		action: "push",
+
+		blocking: true
+	})
+);
+*/
+
+// Sync all changes received from the remote server to the memory source
+coordinator.addStrategy(
+	new SyncStrategy({
+		source: "remote",
+		target: "memory",
+		blocking: false
+	})
+);
+
+
+/**
+ * Events
+ */
+const listenners = [];
+const changes = fn => {
+	listenners.push(fn);
+
+	return () => listenners.splice(listenners.indexOf(fn), 1);
+};
+
 let ready = false;
 
+const onReady = () => new Promise(
+	resolve => {
+		const r = () => ready ? resolve(ready) : setTimeout(r, 1000);
+		r();
+	}
+);
+
+/**
+ * Utils
+ */
+const genID = uuid;
+
+/**
+ * Setup
+ */
 async function setup() {
 	let transform = await backup.pull(q => q.findRecords());
 	await db.sync(transform);
@@ -82,15 +183,6 @@ async function setup() {
 }
 
 setup();
-
-const genID = uuid;
-
-const onReady = () => new Promise(
-	resolve => {
-		const r = () => ready ? resolve(ready) : setTimeout(r, 1000);
-		r();
-	}
-);
 
 export { db, genID, changes, onReady };
 
