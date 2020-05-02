@@ -30,7 +30,7 @@ const schema = new Schema({
 				dueDate: { type: "date-time" },
 			},
 			relationships: {
-				tags: { type: "hasMany", model: "tag" /*, inverse: "sprint"*/ }
+				tags: { type: "hasMany", model: "tag" }
 			}
 		},
 		todo: {
@@ -53,10 +53,12 @@ const backup = new IndexedDBSource({
 	namespace: "taskroulette"
 });
 
+console.log(process.env.REACT_JSONAPI_URL);
+
 const remote = new JSONAPISource({
 	schema,
 	name: "remote",
-	host: "http://localhost:9000/api/fsvieira"
+	host: process.env.REACT_JSONAPI_URL // "http://localhost:9000/api/fsvieira"
 });
 
 /**
