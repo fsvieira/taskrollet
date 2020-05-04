@@ -11,8 +11,6 @@ import {
     Card
 } from "@blueprintjs/core";
 
-import { saveAs } from 'file-saver';
-import moment from 'moment';
 import SelectTags from '../components/SelectTags';
 
 export default function Tasks() {
@@ -54,11 +52,6 @@ export default function Tasks() {
         }
     };
 
-    function exportTasks() {
-        var tasksBlob = new Blob([JSON.stringify(tasks, null, '\t')], { type: "text/plain;charset=utf-8" });
-        saveAs(tasksBlob, `tasks-${moment().toISOString()}.json`);
-    }
-
     const tasksList = tasks.filter(t => t.description.toLowerCase().indexOf(searchText.toLocaleLowerCase()) !== -1).map(
         task => (<Task
             task={task}
@@ -82,12 +75,6 @@ export default function Tasks() {
                 padding: "0.2em",
                 backgroundColor: Colors.BLUE5
             }}>
-                <Button
-                    icon="download"
-                    onClick={exportTasks}
-                    style={{ float: "left" }}
-                ></Button>
-
                 <SelectTags
                     onChange={tags => setTags(tags)}
                     noText={true}
