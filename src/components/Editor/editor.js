@@ -31,6 +31,8 @@ export function parseValue(value, tags) {
 function getTask(text, task) {
     return {
         description: text,
+        doneUntil: task ? task.doneUntil : undefined,
+        createdAt: task ? task.createdAt : undefined,
         tags: getTags(text),
         _id: task ? task._id : undefined,
         _rev: task ? task._rev : undefined
