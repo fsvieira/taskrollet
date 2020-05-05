@@ -12,6 +12,7 @@ import {
 } from "@blueprintjs/core";
 
 import SelectTags from '../components/SelectTags';
+import SelectOrder from '../components/SelectOrder';
 
 export default function Tasks() {
     const {
@@ -25,6 +26,7 @@ export default function Tasks() {
 
     const [showSearch, setShowSearch] = useState(false);
     const [searchText, setSearchText] = useState("");
+    const [orderedTasks, setOrderedTasks] = useState();
 
     if (tasks.length === 0) {
         return (<Card interactive={true} elevation={Elevation.TWO} style={{ margin: '1em' }}>
@@ -52,7 +54,7 @@ export default function Tasks() {
         }
     };
 
-    const tasksList = tasks.filter(t => t.description.toLowerCase().indexOf(searchText.toLocaleLowerCase()) !== -1).map(
+    const tasksList = (orderedTasks || tasks).filter(t => t.description.toLowerCase().indexOf(searchText.toLocaleLowerCase()) !== -1).map(
         task => (<Task
             task={task}
             doneTask={doneTask}
@@ -75,12 +77,12 @@ export default function Tasks() {
                 padding: "0.2em",
                 backgroundColor: Colors.BLUE5
             }}>
+                <SelectOrder setOrderedTasks={setOrderedTasks} tasks={tasks} />
                 <SelectTags
                     onChange={tags => setTags(tags)}
                     noText={true}
                     style={{ float: "left" }}
                 />
-
                 <div style={{ float: "left" }}>
                     <Button
                         icon="search-template"
