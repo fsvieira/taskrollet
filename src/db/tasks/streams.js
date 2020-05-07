@@ -2,6 +2,25 @@ import { dbTasks } from "./db";
 import { fromBinder } from "baconjs";
 import moment from "moment";
 
+export const $allTasks = () =>
+	fromBinder(sink => {
+		async function find() {
+			const docs = await dbTasks.allDocs({ include_docs: true });
+			return docs.rows.map(t => t.doc);
+		}
+
+		const taskChanges = dbTasks.changes({
+			since: "now",
+			live: true,
+			include_docs: true
+		}).on("change", () => find().then(sink));
+
+		find().then(sink);
+
+		return () => taskChanges.cancel();
+	});
+
+
 export const $tasks = (tags = { all: true }, selector, filterDoneUntil = false) =>
 	fromBinder(sink => {
 		let { done, deleted } = selector || {
