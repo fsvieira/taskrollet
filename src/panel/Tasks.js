@@ -150,26 +150,6 @@ export default function Tasks() {
         ></Task>)
     );
 
-
-    /*
-    const tasksList = sort(
-        tasks.filter(t => t.description.toLowerCase().indexOf(searchText.toLocaleLowerCase()) !== -1),
-        orderBy
-    )
-        // .sort((a, b) => orderByCmp(orderBy, a, b, tasks))
-        .map(
-            task => (<Task
-                task={task}
-                doneTask={doneTask}
-                doneTaskUntil={doneTaskUntil}
-                deleteTask={deleteTask}
-                selectTodo={selectTodoNotification}
-                canEditTask={true}
-                canSplitTask={true}
-                key={task._id}
-            ></Task>)
-        );
-    */
     const tasksList = sort(
         tasks.filter(t => t.description.toLowerCase().indexOf(searchText.toLocaleLowerCase()) !== -1),
         orderBy
@@ -242,10 +222,18 @@ export default function Tasks() {
             <article style={{ marginTop: "3em" }}>
                 {!noTasks &&
                     <Tabs id="TabsExample" onChange={value => setSelectedTab(value)} selectedTabId={selectedTabFunc(selectedTab)}>
+                        {/*
                         {!!activeTasks.length && <Tab id="active" title={`Active (${activeTasks.length})`} panel={activeTasks} />}
                         {!!doneUntilTasks.length && <Tab id="doneUntil" title={`Done Until ${doneUntilTasks.length}`} panel={doneUntilTasks} />}
                         {!!doneTasks.length && <Tab id="done" title={`Done ${doneTasks.length}`} panel={doneTasks} />}
                         {!!deletedTasks.length && <Tab id="deleted" title={`Deleted ${deletedTasks.length}`} panel={deletedTasks} />}
+                        */}
+                        {tasksTable
+                            .filter(([tab, { tasks }]) => tasks.length > 0)
+                            .map(([tab, { tasks, label }]) =>
+                                <Tab id={tab} title={`${label} (${tasks.length})`} panel={tasks} key={tab} />
+                            )
+                        }
                         <Tabs.Expander />
                     </Tabs>
                 }

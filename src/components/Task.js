@@ -145,8 +145,7 @@ export default function Task({
       interactive={true}
       elevation={Elevation.TWO}
       style={{
-        height: "100%",
-        backgroundColor: dateUntil ? "#CFF3D2" : undefined
+        height: "100%"
       }}
     >
       {canEditTask &&
