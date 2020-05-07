@@ -15,9 +15,9 @@ export const addTask = ({ computed, ...task }, createdAt) =>
         dbTasks.post({ ...task, createdAt: createdAt || moment().toDate() })
 
 export const doneTask = ({ computed, ...task }) =>
-    dbTasks.put({ ...task, done: true, closedAt: moment().toDate() })
+    dbTasks.put({ ...task, done: true, updatedAt: moment().toDate() })
 
 export const doneTaskUntil = ({ computed, ...task }, doneUntil) =>
-    dbTasks.put({ ...task, doneUntil, closedAt: moment().toDate() })
+    dbTasks.put({ ...task, doneUntil, updatedAt: moment().toDate() })
 
-export const deleteTask = ({ computed, ...task }) => dbTasks.put({ ...task, deleted: true, closedAt: moment().toDate() })
+export const deleteTask = ({ computed, ...task }) => dbTasks.put({ ...task, deleted: true, updatedAt: moment().toDate() })

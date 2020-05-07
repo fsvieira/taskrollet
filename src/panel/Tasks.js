@@ -69,9 +69,6 @@ function orderByCmp(orderBy, a, b) {
         case "updatedAt":
             return moment(b.updatedAt).valueOf() - moment(a.updatedAt).valueOf();
 
-        case "doneUntil":
-            return moment(b.doneUntil).valueOf() - moment(a.doneUntil).valueOf();
-
         case "size":
             return b.description.length - a.description.length;
     }
@@ -86,7 +83,6 @@ function SelectOrder({ orderBy, setOrderBy }) {
         >
             <Radio label="creation date" value="createdAt" />
             <Radio label="update date" value="updatedAt" />
-            <Radio label="done until" value="doneUntil" />
             <Radio label="size" value="size" />
             <Radio label="similiar" value="similiar" />
         </RadioGroup>
