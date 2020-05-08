@@ -2,7 +2,6 @@ import { Schema } from "@orbit/data";
 import IndexedDBSource from "@orbit/indexeddb";
 import MemorySource from "@orbit/memory";
 import Coordinator, { SyncStrategy, RequestStrategy } from "@orbit/coordinator";
-import { uuid } from "@orbit/utils";
 import JSONAPISource from "@orbit/jsonapi";
 
 /**
@@ -112,34 +111,6 @@ coordinator.addStrategy(
 	})
 );
 
-/*
-// Query the remote server whenever the memory source is queried
-coordinator.addStrategy(
-	new RequestStrategy({
-		source: "memory",
-		on: "beforeQuery",
-
-		target: "remote",
-		action: "pull",
-
-		blocking: true
-	})
-);
-
-// Update the remote server whenever the memory source is updated
-coordinator.addStrategy(
-	new RequestStrategy({
-		source: "memory",
-		on: "beforeUpdate",
-
-		target: "remote",
-		action: "push",
-
-		blocking: true
-	})
-);
-*/
-
 // Sync all changes received from the remote server to the memory source
 coordinator.addStrategy(
 	new SyncStrategy({
@@ -170,11 +141,6 @@ const onReady = () => new Promise(
 );
 
 /**
- * Utils
- */
-const genID = uuid;
-
-/**
  * Setup
  */
 async function setup() {
@@ -186,5 +152,5 @@ async function setup() {
 
 setup();
 
-export { db, genID, changes, onReady };
+export { db, changes, onReady };
 

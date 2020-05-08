@@ -20,7 +20,6 @@ export const addTask = ({ computed, tags, ...task }, createdAt) => {
         }))),
         tx.addRecord({
             type: "task",
-            id: genID(),
             attributes: {
                 ...task.attributes,
                 done: false,
