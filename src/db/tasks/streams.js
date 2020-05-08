@@ -2,11 +2,24 @@ import { dbTasks } from "./db";
 import { fromBinder } from "baconjs";
 import moment from "moment";
 
-export const $allTasks = () =>
+export const $allTasks = (tags = { all: true }) =>
 	fromBinder(sink => {
 		async function find() {
 			const docs = await dbTasks.allDocs({ include_docs: true });
-			return docs.rows.map(t => t.doc);
+			return docs.rows.map(t => t.doc)
+				.filter(task => {
+					if (!task.tags) {
+						return false;
+					}
+
+					for (let tag in tags) {
+						if (!task.tags[tag]) {
+							return false;
+						}
+					}
+
+					return true;
+				});
 		}
 
 		const taskChanges = dbTasks.changes({
