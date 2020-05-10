@@ -1,22 +1,22 @@
 import { useState, useEffect } from 'react';
 
-import { setTodoFilterTags, dismissTodo } from "./db";
+import { dismissTodo } from "./db";
 import { $activeTodo } from "./streams";
 import { deleteTask, doneTask, doneTaskUntil } from "./../tasks/db";
 
 export const useTodo = () => {
     const [todo, setTodo] = useState({});
+    const [tags, setTags] = useState({ all: true });
 
     useEffect(
         () => {
-            const cancel = $activeTodo(todo.tags).onValue(setTodo);
+            console.log(tags);
+            const cancel = $activeTodo(tags).onValue(setTodo);
 
             return () => cancel();
         },
-        [JSON.stringify(todo.tags)]
+        [JSON.stringify(tags)]
     );
-
-    const setTags = tags => setTodoFilterTags(tags);
 
     return {
         todo,
