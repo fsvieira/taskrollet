@@ -4,13 +4,16 @@ import { dismissTodo } from "./db";
 import { $activeTodo } from "./streams";
 import { deleteTask, doneTask, doneTaskUntil } from "./../tasks/db";
 
+// There is probaly a better way to do it.
+let memTags = { all: true };
+
 export const useTodo = () => {
     const [todo, setTodo] = useState({});
-    const [tags, setTags] = useState({ all: true });
+    const [tags, setTags] = useState(memTags);
 
     useEffect(
         () => {
-            console.log(tags);
+            memTags = tags;
             const cancel = $activeTodo(tags).onValue(setTodo);
 
             return () => cancel();
@@ -20,6 +23,7 @@ export const useTodo = () => {
 
     return {
         todo,
+        tags,
         setTags,
         doneTask,
         doneTaskUntil,

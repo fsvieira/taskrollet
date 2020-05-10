@@ -50,8 +50,9 @@ export const $activeTodo = tags =>
 
         console.log("TODO", todo);
 
-        if (tasks.length === 0 && Object.keys(todo.tags).length > 1) {
-            setTodoFilterTags({ all: true });
+        if (tasks.length === 0) {
+            // setTodoFilterTags({ all: true });
+            tags = { all: true };
         }
 
         if (selectedTasks.length > 10) {

@@ -16,7 +16,7 @@ import moment from "moment";
 import { addSprint } from "../db/sprints/db";
 
 export default function Todo() {
-  const { todo, setTags, doneTask, doneTaskUntil, dismissTodo, deleteTask } = useTodo();
+  const { todo, tags, setTags, doneTask, doneTaskUntil, dismissTodo, deleteTask } = useTodo();
 
   let taskHeader;
   if (todo && todo.task) {
@@ -34,7 +34,7 @@ export default function Todo() {
     let sprintUI;
     if (inSprints === 0 && openTasksTotal > 1 && estimatedDueDate > moment.duration(7, "days").valueOf()) {
       const date = moment((moment().valueOf() + estimatedDueDate)).endOf("day");
-      const newSprint = { tags: todo.tags, date: date.toDate() };
+      const newSprint = { tags: tags, date: date.toDate() };
       sprintUI = <Button
         onClick={() => addSprint(newSprint)}
       >
@@ -60,7 +60,7 @@ export default function Todo() {
         <span style={{ float: "right" }}>
           <SelectTags
             onChange={tags => setTags(tags)}
-            filterTags={todo.tags}
+            filterTags={tags}
             filterDoneUntil={true}
           />
         </span>
