@@ -59,12 +59,12 @@ export default function Task({
   children
 }) {
   const description = task ? task.attributes.description : "There is no tasks, please add some!!";
-  const date = (task ? moment(task.attributes.createdAt) : moment()).calendar();
+  const date = (task ? moment.utc(task.attributes.createdAt) : moment.utc()).calendar();
 
-  const now = moment();
+  const now = moment.utc();
 
-  const dateUntil = task && task.attributes.doneUntil && moment(task.attributes.doneUntil).isAfter(now)
-    ? moment(task.attributes.doneUntil).calendar() : undefined;
+  const dateUntil = task && task.attributes.doneUntil && moment.utc(task.attributes.doneUntil).isAfter(now)
+    ? moment.utc(task.attributes.doneUntil).calendar() : undefined;
 
   const [editTaskIsOpen, setEditTaskIsOpen] = useState(false);
   const [doneTaskUntilIsOpen, setDoneTaskUntilIsOpen] = useState(false);
@@ -83,23 +83,23 @@ export default function Task({
 
     switch (value) {
       case "4hours":
-        time = moment().add(4, "hours").toDate();
+        time = moment.utc().add(4, "hours").valueOf();
         break;
 
       case "tomorrow":
-        time = moment().endOf("days").toDate();
+        time = moment.utc().endOf("days").valueOf();
         break;
 
       case "next week":
-        time = moment().add(1, "weeks").startOf("week").toDate();
+        time = moment.utc().add(1, "weeks").startOf("week").valueOf();
         break;
 
       case 'next weekday':
-        time = moment().add(7, "days").startOf("day").toDate();
+        time = moment.utc().add(7, "days").startOf("day").valueOf();
         break;
 
       case "Next month":
-        time = moment().add(1, "months").startOf("month").toDate();
+        time = moment.utc().add(1, "months").startOf("month").valueOf();
         break;
     }
 

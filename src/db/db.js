@@ -67,9 +67,9 @@ db.on("transform", transform => {
 	backup.sync(transform);
 
 	console.log("TRASNFORM -> " + JSON.stringify(transform));
-	if (transform.operations.length) {
+	/*if (transform.operations.length) {
 		listenners.forEach(fn => fn());
-	}
+	}*/
 });
 
 /**

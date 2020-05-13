@@ -33,8 +33,8 @@ export default function Todo() {
     const estimatedDueDate = openTasksTotal * nextTodoAvgDueTime;
     let sprintUI;
     if (inSprints === 0 && openTasksTotal > 1 && estimatedDueDate > moment.duration(7, "days").valueOf()) {
-      const date = moment((moment().valueOf() + estimatedDueDate)).endOf("day");
-      const newSprint = { tags: todo.tags, date: date.toDate() };
+      const date = moment.utc((moment.valueOf() + estimatedDueDate)).endOf("day");
+      const newSprint = { tags: todo.tags, date: date.valueOf() };
       sprintUI = <Button
         onClick={() => addSprint(newSprint)}
       >

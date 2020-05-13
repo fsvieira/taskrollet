@@ -1,10 +1,10 @@
-import { db, genID, changes, onReady } from "../db";
+import { db, changes, onReady } from "../db";
 import moment from "moment";
 
 export { db, changes, onReady };
 
 export const addTask = ({ computed, tags, ...task }, createdAt) => {
-    const now = moment.utc().toDate();
+    const now = moment.utc().valueOf();
     const nTags = [];
 
     for (let tag in tags) {
@@ -42,7 +42,7 @@ export const addTask = ({ computed, tags, ...task }, createdAt) => {
 }
 
 export const editTask = ({ computed, tags, ...task }) => {
-    const now = moment.utc().toDate();
+    const now = moment.utc().valueOf();
 
     const nTags = [];
 
@@ -87,7 +87,7 @@ export const doneTask = ({ computed, ...task }) => db.update(
         attributes: {
             ...task.attributes,
             done: true,
-            updatedAt: moment().toDate()
+            updatedAt: moment.utc().valueOf()
         },
         relationships: task.relationships
     })
@@ -99,7 +99,7 @@ export const doneTaskUntil = ({ computed, ...task }, doneUntil) => {
         attributes: {
             ...task.attributes,
             doneUntil,
-            updatedAt: moment().toDate()
+            updatedAt: moment.utc().valueOf()
         },
         relationships: task.relationships
     });
@@ -111,7 +111,7 @@ export const doneTaskUntil = ({ computed, ...task }, doneUntil) => {
             attributes: {
                 ...task.attributes,
                 doneUntil,
-                updatedAt: moment().toDate()
+                updatedAt: moment.utc().valueOf()
             },
             relationships: task.relationships
         })
@@ -125,7 +125,7 @@ export const deleteTask = ({ computed, ...task }) => db.update(
         attributes: {
             ...task.attributes,
             deleted: true,
-            updatedAt: moment().toDate()
+            updatedAt: moment.utc().valueOf()
         },
         relationships: task.relationships
     })

@@ -4,8 +4,6 @@ import moment from "moment";
 export { db, changes, onReady };
 
 export const addSprint = async ({ dueDate, tags }) => {
-    console.log(dueDate, tags);
-
     const nTags = [];
 
     for (let tag in tags) {
@@ -20,7 +18,7 @@ export const addSprint = async ({ dueDate, tags }) => {
         tx => tx.addRecord({
             type: "sprint",
             attributes: {
-                createdAt: moment.utc().toDate(),
+                createdAt: moment.valueOf(),
                 dueDate
             },
             relationships: {
