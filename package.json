@@ -45,7 +45,6 @@
     "components": "^0.1.0",
     "db": "^1.1.1",
     "editor": "^1.0.0",
-    "file-saver": "^2.0.2",
     "filesaver": "0.0.13",
     "import": "0.0.6",
     "moment": "^2.24.0",
@@ -58,7 +57,6 @@
     "reactjs": "^1.0.0",
     "redux": "^4.0.4",
     "remove": "^0.1.5",
-    "sync": "^0.2.5",
-    "uuid": "^3.4.0"
+    "string-similarity": "^4.0.1"
   }
 }

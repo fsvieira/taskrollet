@@ -10,7 +10,8 @@ import {
   Dialog,
   Classes,
   RadioGroup,
-  Radio
+  Radio,
+  Checkbox
 } from "@blueprintjs/core";
 import "@blueprintjs/core/lib/css/blueprint.css";
 
@@ -19,8 +20,12 @@ import moment from "moment";
 import TaskEditor from "./Editor/TaskEditor";
 import TaskSplit from "./Editor/TaskSplit";
 
-export function PrettyDescription({ description }) {
-  const tokens = description.match(/([^\s]+)|(\s)/g);
+import { addTask } from '../db/tasks/db';
+
+
+export function PrettyDescription({ description, task }) {
+  // const tokens = description.match(/([^\s]+)|(\s)/g);
+  const tokens = description.match(/(#|http)([^\s]+)|\[ \]|\[x\]|\[X\]|[ \n\t]|([^\s]+)/g);
 
   if (tokens) {
     return tokens.map(
@@ -30,6 +35,34 @@ export function PrettyDescription({ description }) {
         }
         else if (elem.startsWith("http://") || elem.startsWith("https://")) {
           return <a href={elem} target="_blank">{elem}</a>
+        }
+        else if (elem === "[ ]") {
+          const newDescription = tokens.slice();
+          newDescription.splice(i, 1, "[X]");
+          return <Checkbox
+            checked={false}
+            inline={true}
+            onChange={() => {
+              task.description = newDescription.join("");
+              addTask(task);
+            }}
+            key={i}
+          >
+          </Checkbox>;
+        }
+        else if (elem === "[X]" || elem === "[x]") {
+          const newDescription = tokens.slice();
+          newDescription.splice(i, 1, "[ ]");
+          return <Checkbox
+            checked={true}
+            inline={true}
+            onChange={() => {
+              task.description = newDescription.join("");
+              addTask(task);
+            }}
+            key={i}
+          >
+          </Checkbox>;
         }
         else if (elem === '\n') {
           return <br key={i} />
@@ -77,8 +110,6 @@ export default function Task({
 
   const doneTaskUntilSelectTime = async e => {
     const value = e.target.value;
-    console.log("TODO: Value ==> ", value);
-
     let time;
 
     switch (value) {
@@ -113,8 +144,7 @@ export default function Task({
       interactive={true}
       elevation={Elevation.TWO}
       style={{
-        height: "100%",
-        backgroundColor: dateUntil ? "#CFF3D2" : undefined
+        height: "100%"
       }}
     >
       {canEditTask &&
@@ -198,7 +228,7 @@ export default function Task({
             height: "100px"
           }}
         >
-          <PrettyDescription description={description}></PrettyDescription>
+          <PrettyDescription description={description} task={task} ></PrettyDescription>
         </article>
         <footer>
           <Divider />

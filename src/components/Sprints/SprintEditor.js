@@ -49,16 +49,4 @@ export default function SprintEditor({ addSprint }) {
             </div>
         </Callout>
     );
-
-    /*
-    return <MultiSelect 
-        tagInputProps={{ placeholder: 'Search tags' }}
-        itemRenderer={value => <div>{value}</div>}
-        tagRenderer={value => value}
-        items={tags}
-        selectedItems={[]}
-        onItemSelect={(e) => console.log(e)}
-    />*/
-
-
 }

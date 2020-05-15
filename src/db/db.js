@@ -19,7 +19,7 @@ const schema = new Schema({
 				updatedAt: { type: "date-time" }
 			},
 			relationships: {
-				tags: { type: "hasMany", model: "tag" /*, inverse: "task"*/ }
+				tags: { type: "hasMany", model: "tag" }
 			}
 		},
 		tag: {},
@@ -34,7 +34,6 @@ const schema = new Schema({
 		},
 		todo: {
 			relationships: {
-				tags: { type: "hasMany", model: "tag" /*, inverse: "todo"*/ },
 				task: { type: "hasOne", model: "task" }
 			}
 		}
@@ -52,8 +51,6 @@ const backup = new IndexedDBSource({
 	namespace: "taskroulette"
 });
 
-console.log(process.env.REACT_JSONAPI_URL);
-
 const remote = new JSONAPISource({
 	schema,
 	name: "remote",
@@ -65,11 +62,7 @@ const remote = new JSONAPISource({
  */
 db.on("transform", transform => {
 	backup.sync(transform);
-
-	console.log("TRASNFORM -> " + JSON.stringify(transform));
-	/*if (transform.operations.length) {
-		listenners.forEach(fn => fn());
-	}*/
+	listenners.forEach(fn => fn());
 });
 
 /**
@@ -122,6 +115,15 @@ coordinator.addStrategy(
 	})
 );
 
+/*
+// Sync all changes from memory source to remote
+coordinator.addStrategy(
+	new SyncStrategy({
+		source: "memory",
+		target: "remote",
+		blocking: false
+	})
+);*/
 
 /**
  * Events

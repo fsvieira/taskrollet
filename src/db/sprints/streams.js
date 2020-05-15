@@ -1,31 +1,16 @@
 import { fromBinder, interval } from "baconjs";
 import { db, changes, onReady } from "./db";
 import { $tasks } from "../tasks/streams";
-
 import moment from "moment";
-
-/*
-.map(tasks => {
-			console.log(tasks.filter(task => !task.doneUntil || moment().isAfter(moment(task.doneUntil))));
-			return tasks.filter(task => {
-				console.log(
-					task.doneUntil,
-					!task.doneUntil, moment().isAfter(moment(task.doneUntil)),
-				);
-				return !task.doneUntil || moment().isAfter(moment(task.doneUntil))
-			})
-		});
-
-*/
 
 export const $activeSprints = tags =>
 	fromBinder(sink => {
-		const find = () => onReady().then(() => db.query(q => q.findRecords("sprint"))).then(sink);
+		const find = (source = db.cache) => onReady().then(() => source.query(q => q.findRecords("sprint"))).then(sink);
 		// const find = () => sink([]);
 
 		const cancel = changes(find);
 
-		find();
+		find(db);
 
 		return cancel;
 	});
@@ -40,15 +25,11 @@ const $interval = delay =>
 	});
 
 
-export const $activeSprintsTasks = (tags, filter = [{ attribute: "deleted", value: false }]
-
-/*{ deleted: false }*/) =>
+export const $activeSprintsTasks = (tags, filter = [{ attribute: "deleted", value: false }]) =>
 	$activeSprints(tags)
 		.combine(
 			$tasks(tags, filter).combine($interval(1000 * 60), tasks => tasks),
 			(sprints, tasks) => {
-				console.log("SPRINTS", sprints);
-
 				const now = moment().valueOf();
 
 				sprints = sprints.concat([{

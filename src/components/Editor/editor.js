@@ -11,6 +11,12 @@ export function getTags(text) {
     }, {})
 }
 
+export function getTagsList(text) {
+    const tags = (text.match(/#([^\s]+)/g) || []).concat(["all"]).map(t => t.replace("#", ""));
+
+    return [...new Set(tags)].map(id => ({ type: "tag", id }));
+}
+
 // TODO: is this the same as getTags ???
 export function parseValue(value, tags) {
     const pTags = Object.keys(tags).map(t => t.replace("#", ""));
@@ -29,12 +35,20 @@ export function parseValue(value, tags) {
 }
 
 function getTask(text, task) {
+
     return {
+        type: "task",
         id: task ? task.id : undefined,
         attributes: {
-            description: text
+            description: text,
+            doneUntil: task ? task.doneUntil : undefined,
+            createdAt: task ? task.createdAt : undefined
         },
-        tags: getTags(text)
+        relationships: {
+            tags: {
+                data: getTagsList(text)
+            }
+        }
     };
 }
 

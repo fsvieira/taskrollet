@@ -2,7 +2,42 @@ import { db, changes, onReady } from "./db";
 import { fromBinder } from "baconjs";
 import moment from "moment";
 
-export const $tasks = (tags = { all: true }, selector) =>
+export const $allTasks = (tags = { all: true }) =>
+	fromBinder(sink => {
+		const find = (source = db.cache) => onReady().then(
+			() => source.query(
+				q => q.findRecords("task")
+			)
+		).then(
+			tasks => sink(tasks.filter(
+				({ relationships: { tags: { data } } }) => {
+					const s = new Set(data.map(({ id }) => id));
+
+					for (let tag in tags) {
+						if (!s.has(tag)) {
+							return false;
+						}
+					}
+
+					return true;
+				}
+			)),
+			err => {
+				console.log(err);
+				return err;
+			}
+		);
+
+		const cancel = changes(find);
+
+		find(db);
+		// setTimeout(find, 1000);
+
+		return cancel;
+	});
+
+
+export const $tasks = (tags = { all: true }, selector, filterDoneUntil = false) =>
 	fromBinder(sink => {
 
 		/*
@@ -15,11 +50,8 @@ export const $tasks = (tags = { all: true }, selector) =>
 			}
 		}*/
 
-
-		console.log("Selector", selector);
-
-		const find = () => onReady().then(
-			() => db.query(
+		const find = (source = db.cache) => onReady().then(
+			() => source.query(
 				q => q.findRecords("task").filter(
 					...selector
 					// { attribute: "deleted", value: false },
@@ -29,10 +61,17 @@ export const $tasks = (tags = { all: true }, selector) =>
 			)
 		).then(
 			tasks => {
-				console.log(tasks.length, tasks);
-
 				sink(tasks.filter(
-					({ relationships: { tags: { data } } }) => {
+					({
+						attributes: { doneUntil },
+						relationships: { tags: { data } }
+					}) => {
+						const dateUntil = filterDoneUntil && doneUntil && moment.utc(doneUntil).isAfter(moment.utc());
+
+						if (dateUntil) {
+							return false;
+						}
+
 						const s = new Set(data.map(({ id }) => id));
 
 						for (let tag in tags) {
@@ -45,39 +84,32 @@ export const $tasks = (tags = { all: true }, selector) =>
 					}
 				));
 			},
-			err => console.log("TASKS ERROR _> " + err)
-			/*tasks => sink(tasks.filter(
-				task => {
-					for (let tag in tags) {
-						if (!task.tags[tag]) {
-							return false;
-						}
-					}
-
-					return true;
-				}
-			))*/
+			err => {
+				console.log(err);
+				return err;
+			}
 		);
 
 		const cancel = changes(find);
 
-		find();
+		find(db);
 		// setTimeout(find, 1000);
 
 		return cancel;
 	});
 
-
-export const $activeTasks = tags => $tasks(
+export const $activeTasks = (tags, filterDoneUntil) => $tasks(
 	tags,
 	// { done: false, deleted: false }
 	[
 		{ attribute: "deleted", value: false },
 		{ attribute: "done", value: false }
-	]
+	],
+	filterDoneUntil
 );
 
-export const $activeTags = tags => $activeTasks(tags).map(tasks => {
+
+export const $activeTags = (tags, filterDoneUntil) => $activeTasks(tags, filterDoneUntil).map(tasks => {
 	const tags = {};
 
 	for (let i = 0; i < tasks.length; i++) {
@@ -87,4 +119,3 @@ export const $activeTags = tags => $activeTasks(tags).map(tasks => {
 
 	return tags;
 });
-
