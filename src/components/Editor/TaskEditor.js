@@ -26,6 +26,11 @@ export default function TaskEditor({
   const { tags } = useActiveTags();
 
   const newTags = parseValue(value, tags);
+  const submit = () => {
+    if (addTaskText(task, value, onSave)) {
+      setValue("");
+    }
+  };
 
   return (
     <Card
@@ -43,17 +48,20 @@ export default function TaskEditor({
         onChange={setValue}
         placeholder={
           "a. Write here the task description, use # to add #tags!!\n" +
-          "b. Use [ ] and [X] to render checkboxes."
+          "b. Use [ ] and [X] to render checkboxes.\n" +
+          "c. Add Shortcut: Ctrl+Enter"
         }
+        onKeyPress={e => {
+          const code = e.keyCode || e.which;
+          if (code === 13 && e.ctrlKey) {
+            submit();
+          }
+        }}
       />
       <Divider />
       <Button
         position={Position.RIGHT}
-        onClick={() => {
-          if (addTaskText(task, value, onSave)) {
-            setValue("");
-          }
-        }}
+        onClick={submit}
         disabled={value.trim() === ''}
       >{task ? "Save" : "Add"}</Button>
     </Card>

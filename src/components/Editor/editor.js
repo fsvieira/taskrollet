@@ -71,6 +71,15 @@ export async function splitTask(task, textA, textB, onSave) {
 }
 
 export async function addTaskText(task, text, onSave) {
+    if (text.trim() === "") {
+        AppToaster.show({
+            message: `Task description can't be empty.`,
+            intent: Intent.DANGER
+        });
+
+        return false;
+    }
+
     const newTask = getTask(text, task);
 
     const msg = newTask.description.length > 10 ? newTask.description.substring(0, 10) + "..." : newTask.description;

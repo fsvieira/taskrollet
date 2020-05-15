@@ -5,14 +5,14 @@ import {
 } from "@blueprintjs/core";
 
 
-function duration(d) {
-    if (d) {
-        const md = moment.duration(d);
-        return md.humanize();
-    }
+export function duration(d) {
+    // if (d) {
+    const md = moment.duration(d);
+    return (d > 0 ? "+" : "-") + md.humanize();
+    /*}
     else {
         return "None";
-    }
+    }*/
 }
 
 import moment from "moment";
@@ -50,7 +50,8 @@ export default function SprintStats({
             <p>Avg Close Task Time: {duration(doneAvg)}</p>
             <p>Next Todo Time: {duration(nextTodoAvgDueTime)}</p>
             <p>Oldest Open Task: {oldestOpenTask ? moment(oldestOpenTask).format("DD-MM-YYYY") : "None"}</p>
-            <p>Time Remaning: {duration(moment(date).valueOf() - moment().valueOf())}</p>
         </div>
     );
+
+    // <p>Time Remaning: {duration(moment(date).valueOf() - moment().valueOf())}</p>
 }

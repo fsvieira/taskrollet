@@ -12,12 +12,22 @@ import {
 } from "@blueprintjs/core";
 
 import TagsList from "../Tags/TagsList";
-import SprintStats from "./SprintStats";
+import SprintStats, { duration } from "./SprintStats";
 
 import moment from "moment";
 
+/*function duration(d) {
+  console.log("Date", d)
+  const md = moment.duration(d);
+  return (d > 0 ? "+" : "-") + md.humanize();
+}*/
+
+
 export default function Sprint({ sprint, deleteSprint }) {
   const date = moment(sprint.date).format("DD-MM-YYYY");
+  const days = duration(moment(sprint.date).valueOf() - moment().valueOf());
+
+  console.log(days);
 
   const confirmDelete = (
     <div style={{ padding: "0.5em" }}>
@@ -40,7 +50,7 @@ export default function Sprint({ sprint, deleteSprint }) {
 
   const title = (
     <p>
-      {date}
+      {date} ({days})
       <span style={{ float: "right" }}>
         <Popover
           content={confirmDelete}
@@ -61,6 +71,7 @@ export default function Sprint({ sprint, deleteSprint }) {
 
   const endDateTime = moment(sprint.date).valueOf();
   let intent = Intent.SUCCESS;
+
   if (endDateTime < sprint.estimatedDueDate) {
     intent = Intent.DANGER;
   }
