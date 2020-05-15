@@ -43,7 +43,7 @@ export default function SelectTags({ onChange, label, noText, filterTags = { all
         );
     }
 
-    const tagsSelector = <div style={{ padding: "0.5em" }}>{checks}</div>;
+    const tagsSelector = <div style={{ padding: "0.5em", overflow: "auto", maxHeight: "70vh", width: "15em" }}>{checks}</div>;
 
     return (
         <Popover content={tagsSelector} position={Position.BOTTOM}>
