@@ -1,4 +1,4 @@
-import { db, changes, onReady } from "./db";
+import { db, changes, onReady, refreshTime, constants } from "./db";
 import { fromBinder } from "baconjs";
 import moment from "moment";
 
@@ -31,9 +31,13 @@ export const $allTasks = (tags = { all: true }) =>
 		const cancel = changes(find);
 
 		find(db);
-		// setTimeout(find, 1000);
 
-		return cancel;
+		const cancelInterval = setInterval(() => find(db), refreshTime);
+
+		return () => {
+			clearInterval(cancelInterval);
+			return cancel();
+		}
 	});
 
 
@@ -93,9 +97,13 @@ export const $tasks = (tags = { all: true }, selector, filterDoneUntil = false) 
 		const cancel = changes(find);
 
 		find(db);
-		// setTimeout(find, 1000);
 
-		return cancel;
+		const cancelInterval = setInterval(() => find(db), refreshTime);
+
+		return () => {
+			clearInterval(cancelInterval);
+			return cancel();
+		}
 	});
 
 export const $activeTasks = (tags, filterDoneUntil) => $tasks(

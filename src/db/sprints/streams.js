@@ -1,18 +1,22 @@
 import { fromBinder, interval } from "baconjs";
-import { db, changes, onReady } from "./db";
+import { db, changes, onReady, refreshTime } from "./db";
 import { $tasks } from "../tasks/streams";
 import moment from "moment";
 
 export const $activeSprints = tags =>
 	fromBinder(sink => {
 		const find = (source = db.cache) => onReady().then(() => source.query(q => q.findRecords("sprint"))).then(sink);
-		// const find = () => sink([]);
 
 		const cancel = changes(find);
 
 		find(db);
 
-		return cancel;
+		const cancelInterval = setInterval(() => find(db), refreshTime);
+
+		return () => {
+			clearInterval(cancelInterval);
+			return cancel();
+		}
 	});
 
 const $interval = delay =>

@@ -1,7 +1,7 @@
-import { db, changes, onReady } from "../db";
+import { db, changes, onReady, refreshTime } from "../db";
 import moment from "moment";
 
-export { db, changes, onReady };
+export { db, changes, onReady, refreshTime };
 
 export const addTask = ({ computed, ...task }, createdAt) => {
     const now = moment.utc().valueOf();

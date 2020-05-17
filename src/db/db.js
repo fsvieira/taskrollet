@@ -4,6 +4,8 @@ import MemorySource from "@orbit/memory";
 import Coordinator, { SyncStrategy, RequestStrategy } from "@orbit/coordinator";
 import JSONAPISource from "@orbit/jsonapi";
 
+export const refreshTime = +process.env.REACT_JSONAPI_REFRESH_TIME_MINUTES * 1000 * 60;
+
 /**
  * Schema
  */
@@ -43,7 +45,7 @@ const schema = new Schema({
 /**
  * Sources,
  */
-const db = new MemorySource({ schema });
+export const db = new MemorySource({ schema });
 
 const backup = new IndexedDBSource({
 	schema,
@@ -129,7 +131,7 @@ coordinator.addStrategy(
  * Events
  */
 const listenners = [];
-const changes = fn => {
+export const changes = fn => {
 	listenners.push(fn);
 
 	return () => listenners.splice(listenners.indexOf(fn), 1);
@@ -137,7 +139,7 @@ const changes = fn => {
 
 let ready = false;
 
-const onReady = () => new Promise(
+export const onReady = () => new Promise(
 	resolve => {
 		const r = () => ready ? resolve(ready) : setTimeout(r, 1000);
 		r();
@@ -156,5 +158,5 @@ async function setup() {
 
 setup();
 
-export { db, changes, onReady };
+// export { db, changes, onReady, refreshTime };
 

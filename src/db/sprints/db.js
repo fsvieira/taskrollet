@@ -1,7 +1,7 @@
-import { db, changes, onReady } from "../db";
+import { db, changes, onReady, refreshTime } from "../db";
 import moment from "moment";
 
-export { db, changes, onReady };
+export { db, changes, onReady, refreshTime };
 
 export const addSprint = async ({ dueDate, tags }) => {
     const nTags = [];

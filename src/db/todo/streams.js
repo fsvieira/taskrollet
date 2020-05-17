@@ -1,4 +1,4 @@
-import { db, selectTodo, setTodoFilterTags, changes, onReady } from "./db";
+import { db, selectTodo, changes, onReady, refreshTime } from "./db";
 import { $activeSprintsTasks } from "../sprints/streams";
 import { fromBinder } from "baconjs"
 import moment from "moment";
@@ -29,7 +29,12 @@ export const $todo = () =>
 
         find(db);
 
-        return cancel;
+        const cancelInterval = setInterval(() => find(db), refreshTime);
+
+        return () => {
+            clearInterval(cancelInterval);
+            return cancel();
+        }
     });
 
 let selectedTasks = [];
