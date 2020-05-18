@@ -90,6 +90,7 @@ export default function Task({
   selectTodo,
   canEditTask,
   canSplitTask,
+  recoverTask,
   children
 }) {
   const description = task ? task.description : "There is no tasks, please add some!!";
@@ -233,15 +234,17 @@ export default function Task({
         </article>
         <footer>
           <Divider />
-          <ButtonGroup>
+
+          <div>
             {doneTask && <Button icon="tick" onClick={() => doneTask(task)} disabled={!task}>Done</Button>}
-            {doneTaskUntil && <Button icon="tick" onClick={() => setDoneTaskUntilIsOpen(true)} disabled={!task}>Done Until</Button>}
+            {doneTaskUntil && <Button icon="automatic-updates" onClick={() => setDoneTaskUntilIsOpen(true)} disabled={!task}>Done Until</Button>}
             {dismissTodo && <Button icon="swap-vertical" onClick={() => dismissTodo(task)} disabled={!task}>Dismiss</Button>}
             {canEditTask && <Button icon='edit' onClick={() => setEditTaskIsOpen(true)} disabled={!task}>Edit</Button>}
             {canSplitTask && <Button icon='fork' onClick={() => setSplitTaskIsOpen(true)} disabled={!task}>Split</Button>}
             {selectTodo && <Button icon="pin" onClick={() => selectTodo(task)} disabled={!task}>To do</Button>}
             {deleteTask && <Button icon="trash" onClick={() => deleteTask(task)} disabled={!task}>Delete</Button>}
-          </ButtonGroup>
+            {recoverTask && <Button icon="undo" onClick={() => recoverTask(task)} disabled={!task}>Undo</Button>}
+          </div>
 
           {!dateUntil &&
             < div style={{ float: "right", color: Colors.BLUE3 }}>

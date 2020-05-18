@@ -20,6 +20,7 @@ import {
 import moment from "moment";
 import SelectTags from '../components/SelectTags';
 import stringSimilarity from 'string-similarity';
+import { resetTask } from "../db/tasks/db";
 
 function sort(tasks, orderBy) {
     if (orderBy === "similiar") {
@@ -103,7 +104,8 @@ export default function Tasks() {
         doneTaskUntil,
         deleteTask,
         selectTodo,
-        setTags
+        setTags,
+        recoverTask
     } = useAllTasks(); // useActiveTasks();
 
     const [showSearch, setShowSearch] = useState(false);
@@ -137,18 +139,28 @@ export default function Tasks() {
         }
     };
 
-    const renderTasksList = tasks => tasks.map(
-        task => (<Task
-            task={task}
-            doneTask={doneTask}
-            doneTaskUntil={doneTaskUntil}
-            deleteTask={deleteTask}
-            selectTodo={selectTodoNotification}
-            canEditTask={true}
-            canSplitTask={true}
-            key={task._id}
-        ></Task>)
-    );
+    const renderTasksList = (
+        tasks, {
+            doneTask,
+            doneTaskUntil,
+            deleteTask,
+            selectTodoNotification,
+            recoverTask,
+            canEditTask,
+            canSplitTask
+        }) => tasks.map(
+            task => (<Task
+                task={task}
+                doneTask={doneTask}
+                doneTaskUntil={doneTaskUntil}
+                deleteTask={deleteTask}
+                selectTodo={selectTodoNotification}
+                canEditTask={canEditTask}
+                canSplitTask={canSplitTask}
+                recoverTask={recoverTask}
+                key={task._id}
+            ></Task>)
+        );
 
     const tasksList = sort(
         tasks.filter(t => t.description.toLowerCase().indexOf(searchText.toLocaleLowerCase()) !== -1),
@@ -157,10 +169,27 @@ export default function Tasks() {
 
     const isDoneUntil = doneUntil => moment(doneUntil).isAfter(moment());
 
-    const activeTasks = renderTasksList(tasksList.filter(t => !t.done && !t.deleted && !isDoneUntil(t.doneUntil)));
-    const doneUntilTasks = renderTasksList(tasksList.filter(t => !t.done && !t.deleted && isDoneUntil(t.doneUntil)));
-    const doneTasks = renderTasksList(tasksList.filter(t => t.done && !t.deleted));
-    const deletedTasks = renderTasksList(tasksList.filter(t => t.deleted));
+    const activeTasks = renderTasksList(
+        tasksList.filter(t => !t.done && !t.deleted && !isDoneUntil(t.doneUntil)),
+        {
+            doneTask, doneTaskUntil,
+            deleteTask, selectTodoNotification,
+            canEditTask: true,
+            canSplitTask: true
+        }
+    );
+
+    const doneUntilTasks = renderTasksList(
+        tasksList.filter(t => !t.done && !t.deleted && isDoneUntil(t.doneUntil)),
+        { doneTask, doneTaskUntil, deleteTask, selectTodoNotification }
+    );
+
+    const doneTasks = renderTasksList(tasksList.filter(
+        t => t.done && !t.deleted),
+        { recoverTask: resetTask }
+    );
+
+    const deletedTasks = renderTasksList(tasksList.filter(t => t.deleted), { recoverTask: resetTask });
 
     const tasksTable = [
         ["active", { tasks: activeTasks, label: "Active" }],

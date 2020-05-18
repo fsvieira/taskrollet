@@ -21,3 +21,9 @@ export const doneTaskUntil = ({ computed, ...task }, doneUntil) =>
     dbTasks.put({ ...task, doneUntil, updatedAt: moment().toDate() })
 
 export const deleteTask = ({ computed, ...task }) => dbTasks.put({ ...task, deleted: true, updatedAt: moment().toDate() })
+
+export const resetTask = ({ computed, ...task }) => {
+    if (task.deleted || task.done || task.doneUntil) {
+        return dbTasks.put({ ...task, done: false, deleted: false, doneUntil: null, updatedAt: moment().toDate() });
+    }
+}
