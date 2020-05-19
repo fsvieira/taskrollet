@@ -1,14 +1,14 @@
-import { db, changes, onReady, refreshTime } from "../db";
+import { db, changes, refreshTime } from "../db";
 import { doneTaskUntil } from "../tasks/db"
 
-export { db, changes, onReady, refreshTime };
+export { db, changes, refreshTime };
 
 export const selectTodo = async task => {
     if (task.attributes.doneUntil) {
         await doneTaskUntil(task, null)
     }
 
-    return db.update(tx => [
+    return (await db()).update(tx => [
         tx.addRecord({
             type: "todo",
             id: "todo",
@@ -20,7 +20,7 @@ export const selectTodo = async task => {
 }
 
 export const dismissTodo = async () => {
-    return db.update(tx => [
+    return (await db()).update(tx => [
         tx.addRecord({
             type: "todo",
             id: "todo",

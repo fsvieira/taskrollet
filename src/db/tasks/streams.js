@@ -1,11 +1,11 @@
-import { db, changes, onReady, refreshTime, constants } from "./db";
+import { db, changes, refreshTime, constants } from "./db";
 import { fromBinder } from "baconjs";
 import moment from "moment";
 
 export const $allTasks = (tags = { all: true }) =>
 	fromBinder(sink => {
-		const find = (source = db.cache) => onReady().then(
-			() => source.query(
+		const find = cache => db(cache).then(
+			db => db.query(
 				q => q.findRecords("task")
 			)
 		).then(
@@ -28,11 +28,11 @@ export const $allTasks = (tags = { all: true }) =>
 			}
 		);
 
-		const cancel = changes(find);
+		const cancel = changes(() => find(true));
 
-		find(db);
+		find();
 
-		const cancelInterval = setInterval(() => find(db), refreshTime);
+		const cancelInterval = setInterval(() => find(), refreshTime);
 
 		return () => {
 			clearInterval(cancelInterval);
@@ -54,8 +54,8 @@ export const $tasks = (tags = { all: true }, selector, filterDoneUntil = false) 
 			}
 		}*/
 
-		const find = (source = db.cache) => onReady().then(
-			() => source.query(
+		const find = cache => db(cache).then(
+			db => db.query(
 				q => q.findRecords("task").filter(
 					...selector
 					// { attribute: "deleted", value: false },
@@ -94,11 +94,11 @@ export const $tasks = (tags = { all: true }, selector, filterDoneUntil = false) 
 			}
 		);
 
-		const cancel = changes(find);
+		const cancel = changes(() => find(true));
 
-		find(db);
+		find();
 
-		const cancelInterval = setInterval(() => find(db), refreshTime);
+		const cancelInterval = setInterval(() => find(), refreshTime);
 
 		return () => {
 			clearInterval(cancelInterval);

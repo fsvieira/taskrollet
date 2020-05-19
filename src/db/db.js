@@ -45,7 +45,8 @@ const schema = new Schema({
 /**
  * Sources,
  */
-export const db = new MemorySource({ schema });
+// export const memDB = new MemorySource({ schema });
+const memDB = new MemorySource({ schema });
 
 const backup = new IndexedDBSource({
 	schema,
@@ -62,7 +63,7 @@ const remote = new JSONAPISource({
 /**
  * Tranform backup sync
  */
-db.on("transform", transform => {
+memDB.on("transform", transform => {
 	backup.sync(transform);
 	listenners.forEach(fn => fn());
 });
@@ -71,7 +72,7 @@ db.on("transform", transform => {
  * Coordinator
  */
 const coordinator = new Coordinator({
-	sources: [db, backup, remote]
+	sources: [memDB, backup, remote]
 });
 
 const backupMemorySync = new SyncStrategy({
@@ -139,9 +140,9 @@ export const changes = fn => {
 
 let ready = false;
 
-export const onReady = () => new Promise(
+export const db = cache => new Promise(
 	resolve => {
-		const r = () => ready ? resolve(ready) : setTimeout(r, 1000);
+		const r = () => ready ? resolve(cache ? memDB.cache : memDB) : setTimeout(r, 1000);
 		r();
 	}
 );
@@ -151,12 +152,10 @@ export const onReady = () => new Promise(
  */
 async function setup() {
 	let transform = await backup.pull(q => q.findRecords());
-	await db.sync(transform);
+	await memDB.sync(transform);
 	await coordinator.activate();
 	ready = true;
 }
 
 setup();
-
-// export { db, changes, onReady, refreshTime };
 

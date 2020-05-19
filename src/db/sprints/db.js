@@ -1,7 +1,7 @@
-import { db, changes, onReady, refreshTime } from "../db";
+import { db, changes, refreshTime } from "../db";
 import moment from "moment";
 
-export { db, changes, onReady, refreshTime };
+export { db, changes, refreshTime };
 
 export const addSprint = async ({ dueDate, tags }) => {
     const nTags = [];
@@ -14,7 +14,7 @@ export const addSprint = async ({ dueDate, tags }) => {
 
     nTags.push("all");
 
-    return db.update(
+    return (await db()).update(
         tx => tx.addRecord({
             type: "sprint",
             attributes: {
@@ -35,6 +35,6 @@ export const addSprint = async ({ dueDate, tags }) => {
     );
 };
 
-export const deleteSprint = ({ type, id }) => db.update(
+export const deleteSprint = async ({ type, id }) => (await db()).update(
     tx => tx.removeRecord({ type, id })
 );

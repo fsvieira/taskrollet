@@ -1,14 +1,14 @@
-import { db, selectTodo, changes, onReady, refreshTime } from "./db";
+import { db, selectTodo, changes, refreshTime } from "./db";
 import { $activeSprintsTasks } from "../sprints/streams";
 import { fromBinder } from "baconjs"
 import moment from "moment";
 
 export const $todo = () =>
     fromBinder(sink => {
-        const find = (source = db.cache) => onReady().then(
-            async () => {
+        const find = cache => db(cache).then(
+            async db => {
                 try {
-                    const todo = await source.query(q => q.findRecord({ type: "todo", id: "todo" }));
+                    const todo = await db.query(q => q.findRecord({ type: "todo", id: "todo" }));
                     sink(todo);
                 }
                 catch (err) {
@@ -25,11 +25,11 @@ export const $todo = () =>
             }
         );
 
-        const cancel = changes(find);
+        const cancel = changes(() => find(true));
 
-        find(db);
+        find();
 
-        const cancelInterval = setInterval(() => find(db), refreshTime);
+        const cancelInterval = setInterval(() => find(), refreshTime);
 
         return () => {
             clearInterval(cancelInterval);

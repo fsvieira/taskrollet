@@ -1,12 +1,12 @@
-import { db, changes, onReady, refreshTime } from "../db";
+import { db, changes, refreshTime } from "../db";
 import moment from "moment";
 
-export { db, changes, onReady, refreshTime };
+export { db, changes, refreshTime };
 
-export const addTask = ({ computed, ...task }, createdAt) => {
+export const addTask = async ({ computed, ...task }, createdAt) => {
     const now = moment.utc().valueOf();
 
-    return db.update(tx => [
+    return (await db()).update(tx => [
         ...task.relationships.tags.data.map(tag => tx.addRecord(tag)),
         tx.addRecord({
             ...task,
@@ -21,10 +21,10 @@ export const addTask = ({ computed, ...task }, createdAt) => {
     ]);
 }
 
-export const editTask = ({ computed, ...task }) => {
+export const editTask = async ({ computed, ...task }) => {
     const now = moment.utc().valueOf();
 
-    return db.update(tx => [
+    return (await db()).update(tx => [
         ...task.relationships.tags.data.map(tag => tx.addRecord(tag)),
         tx.updateRecord({
             ...task,
@@ -36,7 +36,7 @@ export const editTask = ({ computed, ...task }) => {
     ]);
 }
 
-export const doneTask = ({ computed, ...task }) => db.update(
+export const doneTask = async ({ computed, ...task }) => (await db()).update(
     tx => tx.updateRecord({
         ...task,
         attributes: {
@@ -47,8 +47,8 @@ export const doneTask = ({ computed, ...task }) => db.update(
     })
 );
 
-export const doneTaskUntil = ({ computed, ...task }, doneUntil) => {
-    return db.update(
+export const doneTaskUntil = async ({ computed, ...task }, doneUntil) => {
+    return (await db()).update(
         tx => tx.updateRecord({
             ...task,
             attributes: {
@@ -60,7 +60,7 @@ export const doneTaskUntil = ({ computed, ...task }, doneUntil) => {
     )
 };
 
-export const deleteTask = ({ computed, ...task }) => db.update(
+export const deleteTask = async ({ computed, ...task }) => (await db()).update(
     tx => tx.updateRecord({
         ...task,
         attributes: {
