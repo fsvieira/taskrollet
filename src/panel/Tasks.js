@@ -76,10 +76,16 @@ function orderByCmp(orderBy, a, b) {
 }
 
 function SelectOrder({ orderBy, setOrderBy }) {
+    const [isOpen, setIsOpen] = useState(false);
+
     const selector = <div style={{ padding: "0.5em" }}>
         <RadioGroup
             label="Order By"
-            onChange={e => setOrderBy(e.target.value)}
+            onChange={e => {
+                setOrderBy(e.target.value);
+                setIsOpen(false);
+            }
+            }
             selectedValue={orderBy}
         >
             <Radio label="creation date" value="createdAt" />
@@ -90,8 +96,13 @@ function SelectOrder({ orderBy, setOrderBy }) {
     </div>;
 
     return (
-        <Popover content={selector} position={Position.BOTTOM}>
-            <Button icon="sort" />
+        <Popover
+            content={selector}
+            position={Position.BOTTOM}
+            isOpen={isOpen}
+            onInteraction={isOpen => setIsOpen(isOpen)}
+        >
+            <Button icon="sort" onClick={() => setIsOpen(!isOpen)} />
         </Popover>
     );
 }
