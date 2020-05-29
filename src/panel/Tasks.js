@@ -115,8 +115,7 @@ export default function Tasks() {
         doneTaskUntil,
         deleteTask,
         selectTodo,
-        setTags,
-        recoverTask
+        setTags
     } = useAllTasks(); // useActiveTasks();
 
     const [showSearch, setShowSearch] = useState(false);
@@ -260,26 +259,22 @@ export default function Tasks() {
                 </div>
             </div>
             <article style={{ marginTop: "3em" }}>
-                {!noTasks &&
-                    <Tabs id="TabsExample" onChange={value => setSelectedTab(value)} selectedTabId={selectedTabFunc(selectedTab)}>
-                        {/*
+
+                <Tabs id="TabsExample" onChange={value => setSelectedTab(value)} selectedTabId={selectedTabFunc(selectedTab)}>
+                    {/*
                         {!!activeTasks.length && <Tab id="active" title={`Active (${activeTasks.length})`} panel={activeTasks} />}
                         {!!doneUntilTasks.length && <Tab id="doneUntil" title={`Done Until ${doneUntilTasks.length}`} panel={doneUntilTasks} />}
                         {!!doneTasks.length && <Tab id="done" title={`Done ${doneTasks.length}`} panel={doneTasks} />}
                         {!!deletedTasks.length && <Tab id="deleted" title={`Deleted ${deletedTasks.length}`} panel={deletedTasks} />}
-                        */}
-                        {tasksTable
-                            .filter(([tab, { tasks }]) => tasks.length > 0)
-                            .map(([tab, { tasks, label }]) =>
-                                <Tab id={tab} title={`${label} (${tasks.length})`} panel={tasks} key={tab} />
-                            )
-                        }
-                        <Tabs.Expander />
-                    </Tabs>
-                }
-                {noTasks && <Card interactive={true} elevation={Elevation.TWO} style={{ margin: '1em' }}>
-                    <p>No tasks found!!</p>
-                </Card>}
+                    */}
+                    {tasksTable
+                        .filter(([tab, { tasks }]) => tasks.length > 0)
+                        .map(([tab, { tasks, label }]) =>
+                            <Tab id={tab} title={`${label} (${tasks.length})`} panel={tasks} key={tab} />
+                        )
+                    }
+                    <Tabs.Expander />
+                </Tabs>
             </article>
         </section>
     );

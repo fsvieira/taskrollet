@@ -18,6 +18,9 @@ export default function SelectTags({ onChange, label, noText, filterTags = { all
 
     const checks = [];
     const orderTags = Object.keys(tags).sort();
+
+    console.log("orderTags", orderTags);
+
     for (let i = 0; i < orderTags.length; i++) {
         const tag = orderTags[i];
 
