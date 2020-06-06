@@ -5,8 +5,8 @@
   "author": "Filipe Vieira",
   "license": "MIT",
   "scripts": {
-    "start": "parcel index.html",
-    "ghpages": "rm ./docs/* -rf && parcel build index.html --public-url ./ --out-dir ./docs"
+    "start": "mkdir dist -p && cp locales/ dist/ -rf && parcel index.html",
+    "ghpages": "rm ./docs/* -rf && mkdir docs -p && cp locales/ docs/ -rf && parcel build index.html --public-url ./ --out-dir ./docs"
   },
   "browserslist": [
     "last 1 Chrome versions"
@@ -37,6 +37,9 @@
     "db": "^1.1.1",
     "editor": "^1.0.0",
     "filesaver": "0.0.13",
+    "i18next": "^19.4.5",
+    "i18next-browser-languagedetector": "^4.2.0",
+    "i18next-http-backend": "^1.0.13",
     "import": "0.0.6",
     "moment": "^2.24.0",
     "parcel": "^1.12.4",
@@ -45,6 +48,7 @@
     "react": "^16.12.0",
     "react-autocomplete-input": "^1.0.12",
     "react-dom": "^16.12.0",
+    "react-i18next": "^11.5.0",
     "react-redux": "^7.1.3",
     "reactjs": "^1.0.0",
     "redux": "^4.0.4",

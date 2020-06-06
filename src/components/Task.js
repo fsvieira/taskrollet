@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
+import { useTranslation } from 'react-i18next';
 
 import {
   Button,
-  ButtonGroup,
   Divider,
   Card,
   Elevation,
@@ -93,6 +93,8 @@ export default function Task({
   recoverTask,
   children
 }) {
+  const { t } = useTranslation();
+
   const description = task ? task.description : "There is no tasks, please add some!!";
   const date = (task ? moment(task.createdAt) : moment()).calendar();
 
@@ -236,7 +238,7 @@ export default function Task({
           <Divider />
 
           <div>
-            {doneTask && <Button icon="tick" onClick={() => doneTask(task)} disabled={!task}>Done</Button>}
+            {doneTask && <Button icon="tick" onClick={() => doneTask(task)} disabled={!task}>{t("DONE")}</Button>}
             {doneTaskUntil && <Button icon="automatic-updates" onClick={() => setDoneTaskUntilIsOpen(true)} disabled={!task}>Done Until</Button>}
             {dismissTodo && <Button icon="swap-vertical" onClick={() => dismissTodo(task)} disabled={!task}>Dismiss</Button>}
             {canEditTask && <Button icon='edit' onClick={() => setEditTaskIsOpen(true)} disabled={!task}>Edit</Button>}

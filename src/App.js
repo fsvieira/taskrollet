@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 
 import {
   Alignment,
@@ -35,56 +35,58 @@ export default function App() {
   const openContent = content => setContent(content);
 
   return (
-    <section
-      className="App"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100%"
-      }}
-    >
-      <Sprints
-        isOpen={drawer === Drawers.SPRINTS}
-        onClose={onDrawerClose}
-      />
-      <header>
-        <Navbar style={{ flexGrow: 1 }}>
-          <NavbarGroup align={Alignment.LEFT}>
-            <NavbarHeading>
-              <Icon
-                icon='walk'
-                iconSize={Icon.SIZE_LARGE}
-                intent={Intent.NONE}
-                onClick={() => openDrawer(Drawers.SPRINTS)}
-              />
-            </NavbarHeading>
-
-            {
+    <Suspense fallback="loading">
+      <section
+        className="App"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          height: "100%"
+        }}
+      >
+        <Sprints
+          isOpen={drawer === Drawers.SPRINTS}
+          onClose={onDrawerClose}
+        />
+        <header>
+          <Navbar style={{ flexGrow: 1 }}>
+            <NavbarGroup align={Alignment.LEFT}>
               <NavbarHeading>
                 <Icon
-                  icon='build'
+                  icon='walk'
                   iconSize={Icon.SIZE_LARGE}
-                  intent={content === Content.WORK ? Intent.PRIMARY : Intent.NONE}
-                  onClick={() => openContent(Content.WORK)}
+                  intent={Intent.NONE}
+                  onClick={() => openDrawer(Drawers.SPRINTS)}
                 />
               </NavbarHeading>
-            }
 
-            {
-              <NavbarHeading>
-                <Icon
-                  icon='projects'
-                  iconSize={Icon.SIZE_LARGE}
-                  intent={content === Content.TASKS ? Intent.PRIMARY : Intent.NONE}
-                  onClick={() => openContent(Content.TASKS)}
-                />
-              </NavbarHeading>
-            }
-          </NavbarGroup>
-        </Navbar>
-      </header>
-      {content === Content.WORK && <Work />}
-      {content === Content.TASKS && <Tasks />}
-    </section>
+              {
+                <NavbarHeading>
+                  <Icon
+                    icon='build'
+                    iconSize={Icon.SIZE_LARGE}
+                    intent={content === Content.WORK ? Intent.PRIMARY : Intent.NONE}
+                    onClick={() => openContent(Content.WORK)}
+                  />
+                </NavbarHeading>
+              }
+
+              {
+                <NavbarHeading>
+                  <Icon
+                    icon='projects'
+                    iconSize={Icon.SIZE_LARGE}
+                    intent={content === Content.TASKS ? Intent.PRIMARY : Intent.NONE}
+                    onClick={() => openContent(Content.TASKS)}
+                  />
+                </NavbarHeading>
+              }
+            </NavbarGroup>
+          </Navbar>
+        </header>
+        {content === Content.WORK && <Work />}
+        {content === Content.TASKS && <Tasks />}
+      </section>
+    </Suspense>
   );
 }
