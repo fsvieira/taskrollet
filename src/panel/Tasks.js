@@ -123,6 +123,8 @@ export default function Tasks() {
     const [orderBy, setOrderBy] = useState("updatedAt");
     const [selectedTab, setSelectedTab] = useState("active");
 
+    let searchComponent;
+
     if (tasks.length === 0) {
         return (<Card interactive={true} elevation={Elevation.TWO} style={{ margin: '1em' }}>
             <p>Your task list is empty, please add a task.</p>
@@ -250,6 +252,7 @@ export default function Tasks() {
                         onClick={() => setShowSearch(!showSearch)}
                     ></Button>
                     {showSearch && <input
+                        ref={el => el && el.focus()}
                         className="bp3-input"
                         type="text"
                         placeholder="Search"
