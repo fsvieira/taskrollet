@@ -122,8 +122,7 @@ export default function Tasks() {
     const [searchText, setSearchText] = useState("");
     const [orderBy, setOrderBy] = useState("updatedAt");
     const [selectedTab, setSelectedTab] = useState("active");
-
-    let searchComponent;
+    const [display, setDisplay] = useState("list");
 
     if (tasks.length === 0) {
         return (<Card interactive={true} elevation={Elevation.TWO} style={{ margin: '1em' }}>
@@ -152,7 +151,8 @@ export default function Tasks() {
     };
 
     const renderTasksList = (
-        tasks, {
+        tasks,
+        {
             doneTask,
             doneTaskUntil,
             deleteTask,
@@ -160,19 +160,28 @@ export default function Tasks() {
             recoverTask,
             canEditTask,
             canSplitTask
-        }) => tasks.map(
-            task => (<Task
-                task={task}
-                doneTask={doneTask}
-                doneTaskUntil={doneTaskUntil}
-                deleteTask={deleteTask}
-                selectTodo={selectTodoNotification}
-                canEditTask={canEditTask}
-                canSplitTask={canSplitTask}
-                recoverTask={recoverTask}
-                key={task._id}
-            ></Task>)
-        );
+        }
+    ) => tasks.map(
+        task => <Task
+            task={task}
+            doneTask={doneTask}
+            doneTaskUntil={doneTaskUntil}
+            deleteTask={deleteTask}
+            selectTodo={selectTodoNotification}
+            canEditTask={canEditTask}
+            canSplitTask={canSplitTask}
+            recoverTask={recoverTask}
+            key={task._id}
+        ></Task>
+    );
+
+    /*
+    const renderTasksList = (tasks, actions) =>
+        <div style={{
+            display: "flex",
+            flexWrap: "wrap",
+            flexDirection: "row"
+        }}>{renderTasksListAux(tasks, actions)}</div>;*/
 
     const tasksList = sort(
         tasks.filter(t => t.description.toLowerCase().indexOf(searchText.toLocaleLowerCase()) !== -1),
@@ -228,8 +237,6 @@ export default function Tasks() {
         }
     }
 
-    const noTasks = !tasksTable.reduce((acc, [tab, { tasks }]) => acc += tasks.length, 0);
-
     return (
         <section style={{ overflow: "auto" }}>
             <div style={{
@@ -260,10 +267,19 @@ export default function Tasks() {
                         onChange={e => setSearchText(e.target.value)}
                     />}
                 </div>
+                <Button
+                    icon={display === "list" ? "list" : "grid-view"}
+                    onClick={() => setDisplay(
+                        display === "list" ? "grid-view" : "list"
+                    )}
+                />
             </div>
             <article style={{ marginTop: "3em" }}>
 
-                <Tabs id="TabsExample" onChange={value => setSelectedTab(value)} selectedTabId={selectedTabFunc(selectedTab)}>
+                <Tabs
+                    onChange={value => setSelectedTab(value)}
+                    selectedTabId={selectedTabFunc(selectedTab)}
+                >
                     {/*
                         {!!activeTasks.length && <Tab id="active" title={`Active (${activeTasks.length})`} panel={activeTasks} />}
                         {!!doneUntilTasks.length && <Tab id="doneUntil" title={`Done Until ${doneUntilTasks.length}`} panel={doneUntilTasks} />}
@@ -273,7 +289,21 @@ export default function Tasks() {
                     {tasksTable
                         .filter(([tab, { tasks }]) => tasks.length > 0)
                         .map(([tab, { tasks, label }]) =>
-                            <Tab id={tab} title={`${label} (${tasks.length})`} panel={tasks} key={tab} />
+                            <Tab
+                                id={tab}
+                                title={`${label} (${tasks.length})`}
+                                panel={
+                                    <div style={{
+                                        display: "flex",
+                                        flexWrap: "wrap",
+                                        flexDirection: display === "list" ? "column" : "row"
+                                    }}>
+                                        {tasks}
+                                    </div>
+                                }
+                                key={tab}
+                                style={{ float: "left" }}
+                            />
                         )
                     }
                     <Tabs.Expander />

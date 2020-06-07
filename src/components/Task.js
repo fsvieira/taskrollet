@@ -148,7 +148,12 @@ export default function Task({
       interactive={true}
       elevation={Elevation.TWO}
       style={{
-        height: "100%"
+        height: "100%",
+        margin: "0.5em",
+        flex: 1,
+        justifyContent: "middle",
+        minWidth: "20em",
+        maxWidth: "100%"
       }}
     >
       {canEditTask &&
