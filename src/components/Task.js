@@ -1,4 +1,4 @@
-import React, { useState, Suspense } from "react";
+import React, { useState } from "react";
 import { useTranslation } from 'react-i18next';
 
 import {
@@ -22,13 +22,30 @@ import TaskSplit from "./Editor/TaskSplit";
 
 import { addTask } from '../db/tasks/db';
 
+import ProgressChart from "./charts/ProgessChart";
+
+export function getTokens(description) {
+  return description.match(/(#|http)([^\s]+)|\[ \]|\[x\]|\[X\]|[ \n\t]|([^\s]+)/g);
+}
+
 
 export function PrettyDescription({ description, task }) {
-  // const tokens = description.match(/([^\s]+)|(\s)/g);
-  const tokens = description.match(/(#|http)([^\s]+)|\[ \]|\[x\]|\[X\]|[ \n\t]|([^\s]+)/g);
+  const tokens = getTokens(description);
 
   if (tokens) {
-    return tokens.map(
+    const { total, checked } = tokens.reduce((acc, el) => {
+      if (el === "[ ]") {
+        acc.total++;
+      }
+      else if (el.toLowerCase() === "[x]") {
+        acc.total++;
+        acc.checked++;
+      }
+
+      return acc;
+    }, { total: 0, checked: 0 });
+
+    const htmlDesc = tokens.map(
       (elem, i) => {
         if (elem.startsWith("#")) {
           return <span key={i} style={{ color: Colors.BLUE3 }}>{elem}</span>
@@ -74,6 +91,16 @@ export function PrettyDescription({ description, task }) {
         return <span key={i}>{elem}</span>;
       }
     );
+
+    return <div>
+      {!!total &&
+        <ProgressChart
+          total={total}
+          closed={checked}
+        />
+      }
+      {htmlDesc}
+    </div>
   }
   else {
     return <span></span>;

@@ -4,6 +4,7 @@ import {
     Colors
 } from "@blueprintjs/core";
 
+import ProgressChart from "../charts/ProgessChart";
 
 export function duration(d) {
     // if (d) {
@@ -33,14 +34,16 @@ export default function SprintStats({
     date: sprintDate
 }) {
 
+    /*
     const chart = (<div style={{ width: "100%", height: "0.5em", clear: "both" }}>
         <div style={{ float: "left", backgroundColor: Colors.GREEN5, height: "100%", width: `${(doneTasksTotal / total) * 100}%` }} ></div>
         <div style={{ float: "left", backgroundColor: Colors.RED5, height: "100%", width: `${(openTasksTotal / total) * 100}%` }} ></div>
-    </div>);
+    </div>);*/
+    // {chart}
 
     return (
         <div>
-            {chart}
+            <ProgressChart total={total} closed={doneTasksTotal} ></ProgressChart>
             {sprintDate && <p>Due Date: {moment(sprintDate).format("DD-MM-YYYY")}</p>}
             {inSprints > 0 && <p>In Sprints: {inSprints}</p>}
             <p>Open Tasks: {openTasksTotal}</p>
