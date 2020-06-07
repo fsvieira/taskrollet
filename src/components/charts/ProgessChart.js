@@ -33,7 +33,7 @@ export default function ProgressChart({ total, closed }) {
                 zIndex: 10,
                 fontWeight: "bold"
             }}>
-                {100 * (closed / total)}%
+                {Math.floor(100 * (closed / total))}%
         </div>
         </div>
     </div>;
