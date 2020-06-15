@@ -5,8 +5,8 @@
   "author": "Filipe Vieira",
   "license": "MIT",
   "scripts": {
-    "start": "mkdir dist -p && cp locales/ dist/ -rf && parcel index.html",
-    "ghpages": "rm ./docs/* -rf && mkdir docs -p && cp locales/ docs/ -rf && parcel build index.html --public-url ./ --out-dir ./docs"
+    "start": "parcel index.html",
+    "ghpages": "rm ./docs/* -rf && parcel build index.html --public-url ./ --out-dir ./docs"
   },
   "browserslist": [
     "last 1 Chrome versions"
