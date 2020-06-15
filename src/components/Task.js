@@ -64,6 +64,7 @@ export function PrettyDescription({ description, task }) {
               addTask(task);
             }}
             key={i}
+            style={{ marginRight: "0px" }}
           >
           </Checkbox>;
         }
@@ -78,6 +79,7 @@ export function PrettyDescription({ description, task }) {
               addTask(task);
             }}
             key={i}
+            style={{ marginRight: "0px" }}
           >
           </Checkbox>;
         }
