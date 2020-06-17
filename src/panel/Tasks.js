@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from 'react-i18next';
 
 import { useAllTasks /*useActiveTasks*/ } from "../db/tasks/hooks";
 import Task from "../components/Task";
@@ -118,6 +119,8 @@ export default function Tasks() {
         setTags
     } = useAllTasks(); // useActiveTasks();
 
+    const { t } = useTranslation();
+
     const [showSearch, setShowSearch] = useState(false);
     const [searchText, setSearchText] = useState("");
     const [orderBy, setOrderBy] = useState("updatedAt");
@@ -126,7 +129,7 @@ export default function Tasks() {
 
     if (tasks.length === 0) {
         return (<Card interactive={true} elevation={Elevation.TWO} style={{ margin: '1em' }}>
-            <p>Your task list is empty, please add a task.</p>
+            <p>{t("EMPTY_TASK_LIST_MSG")}</p>
         </Card>);
     }
 
@@ -214,7 +217,7 @@ export default function Tasks() {
 
     const tasksTable = [
         ["active", { tasks: activeTasks, label: "Active" }],
-        ["doneUntil", { tasks: doneUntilTasks, label: "Done Until" }],
+        ["doneUntil", { tasks: doneUntilTasks, label: t("DONE_UNTIL") }],
         ["done", { tasks: doneTasks, label: "Done" }],
         ["deleted", { tasks: deletedTasks, label: "Deleted" }]
     ];

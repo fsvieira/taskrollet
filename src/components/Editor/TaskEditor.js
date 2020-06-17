@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from 'react-i18next';
 
 import {
   Button,
@@ -21,6 +22,8 @@ export default function TaskEditor({
   width = "100%",
   height = "8em"
 }) {
+
+  const { t } = useTranslation();
 
   const [value, setValue] = useState(task ? task.description : "");
   const { tags } = useActiveTags();
@@ -47,9 +50,11 @@ export default function TaskEditor({
         value={value}
         onChange={setValue}
         placeholder={
+          t("EDIT_PLACEHOLDER")
+          /*
           "a. Write here the task description, use # to add #tags!!\n" +
           "b. Use [ ] and [X] to render checkboxes.\n" +
-          "c. Add Shortcut: Ctrl+Enter"
+          "c. Add Shortcut: Ctrl+Enter"*/
         }
         onKeyPress={e => {
           const code = e.keyCode || e.which;
@@ -63,7 +68,7 @@ export default function TaskEditor({
         position={Position.RIGHT}
         onClick={submit}
         disabled={value.trim() === ''}
-      >{task ? "Save" : "Add"}</Button>
+      >{t(task ? "SAVE" : "ADD")}</Button>
     </Card>
   );
 

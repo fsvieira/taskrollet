@@ -228,11 +228,11 @@ export default function Task({
           icon="info-sign"
           isOpen={doneTaskUntilIsOpen}
           onClose={closeDoneTaskUntil}
-          title="Done Until!!"
+          title={`${t("DONE_UNTIL")}!!`}
         >
           <div className={Classes.DIALOG_BODY}>
             <RadioGroup
-              label="Done Until"
+              label={t("DONE_UNTIL")}
               onChange={doneTaskUntilSelectTime}
             >
               <Radio label="4 hours" value="4hours" />
@@ -273,13 +273,13 @@ export default function Task({
 
           <div>
             {doneTask && <Button icon="tick" onClick={() => doneTask(task)} disabled={!task}>{t("DONE")}</Button>}
-            {doneTaskUntil && <Button icon="automatic-updates" onClick={() => setDoneTaskUntilIsOpen(true)} disabled={!task}>Done Until</Button>}
-            {dismissTodo && <Button icon="swap-vertical" onClick={() => dismissTodo(task)} disabled={!task}>Dismiss</Button>}
-            {canEditTask && <Button icon='edit' onClick={() => setEditTaskIsOpen(true)} disabled={!task}>Edit</Button>}
-            {canSplitTask && <Button icon='fork' onClick={() => setSplitTaskIsOpen(true)} disabled={!task}>Split</Button>}
-            {selectTodo && <Button icon="pin" onClick={() => selectTodo(task)} disabled={!task}>To do</Button>}
-            {deleteTask && <Button icon="trash" onClick={() => deleteTask(task)} disabled={!task}>Delete</Button>}
-            {recoverTask && <Button icon="undo" onClick={() => recoverTask(task)} disabled={!task}>Undo</Button>}
+            {doneTaskUntil && <Button icon="automatic-updates" onClick={() => setDoneTaskUntilIsOpen(true)} disabled={!task}>{t("DONE_UNTIL")}</Button>}
+            {dismissTodo && <Button icon="swap-vertical" onClick={() => dismissTodo(task)} disabled={!task}>{t("DISMISS")}</Button>}
+            {canEditTask && <Button icon='edit' onClick={() => setEditTaskIsOpen(true)} disabled={!task}>{t("EDIT")}</Button>}
+            {canSplitTask && <Button icon='fork' onClick={() => setSplitTaskIsOpen(true)} disabled={!task}>{t("SPLIT")}</Button>}
+            {selectTodo && <Button icon="pin" onClick={() => selectTodo(task)} disabled={!task}>{t("TODO")}</Button>}
+            {deleteTask && <Button icon="trash" onClick={() => deleteTask(task)} disabled={!task}>{t("DELETE")}</Button>}
+            {recoverTask && <Button icon="undo" onClick={() => recoverTask(task)} disabled={!task}>{t("RECOVER")}</Button>}
           </div>
 
           {!dateUntil &&
@@ -289,7 +289,7 @@ export default function Task({
           }
           {dateUntil &&
             <div style={{ float: "right", color: Colors.BLUE3 }}>
-              Done Until: {dateUntil}
+              {t("DONE_UNTIL")}: {dateUntil}
             </div>
           }
 
