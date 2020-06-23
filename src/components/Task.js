@@ -138,8 +138,9 @@ export default function Task({
   const closeTaskEditor = () => setEditTaskIsOpen(false);
   const closeDoneTaskUntil = () => setDoneTaskUntilIsOpen(false);
 
+  /*
   const [splitTaskIsOpen, setSplitTaskIsOpen] = useState(false);
-  const closeTaskSplit = () => setSplitTaskIsOpen(false);
+  const closeTaskSplit = () => setSplitTaskIsOpen(false);*/
 
   const doneTaskUntilSelectTime = async e => {
     const value = e.target.value;
@@ -199,12 +200,12 @@ export default function Task({
           title="Edit Task!!"
         >
           <div className={Classes.DIALOG_BODY}>
-            <TaskEditor height="90%" task={task} onSave={closeTaskEditor} ></TaskEditor>
+            <TaskEditor height="90%" task={task} onSave={closeTaskEditor} canSplitTask={canSplitTask} ></TaskEditor>
           </div>
         </Dialog>
       }
 
-      {canSplitTask &&
+      {/*canSplitTask &&
         <Dialog
           style={{
             maxWidth: "100%",
@@ -220,7 +221,7 @@ export default function Task({
           <div className={Classes.DIALOG_BODY}>
             <TaskSplit height="45%" task={task} onSave={closeTaskSplit} ></TaskSplit>
           </div>
-        </Dialog>
+        </Dialog>*/
       }
 
       {doneTaskUntil &&
@@ -272,13 +273,13 @@ export default function Task({
           <Divider />
 
           <div>
-            {doneTask && <Button icon="tick" onClick={() => doneTask(task)} disabled={!task}>{t("DONE")}</Button>}
-            {doneTaskUntil && <Button icon="automatic-updates" onClick={() => setDoneTaskUntilIsOpen(true)} disabled={!task}>{t("DONE_UNTIL")}</Button>}
+            {doneTask && <Button icon="tick" onClick={() => doneTask(task)} disabled={!task}></Button>}
+            {doneTaskUntil && <Button icon="automatic-updates" onClick={() => setDoneTaskUntilIsOpen(true)} disabled={!task}></Button>}
             {dismissTodo && <Button icon="swap-vertical" onClick={() => dismissTodo(task)} disabled={!task}>{t("DISMISS")}</Button>}
-            {canEditTask && <Button icon='edit' onClick={() => setEditTaskIsOpen(true)} disabled={!task}>{t("EDIT")}</Button>}
-            {canSplitTask && <Button icon='fork' onClick={() => setSplitTaskIsOpen(true)} disabled={!task}>{t("SPLIT")}</Button>}
+            {canEditTask && <Button icon='edit' onClick={() => setEditTaskIsOpen(true)} disabled={!task}></Button>}
+            {/* canSplitTask && <Button icon='fork' onClick={() => setSplitTaskIsOpen(true)} disabled={!task}></Button> */}
             {selectTodo && <Button icon="pin" onClick={() => selectTodo(task)} disabled={!task}>{t("TODO")}</Button>}
-            {deleteTask && <Button icon="trash" onClick={() => deleteTask(task)} disabled={!task}>{t("DELETE")}</Button>}
+            {deleteTask && <Button icon="trash" onClick={() => deleteTask(task)} disabled={!task}></Button>}
             {recoverTask && <Button icon="undo" onClick={() => recoverTask(task)} disabled={!task}>{t("RECOVER")}</Button>}
           </div>
 
