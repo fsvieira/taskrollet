@@ -104,7 +104,7 @@ export default function TaskEditor({
       splitTask(task, valueA, valueB, onSave);
     }
     else if (addTaskText(task, valueA, onSave)) {
-      setValue("");
+      setValueA("");
     }
   };
 
