@@ -11,14 +11,16 @@ import {
   Classes,
   RadioGroup,
   Radio,
-  Checkbox
+  Checkbox,
+  Tooltip,
+  Position
 } from "@blueprintjs/core";
 import "@blueprintjs/core/lib/css/blueprint.css";
 
 import moment from "moment";
 
 import TaskEditor from "./Editor/TaskEditor";
-import TaskSplit from "./Editor/TaskSplit";
+// import TaskSplit from "./Editor/TaskSplit";
 
 import { addTask } from '../db/tasks/db';
 
@@ -273,14 +275,42 @@ export default function Task({
           <Divider />
 
           <div>
-            {doneTask && <Button icon="tick" onClick={() => doneTask(task)} disabled={!task}></Button>}
-            {doneTaskUntil && <Button icon="automatic-updates" onClick={() => setDoneTaskUntilIsOpen(true)} disabled={!task}></Button>}
-            {dismissTodo && <Button icon="swap-vertical" onClick={() => dismissTodo(task)} disabled={!task}>{t("DISMISS")}</Button>}
-            {canEditTask && <Button icon='edit' onClick={() => setEditTaskIsOpen(true)} disabled={!task}></Button>}
+            {doneTask &&
+              <Tooltip content={t("DONE")} position={Position.TOP}>
+                <Button icon="tick" onClick={() => doneTask(task)} disabled={!task}></Button>
+              </Tooltip>
+            }
+            {doneTaskUntil &&
+              <Tooltip content={t("DONE_UNTIL")} position={Position.TOP}>
+                <Button icon="automatic-updates" onClick={() => setDoneTaskUntilIsOpen(true)} disabled={!task}></Button>
+              </Tooltip>
+            }
+            {dismissTodo &&
+              <Tooltip content={t("DISMISS")} position={Position.TOP}>
+                <Button icon="swap-vertical" onClick={() => dismissTodo(task)} disabled={!task}>{t("DISMISS")}</Button>
+              </Tooltip>
+            }
+            {canEditTask &&
+              <Tooltip content={t("EDIT")} position={Position.TOP}>
+                <Button icon='edit' onClick={() => setEditTaskIsOpen(true)} disabled={!task}></Button>
+              </Tooltip>
+            }
             {/* canSplitTask && <Button icon='fork' onClick={() => setSplitTaskIsOpen(true)} disabled={!task}></Button> */}
-            {selectTodo && <Button icon="pin" onClick={() => selectTodo(task)} disabled={!task}>{t("TODO")}</Button>}
-            {deleteTask && <Button icon="trash" onClick={() => deleteTask(task)} disabled={!task}></Button>}
-            {recoverTask && <Button icon="undo" onClick={() => recoverTask(task)} disabled={!task}>{t("RECOVER")}</Button>}
+            {selectTodo &&
+              <Tooltip content={t("TODO")} position={Position.TOP}>
+                <Button icon="pin" onClick={() => selectTodo(task)} disabled={!task}>{t("TODO")}</Button>
+              </Tooltip>
+            }
+            {deleteTask &&
+              <Tooltip content={t("DELETE")} position={Position.TOP}>
+                <Button icon="trash" onClick={() => deleteTask(task)} disabled={!task}></Button>
+              </Tooltip>
+            }
+            {recoverTask &&
+              <Tooltip content={t("RECOVER")} position={Position.TOP}>
+                <Button icon="undo" onClick={() => recoverTask(task)} disabled={!task}>{t("RECOVER")}</Button>
+              </Tooltip>
+            }
           </div>
 
           {!dateUntil &&

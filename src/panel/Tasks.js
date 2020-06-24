@@ -15,7 +15,8 @@ import {
     Elevation,
     Card,
     Tab,
-    Tabs
+    Tabs,
+    Tooltip
 } from "@blueprintjs/core";
 
 import moment from "moment";
@@ -76,7 +77,7 @@ function orderByCmp(orderBy, a, b) {
     }
 }
 
-function SelectOrder({ orderBy, setOrderBy }) {
+function SelectOrder({ orderBy, setOrderBy, t }) {
     const [isOpen, setIsOpen] = useState(false);
 
     const selector = <div style={{ padding: "0.5em" }}>
@@ -103,7 +104,9 @@ function SelectOrder({ orderBy, setOrderBy }) {
             isOpen={isOpen}
             onInteraction={isOpen => setIsOpen(isOpen)}
         >
-            <Button icon="sort" onClick={() => setIsOpen(!isOpen)} />
+            <Tooltip content={t("SORT")} position={Position.TOP}>
+                <Button icon="sort" onClick={() => setIsOpen(!isOpen)} />
+            </Tooltip>
         </Popover>
     );
 }
@@ -250,17 +253,20 @@ export default function Tasks() {
                 padding: "0.2em",
                 backgroundColor: Colors.BLUE5
             }}>
-                <SelectOrder setOrderBy={setOrderBy} orderBy={orderBy} />
+                <SelectOrder setOrderBy={setOrderBy} orderBy={orderBy} t={t} />
                 <SelectTags
                     onChange={tags => setTags(tags)}
                     noText={true}
                     style={{ float: "left" }}
                 />
                 <div style={{ float: "left" }}>
-                    <Button
-                        icon="search-template"
-                        onClick={() => setShowSearch(!showSearch)}
-                    ></Button>
+                    <Tooltip content={t("SEARCH")} position={Position.TOP}>
+                        <Button
+                            icon="search-template"
+                            onClick={() => setShowSearch(!showSearch)}
+                        ></Button>
+                    </Tooltip>
+
                     {showSearch && <input
                         ref={el => el && el.focus()}
                         className="bp3-input"
@@ -270,12 +276,14 @@ export default function Tasks() {
                         onChange={e => setSearchText(e.target.value)}
                     />}
                 </div>
-                <Button
-                    icon={display === "list" ? "list" : "grid-view"}
-                    onClick={() => setDisplay(
-                        display === "list" ? "grid-view" : "list"
-                    )}
-                />
+                <Tooltip content={t("VIEW")} position={Position.TOP}>
+                    <Button
+                        icon={display === "list" ? "list" : "grid-view"}
+                        onClick={() => setDisplay(
+                            display === "list" ? "grid-view" : "list"
+                        )}
+                    />
+                </Tooltip>
             </div>
             <article style={{ marginTop: "3em" }}>
 

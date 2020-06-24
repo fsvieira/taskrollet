@@ -6,9 +6,16 @@
     "SPLIT": "Dividir",
     "TODO": "Fazer",
     "DELETE": "Apagar",
-    "UNDO": "Recuperar",
+    "RECOVER": "Recuperar",
     "ADD": "Adicionar",
     "SAVE": "Salvar",
     "EMPTY_TASK_LIST_MSG": "A lista de tarefas está vazia, por favor adicione tarefas.",
-    "EDIT_PLACEHOLDER": "a. Descrição da tarefa, use # para adicionar #etiquetas!!\nb. Use [ ] e [X] para caixas de verificação.\nc. Atalho para submeter nova tarefa: Ctrl+Enter"
+    "EDIT_PLACEHOLDER": "a. Descrição da tarefa, use # para adicionar #etiquetas!!\nb. Use [ ] e [X] para caixas de verificação.\nc. Atalho para submeter nova tarefa: Ctrl+Enter",
+    "SORT": "Ordenar",
+    "SEARCH": "Pesquisar",
+    "VIEW": "Vista",
+    "TAGS": "Etiquetas",
+    "SPRINTS": "Metas",
+    "WORK": "Bancada",
+    "TASKS": "Tarefas"
 }

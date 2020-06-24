@@ -10,5 +10,12 @@
     "ADD": "Add",
     "SAVE": "Save",
     "EMPTY_TASK_LIST_MSG": "Your task list is empty, please add a task.",
-    "EDIT_PLACEHOLDER": "a. Write here the task description, use # to add #tags!!\nb. Use [ ] and [X] to render checkboxes.\nc. Add Shortcut: Ctrl+Enter"
+    "EDIT_PLACEHOLDER": "a. Write here the task description, use # to add #tags!!\nb. Use [ ] and [X] to render checkboxes.\nc. Add Shortcut: Ctrl+Enter",
+    "SORT": "Sort",
+    "SEARCH": "Search",
+    "VIEW": "View",
+    "TAGS": "Tags",
+    "SPRINTS": "Goals",
+    "WORK": "Workbench",
+    "TASKS": "Tasks"
 }
