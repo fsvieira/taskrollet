@@ -12,7 +12,7 @@ export const $todo = () =>
                     sink(todo);
                 }
                 catch (err) {
-                    db.requestQueue.skip();
+                    db.requestQueue && db.requestQueue.skip();
 
                     sink({
                         relationships: {

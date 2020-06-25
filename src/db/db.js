@@ -84,6 +84,7 @@ const backupMemorySync = new SyncStrategy({
 coordinator.addStrategy(backupMemorySync);
 
 // Query the remote server whenever the memory source is queried
+
 coordinator.addStrategy(
 	new RequestStrategy({
 		source: "memory",
