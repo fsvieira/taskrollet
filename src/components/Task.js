@@ -91,6 +91,9 @@ export function PrettyDescription({ description, task }) {
         else if (elem === '\t') {
           return <span key={i} style={{ width: "3em" }}></span>
         }
+        else if (elem === ' ') {
+          return <>&nbsp;</>;
+        }
 
         return <span key={i}>{elem}</span>;
       }
@@ -139,10 +142,6 @@ export default function Task({
 
   const closeTaskEditor = () => setEditTaskIsOpen(false);
   const closeDoneTaskUntil = () => setDoneTaskUntilIsOpen(false);
-
-  /*
-  const [splitTaskIsOpen, setSplitTaskIsOpen] = useState(false);
-  const closeTaskSplit = () => setSplitTaskIsOpen(false);*/
 
   const doneTaskUntilSelectTime = async e => {
     const value = e.target.value;
@@ -205,25 +204,6 @@ export default function Task({
             <TaskEditor height="90%" task={task} onSave={closeTaskEditor} canSplitTask={canSplitTask} ></TaskEditor>
           </div>
         </Dialog>
-      }
-
-      {/*canSplitTask &&
-        <Dialog
-          style={{
-            maxWidth: "100%",
-            width: "980px",
-            height: "620px",
-            maxHeight: "90vh"
-          }}
-          icon="info-sign"
-          isOpen={splitTaskIsOpen}
-          onClose={closeTaskSplit}
-          title="Split Task!!"
-        >
-          <div className={Classes.DIALOG_BODY}>
-            <TaskSplit height="45%" task={task} onSave={closeTaskSplit} ></TaskSplit>
-          </div>
-        </Dialog>*/
       }
 
       {doneTaskUntil &&
