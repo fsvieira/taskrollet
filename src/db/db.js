@@ -4,6 +4,10 @@ import MemorySource from "@orbit/memory";
 import Coordinator, { SyncStrategy, RequestStrategy } from "@orbit/coordinator";
 import JSONAPISource from "@orbit/jsonapi";
 
+import IndexedDBBucket from "@orbit/indexeddb-bucket";
+
+const bucket = new IndexedDBBucket({ namespace: "taskroulette-bucket" });
+
 export const refreshTime = +process.env.REACT_JSONAPI_REFRESH_TIME_MINUTES * 1000 * 60;
 
 /**
@@ -46,15 +50,20 @@ const schema = new Schema({
  * Sources,
  */
 // export const memDB = new MemorySource({ schema });
-const memDB = new MemorySource({ schema });
+const memDB = new MemorySource({
+	bucket,
+	schema
+});
 
 const backup = new IndexedDBSource({
+	bucket,
 	schema,
 	name: "backup",
 	namespace: "taskroulette"
 });
 
 const remote = new JSONAPISource({
+	bucket,
 	schema,
 	name: "remote",
 	host: process.env.REACT_JSONAPI_URL // "http://localhost:9000/api/fsvieira"
@@ -111,6 +120,8 @@ coordinator.addStrategy(
 );
 
 // Sync all changes received from the remote server to the memory source
+/*
+
 coordinator.addStrategy(
 	new SyncStrategy({
 		source: "remote",
@@ -119,7 +130,6 @@ coordinator.addStrategy(
 	})
 );
 
-/*
 // Sync all changes from memory source to remote
 coordinator.addStrategy(
 	new SyncStrategy({
