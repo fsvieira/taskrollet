@@ -74,8 +74,14 @@ const remote = new JSONAPISource({
  */
 memDB.on("transform", transform => {
 	backup.sync(transform);
-	listenners.forEach(fn => fn());
+	// listenners.forEach(fn => fn());
 });
+
+/*
+memDB.on("update", update => {
+	console.log("ON UPDATE", update);
+	listenners.forEach(fn => fn());
+});*/
 
 /**
  * Coordinator
@@ -120,7 +126,6 @@ coordinator.addStrategy(
 );
 
 // Sync all changes received from the remote server to the memory source
-/*
 
 coordinator.addStrategy(
 	new SyncStrategy({
@@ -131,6 +136,7 @@ coordinator.addStrategy(
 );
 
 // Sync all changes from memory source to remote
+/*
 coordinator.addStrategy(
 	new SyncStrategy({
 		source: "memory",
