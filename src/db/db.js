@@ -1,3 +1,4 @@
+// import { Schema, NetworkError } from "@orbit/data";
 import { Schema } from "@orbit/data";
 import IndexedDBSource from "@orbit/indexeddb";
 import MemorySource from "@orbit/memory";
@@ -77,11 +78,10 @@ memDB.on("transform", transform => {
 	// listenners.forEach(fn => fn());
 });
 
-/*
 memDB.on("update", update => {
 	console.log("ON UPDATE", update);
 	listenners.forEach(fn => fn());
-});*/
+});
 
 /**
  * Coordinator
@@ -124,6 +124,59 @@ coordinator.addStrategy(
 		blocking: false
 	})
 );
+
+coordinator.addStrategy(
+	new RequestStrategy({
+		source: "remote",
+		on: "queryFail",
+		action() {
+			console.log("Query FAIL!!");
+			this.source.requestQueue.skip();
+		}
+	})
+);
+
+coordinator.addStrategy(
+	new RequestStrategy({
+		source: "remote",
+		on: "updateFail",
+		action(transform, e) {
+			console.log(transform, e);
+			console.log("UPDATE FAIL!!");
+			const remote = this.source;
+			const store = this.coordinator.getSource("store");
+
+			// Not working, NetworkError import seems to be an object ? 
+			// if (e instanceof NetworkError) {
+			if (e.constructor.name === 'NetworkError') {
+				// When network errors are encountered, try again in 3s
+				console.log("NetworkError - will try again soon");
+				setTimeout(() => {
+					remote.requestQueue.retry();
+				}, 3000);
+			} else {
+				// When non-network errors occur, notify the user and
+				// reset state.
+				let label = transform.options && transform.options.label;
+				if (label) {
+					alert(`Unable to complete "${label}"`);
+				} else {
+					alert(`Unable to complete operation`);
+				}
+
+				// Roll back store to position before transform
+				if (store.transformLog.contains(transform.id)) {
+					console.log("Rolling back - transform:", transform.id);
+					store.rollback(transform.id, -1);
+				}
+
+				return remote.requestQueue.skip();
+			}
+		},
+		blocking: false
+	})
+);
+
 
 // Sync all changes received from the remote server to the memory source
 

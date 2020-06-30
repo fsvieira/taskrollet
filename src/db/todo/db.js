@@ -4,6 +4,7 @@ import { doneTaskUntil } from "../tasks/db"
 export { db, changes, refreshTime };
 
 export const selectTodo = async task => {
+    console.log("SELECT TODO");
     if (task.attributes.doneUntil) {
         await doneTaskUntil(task, null)
     }

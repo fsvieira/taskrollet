@@ -24,6 +24,7 @@ export const addTask = async ({ computed, ...task }, createdAt) => {
 export const editTask = async ({ computed, ...task }) => {
     const now = moment.utc().valueOf();
 
+    console.log("EDIT TASK!!");
     return (await db()).update(tx => [
         ...task.relationships.tags.data.map(tag => tx.addRecord(tag)),
         tx.updateRecord({
