@@ -147,6 +147,10 @@ export default function Task({
     let time;
 
     switch (value) {
+      case "later":
+        time = moment.utc().add(30, "minutes").valueOf();
+        break;
+
       case "4hours":
         time = moment.utc().add(4, "hours").valueOf();
         break;
@@ -217,6 +221,7 @@ export default function Task({
               label={t("DONE_UNTIL")}
               onChange={doneTaskUntilSelectTime}
             >
+              <Radio label="later (+30min)" value="later" />
               <Radio label="4 hours" value="4hours" />
               <Radio label="Tomorrow" value="tomorrow" />
               <Radio label="Next week" value="next week" />
