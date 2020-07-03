@@ -1,0 +1,35 @@
+    Task Selection algorithm:
+        -- Phase 1:
+        - select all filter tags tasks,
+        - get all additional tags,
+        - calculate the number of combination of aditional tags (C),
+        - choose randomly additional tags, make no more than C simulation (and maybe no more then 100).
+        - for each tags combinations: calculate all avg done time.
+        
+        -- Phase 2:
+        - Use Monte Carlo method, make a bunch of combinations, taking a random avg time from tasks,
+        - For all simultions save (tags, position, estimated time to end all tasks).
+        - For each saved simulation, make (tags, Forall p, e => sum(position, estimated ...))
+        - Choose tags with the less rank, means less time and position.
+        - Use choosed tags to filter again tasks, and then choose when random task.
+
+
+        ** Revision: Phase 1 
+        * This method only works for tasks that are using tags, and for tasks that have lot of 
+        different tags, so in many cases it may not work.
+
+        * The ideia of first phase is to group tasks so that we can have diferent tasks times,
+        so we can replace it using diferent strategies:
+            - random groups of tasks,
+            - using description text (words) instead of tags,
+            - using higth colision hashs on (description, date, tags, ...) [what kind of hashes ?]
+            - by month, day, day of the week, year, date, hour --- this may be very low quality grouping.  
+
+
+        ** Revision: Phase 2 
+
+        * The first task time selection 
+
+
+-- DBS:
+    -- https://github.com/amark/gun

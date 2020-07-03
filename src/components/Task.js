@@ -1,8 +1,8 @@
 import React, { useState } from "react";
+import { useTranslation } from 'react-i18next';
 
 import {
   Button,
-  ButtonGroup,
   Divider,
   Card,
   Elevation,
@@ -11,24 +11,43 @@ import {
   Classes,
   RadioGroup,
   Radio,
-  Checkbox
+  Checkbox,
+  Tooltip,
+  Position
 } from "@blueprintjs/core";
 import "@blueprintjs/core/lib/css/blueprint.css";
 
 import moment from "moment";
 
 import TaskEditor from "./Editor/TaskEditor";
-import TaskSplit from "./Editor/TaskSplit";
+// import TaskSplit from "./Editor/TaskSplit";
 
 import { addTask } from '../db/tasks/db';
 
+import ProgressChart from "./charts/ProgessChart";
+
+export function getTokens(description) {
+  return description.match(/(#|http)([^\s]+)|\[ \]|\[x\]|\[X\]|[ \n\t]|([^\s]+)/g);
+}
+
 
 export function PrettyDescription({ description, task }) {
-  // const tokens = description.match(/([^\s]+)|(\s)/g);
-  const tokens = description.match(/(#|http)([^\s]+)|\[ \]|\[x\]|\[X\]|[ \n\t]|([^\s]+)/g);
+  const tokens = getTokens(description);
 
   if (tokens) {
-    return tokens.map(
+    const { total, checked } = tokens.reduce((acc, el) => {
+      if (el === "[ ]") {
+        acc.total++;
+      }
+      else if (el.toLowerCase() === "[x]") {
+        acc.total++;
+        acc.checked++;
+      }
+
+      return acc;
+    }, { total: 0, checked: 0 });
+
+    const htmlDesc = tokens.map(
       (elem, i) => {
         if (elem.startsWith("#")) {
           return <span key={i} style={{ color: Colors.BLUE3 }}>{elem}</span>
@@ -47,6 +66,7 @@ export function PrettyDescription({ description, task }) {
               addTask(task);
             }}
             key={i}
+            style={{ marginRight: "0px" }}
           >
           </Checkbox>;
         }
@@ -61,6 +81,7 @@ export function PrettyDescription({ description, task }) {
               addTask(task);
             }}
             key={i}
+            style={{ marginRight: "0px" }}
           >
           </Checkbox>;
         }
@@ -70,10 +91,23 @@ export function PrettyDescription({ description, task }) {
         else if (elem === '\t') {
           return <span key={i} style={{ width: "3em" }}></span>
         }
+        else if (elem === ' ') {
+          return <>&nbsp;</>;
+        }
 
         return <span key={i}>{elem}</span>;
       }
     );
+
+    return <div>
+      {!!total &&
+        <ProgressChart
+          total={total}
+          closed={checked}
+        />
+      }
+      {htmlDesc}
+    </div>
   }
   else {
     return <span></span>;
@@ -89,8 +123,11 @@ export default function Task({
   selectTodo,
   canEditTask,
   canSplitTask,
+  recoverTask,
   children
 }) {
+  const { t } = useTranslation();
+
   const description = task ? task.attributes.description : "There is no tasks, please add some!!";
   const date = (task ? moment.utc(task.attributes.createdAt) : moment.utc()).calendar();
 
@@ -104,9 +141,6 @@ export default function Task({
 
   const closeTaskEditor = () => setEditTaskIsOpen(false);
   const closeDoneTaskUntil = () => setDoneTaskUntilIsOpen(false);
-
-  const [splitTaskIsOpen, setSplitTaskIsOpen] = useState(false);
-  const closeTaskSplit = () => setSplitTaskIsOpen(false);
 
   const doneTaskUntilSelectTime = async e => {
     const value = e.target.value;
@@ -144,7 +178,12 @@ export default function Task({
       interactive={true}
       elevation={Elevation.TWO}
       style={{
-        height: "100%"
+        height: "100%",
+        margin: "0.5em",
+        flex: 1,
+        justifyContent: "middle",
+        minWidth: "20em",
+        maxWidth: "100%"
       }}
     >
       {canEditTask &&
@@ -161,26 +200,7 @@ export default function Task({
           title="Edit Task!!"
         >
           <div className={Classes.DIALOG_BODY}>
-            <TaskEditor height="90%" task={task} onSave={closeTaskEditor} ></TaskEditor>
-          </div>
-        </Dialog>
-      }
-
-      {canSplitTask &&
-        <Dialog
-          style={{
-            maxWidth: "100%",
-            width: "980px",
-            height: "620px",
-            maxHeight: "90vh"
-          }}
-          icon="info-sign"
-          isOpen={splitTaskIsOpen}
-          onClose={closeTaskSplit}
-          title="Split Task!!"
-        >
-          <div className={Classes.DIALOG_BODY}>
-            <TaskSplit height="45%" task={task} onSave={closeTaskSplit} ></TaskSplit>
+            <TaskEditor height="90%" task={task} onSave={closeTaskEditor} canSplitTask={canSplitTask} ></TaskEditor>
           </div>
         </Dialog>
       }
@@ -190,11 +210,11 @@ export default function Task({
           icon="info-sign"
           isOpen={doneTaskUntilIsOpen}
           onClose={closeDoneTaskUntil}
-          title="Done Until!!"
+          title={`${t("DONE_UNTIL")}!!`}
         >
           <div className={Classes.DIALOG_BODY}>
             <RadioGroup
-              label="Done Until"
+              label={t("DONE_UNTIL")}
               onChange={doneTaskUntilSelectTime}
             >
               <Radio label="4 hours" value="4hours" />
@@ -232,15 +252,45 @@ export default function Task({
         </article>
         <footer>
           <Divider />
-          <ButtonGroup>
-            {doneTask && <Button icon="tick" onClick={() => doneTask(task)} disabled={!task}>Done</Button>}
-            {doneTaskUntil && <Button icon="tick" onClick={() => setDoneTaskUntilIsOpen(true)} disabled={!task}>Done Until</Button>}
-            {dismissTodo && <Button icon="swap-vertical" onClick={() => dismissTodo(task)} disabled={!task}>Dismiss</Button>}
-            {canEditTask && <Button icon='edit' onClick={() => setEditTaskIsOpen(true)} disabled={!task}>Edit</Button>}
-            {canSplitTask && <Button icon='fork' onClick={() => setSplitTaskIsOpen(true)} disabled={!task}>Split</Button>}
-            {selectTodo && <Button icon="pin" onClick={() => selectTodo(task)} disabled={!task}>To do</Button>}
-            {deleteTask && <Button icon="trash" onClick={() => deleteTask(task)} disabled={!task}>Delete</Button>}
-          </ButtonGroup>
+
+          <div>
+            {doneTask &&
+              <Tooltip content={t("DONE")} position={Position.TOP}>
+                <Button icon="tick" onClick={() => doneTask(task)} disabled={!task}></Button>
+              </Tooltip>
+            }
+            {doneTaskUntil &&
+              <Tooltip content={t("DONE_UNTIL")} position={Position.TOP}>
+                <Button icon="automatic-updates" onClick={() => setDoneTaskUntilIsOpen(true)} disabled={!task}></Button>
+              </Tooltip>
+            }
+            {dismissTodo &&
+              <Tooltip content={t("DISMISS")} position={Position.TOP}>
+                <Button icon="swap-vertical" onClick={() => dismissTodo(task)} disabled={!task}>{t("DISMISS")}</Button>
+              </Tooltip>
+            }
+            {canEditTask &&
+              <Tooltip content={t("EDIT")} position={Position.TOP}>
+                <Button icon='edit' onClick={() => setEditTaskIsOpen(true)} disabled={!task}></Button>
+              </Tooltip>
+            }
+            {/* canSplitTask && <Button icon='fork' onClick={() => setSplitTaskIsOpen(true)} disabled={!task}></Button> */}
+            {selectTodo &&
+              <Tooltip content={t("TODO")} position={Position.TOP}>
+                <Button icon="pin" onClick={() => selectTodo(task)} disabled={!task}>{t("TODO")}</Button>
+              </Tooltip>
+            }
+            {deleteTask &&
+              <Tooltip content={t("DELETE")} position={Position.TOP}>
+                <Button icon="trash" onClick={() => deleteTask(task)} disabled={!task}></Button>
+              </Tooltip>
+            }
+            {recoverTask &&
+              <Tooltip content={t("RECOVER")} position={Position.TOP}>
+                <Button icon="undo" onClick={() => recoverTask(task)} disabled={!task}>{t("RECOVER")}</Button>
+              </Tooltip>
+            }
+          </div>
 
           {!dateUntil &&
             < div style={{ float: "right", color: Colors.BLUE3 }}>
@@ -249,7 +299,7 @@ export default function Task({
           }
           {dateUntil &&
             <div style={{ float: "right", color: Colors.BLUE3 }}>
-              Done Until: {dateUntil}
+              {t("DONE_UNTIL")}: {dateUntil}
             </div>
           }
 

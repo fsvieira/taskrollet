@@ -2,11 +2,14 @@ import React, { useState } from "react";
 
 import { useActiveTags } from "../db/tasks/hooks";
 
+import { useTranslation } from 'react-i18next';
+
 import {
     Checkbox,
     Popover,
     Position,
-    Button
+    Button,
+    Tooltip
 } from "@blueprintjs/core";
 
 // https://blueprintjs.com/docs/#select/multi-select
@@ -18,6 +21,9 @@ export default function SelectTags({ onChange, label, noText, filterTags = { all
 
     const checks = [];
     const orderTags = Object.keys(tags).sort();
+
+    const { t } = useTranslation();
+
     for (let i = 0; i < orderTags.length; i++) {
         const tag = orderTags[i];
 
@@ -47,7 +53,9 @@ export default function SelectTags({ onChange, label, noText, filterTags = { all
 
     return (
         <Popover content={tagsSelector} position={Position.BOTTOM}>
-            <Button icon="tag" text={noText ? "" : label || "filter"} />
+            <Tooltip content={t("TAGS")} position={Position.TOP}>
+                <Button icon="tag" text={noText ? "" : label || "filter"} />
+            </Tooltip>
         </Popover>
     );
 }

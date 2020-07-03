@@ -10,6 +10,7 @@ import {
   Icon
 } from "@blueprintjs/core";
 
+import ProgressChart from "./charts/ProgessChart";
 
 import "@blueprintjs/core/lib/css/blueprint.css";
 import moment from "moment";
@@ -48,12 +49,13 @@ export default function Todo() {
     }
 
     // TODO: make chart a component!!
+    /*
     const chart = (
       <div style={{ width: "100%", height: "0.5em", clear: "both" }}>
         <div style={{ float: "left", backgroundColor: Colors.GREEN5, height: "100%", width: `${(doneTasksTotal / total) * 100}%` }} ></div>
         <div style={{ float: "left", backgroundColor: Colors.RED5, height: "100%", width: `${(openTasksTotal / total) * 100}%` }} ></div>
       </div>
-    );
+    );*/
 
     const diffTime = taskDueAvg - nextTodoAvgDueTime;
 
@@ -84,7 +86,7 @@ export default function Todo() {
             )</span>
         </p>
         <p style={{ marginLeft: "0.5em", marginRight: "0.5em" }}><sup>time</sup>&frasl;<sub>tasks</sub> = {moment.duration(taskDueAvg).humanize()}</p>
-        {chart}
+        <ProgressChart total={total} closed={doneTasksTotal} />
       </div>);
   }
   else {

@@ -4,15 +4,16 @@ import {
     Colors
 } from "@blueprintjs/core";
 
+import ProgressChart from "../charts/ProgessChart";
 
-function duration(d) {
-    if (d) {
-        const md = moment.duration(d);
-        return md.humanize();
-    }
+export function duration(d) {
+    // if (d) {
+    const md = moment.duration(d);
+    return (d > 0 ? "+" : "-") + md.humanize();
+    /*}
     else {
         return "None";
-    }
+    }*/
 }
 
 import moment from "moment";
@@ -35,14 +36,16 @@ export default function SprintStats({
     date: sprintDate
 }) {
 
+    /*
     const chart = (<div style={{ width: "100%", height: "0.5em", clear: "both" }}>
         <div style={{ float: "left", backgroundColor: Colors.GREEN5, height: "100%", width: `${(doneTasksTotal / total) * 100}%` }} ></div>
         <div style={{ float: "left", backgroundColor: Colors.RED5, height: "100%", width: `${(openTasksTotal / total) * 100}%` }} ></div>
-    </div>);
+    </div>);*/
+    // {chart}
 
     return (
         <div>
-            {chart}
+            <ProgressChart total={total} closed={doneTasksTotal} ></ProgressChart>
             {sprintDate && <p>Due Date: {moment(sprintDate).format("DD-MM-YYYY")}</p>}
             {inSprints > 0 && <p>In Sprints: {inSprints}</p>}
             <p>Open Tasks: {openTasksTotal}</p>
@@ -52,7 +55,8 @@ export default function SprintStats({
             <p>Avg Close Task Time: {duration(doneAvg)}</p>
             <p>Next Todo Time: {duration(nextTodoAvgDueTime)}</p>
             <p>Oldest Open Task: {oldestOpenTask ? moment(oldestOpenTask).format("DD-MM-YYYY") : "None"}</p>
-            <p>Time Remaning: {duration(moment(date).valueOf() - moment().valueOf())}</p>
         </div>
     );
+
+    // <p>Time Remaning: {duration(moment(date).valueOf() - moment().valueOf())}</p>
 }

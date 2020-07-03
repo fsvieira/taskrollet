@@ -1,15 +1,26 @@
 import { useState, useEffect } from "react";
 import { $activeTags, $activeTasks, $allTasks } from "./streams";
-import { doneTask, doneTaskUntil, deleteTask } from "./db";
+import { doneTask, doneTaskUntil, deleteTask, resetTask } from "./db";
 import { selectTodo } from "../todo/db";
 
 export const useActiveTags = (filterDoneUntil, filterTags) => {
 	const [tags, setTags] = useState({ all: true });
 	const [selectedTags, setSelectedTags] = useState(filterTags); // {});
 
+	console.log("filterTags", filterTags);
+
 	useEffect(
 		() => {
-			const cancel = $activeTags(selectedTags, filterDoneUntil).onValue(setTags);
+			const cancel = $activeTags(selectedTags, filterDoneUntil).onValue(
+				value => {
+					if (Object.keys(value).length === 0) {
+						setSelectedTags({ all: true });
+					}
+					else {
+						setTags(value);
+					}
+				}
+			);
 
 			return () => cancel();
 		},
@@ -25,7 +36,16 @@ export const useAllTasks = () => {
 
 	useEffect(
 		() => {
-			const cancel = $allTasks(tags).onValue(setTasks);
+			const cancel = $allTasks(tags).onValue(value => {
+				const tagsArray = Object.keys(tags || []);
+
+				if (value.length === 0 && tagsArray.length > 1) {
+					setTags(null)
+				}
+				else {
+					setTasks(value);
+				}
+			});
 
 			return () => cancel();
 		},
@@ -38,7 +58,8 @@ export const useAllTasks = () => {
 		doneTaskUntil,
 		deleteTask,
 		selectTodo,
-		setTags
+		setTags,
+		resetTask
 	};
 
 }
