@@ -17,5 +17,8 @@
     "TAGS": "Tags",
     "SPRINTS": "Goals",
     "WORK": "Workbench",
-    "TASKS": "Tasks"
+    "TASKS": "Tasks",
+    "TASK": "Task",
+    "ERROR_SETTING_TODO": "Error setting TODO task",
+    "IS_SET_TODO": "is set TODO"
 }

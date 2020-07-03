@@ -17,5 +17,8 @@
     "TAGS": "Etiquetas",
     "SPRINTS": "Metas",
     "WORK": "Bancada",
-    "TASKS": "Tarefas"
+    "TASKS": "Tarefas",
+    "TASK": "Tarefa",
+    "ERROR_SETTING_TODO": "Erro a selecionar tarefa para fazer",
+    "IS_SET_TODO": "está selecionado para fazer"
 }

@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 
 import {
-    Colors
+    Icon
 } from "@blueprintjs/core";
 
 import ProgressChart from "../charts/ProgessChart";
@@ -36,6 +36,8 @@ export default function SprintStats({
     date: sprintDate
 }) {
 
+    const [showInfo, setShowInfo] = useState(true);
+
     /*
     const chart = (<div style={{ width: "100%", height: "0.5em", clear: "both" }}>
         <div style={{ float: "left", backgroundColor: Colors.GREEN5, height: "100%", width: `${(doneTasksTotal / total) * 100}%` }} ></div>
@@ -46,15 +48,20 @@ export default function SprintStats({
     return (
         <div>
             <ProgressChart total={total} closed={doneTasksTotal} ></ProgressChart>
-            {sprintDate && <p>Due Date: {moment(sprintDate).format("DD-MM-YYYY")}</p>}
-            {inSprints > 0 && <p>In Sprints: {inSprints}</p>}
-            <p>Open Tasks: {openTasksTotal}</p>
-            <p>Estimated Due Date: {moment(estimatedDueDate).format("DD-MM-YYYY HH:mm")}</p>
-            <p>Total Tasks: {total}</p>
-            <p><sup>time</sup>&frasl;<sub>tasks</sub> = {duration(taskDueAvg)}</p>
-            <p>Avg Close Task Time: {duration(doneAvg)}</p>
-            <p>Next Todo Time: {duration(nextTodoAvgDueTime)}</p>
-            <p>Oldest Open Task: {oldestOpenTask ? moment(oldestOpenTask).format("DD-MM-YYYY") : "None"}</p>
+            <div onClick={() => setShowInfo(!showInfo)}><Icon icon="small-plus" /></div>
+            {showInfo &&
+                <div>
+                    {sprintDate && <p>Due Date: {moment(sprintDate).format("DD-MM-YYYY")}</p>}
+                    {inSprints > 0 && <p>In Sprints: {inSprints}</p>}
+                    <p>Open Tasks: {openTasksTotal}</p>
+                    <p>Estimated Due Date: {moment(estimatedDueDate).format("DD-MM-YYYY HH:mm")}</p>
+                    <p>Total Tasks: {total}</p>
+                    <p><sup>time</sup>&frasl;<sub>tasks</sub> = {duration(taskDueAvg)}</p>
+                    <p>Avg Close Task Time: {duration(doneAvg)}</p>
+                    <p>Next Todo Time: {duration(nextTodoAvgDueTime)}</p>
+                    <p>Oldest Open Task: {oldestOpenTask ? moment(oldestOpenTask).format("DD-MM-YYYY") : "None"}</p>
+                </div>
+            }
         </div>
     );
 

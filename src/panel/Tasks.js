@@ -140,13 +140,13 @@ export default function Tasks() {
             await selectTodo(task);
 
             AppToaster.show({
-                message: `Task ${msg} is set TODO.`,
+                message: `${t("TASK")} ${msg} ${t("IS_SET_TODO")}.`,
                 intent: Intent.SUCCESS
             });
         }
         catch (e) {
             AppToaster.show({
-                message: `Error setting todo task: ${msg}`,
+                message: `${t("ERROR_SETTING_TODO")}: ${msg}`,
                 intent: Intent.DANGER
             });
 
@@ -194,7 +194,7 @@ export default function Tasks() {
     const isDoneUntil = doneUntil => moment(doneUntil).isAfter(moment());
 
     const activeTasks = renderTasksList(
-        tasksList.filter(t => !t.done && !t.deleted && !isDoneUntil(t.doneUntil)),
+        tasksList.filter(t => !t.attributes.done && !t.attributes.deleted && !isDoneUntil(t.attributes.doneUntil)),
         {
             doneTask, doneTaskUntil,
             deleteTask, selectTodoNotification,
@@ -204,16 +204,16 @@ export default function Tasks() {
     );
 
     const doneUntilTasks = renderTasksList(
-        tasksList.filter(t => !t.done && !t.deleted && isDoneUntil(t.doneUntil)),
+        tasksList.filter(t => !t.attributes.done && !t.attributes.deleted && isDoneUntil(t.attributes.doneUntil)),
         { doneTask, doneTaskUntil, deleteTask, selectTodoNotification }
     );
 
     const doneTasks = renderTasksList(tasksList.filter(
-        t => t.done && !t.deleted),
+        t => t.attributes.done && !t.attributes.deleted),
         { recoverTask: resetTask }
     );
 
-    const deletedTasks = renderTasksList(tasksList.filter(t => t.deleted), { recoverTask: resetTask });
+    const deletedTasks = renderTasksList(tasksList.filter(t => t.attributes.deleted), { recoverTask: resetTask });
 
     const tasksTable = [
         ["active", { tasks: activeTasks, label: "Active" }],
@@ -275,7 +275,7 @@ export default function Tasks() {
                 </div>
                 <Tooltip content={t("VIEW")} position={Position.TOP}>
                     <Button
-                        icon={display === "list" ? "list" : "grid-view"}
+                        icon={display === "list" ? "grid-view" : "list"}
                         onClick={() => setDisplay(
                             display === "list" ? "grid-view" : "list"
                         )}
@@ -304,7 +304,8 @@ export default function Tasks() {
                                     <div style={{
                                         display: "flex",
                                         flexWrap: "wrap",
-                                        flexDirection: display === "list" ? "column" : "row"
+                                        flexDirection: display === "list" ? "column" : "row",
+                                        // height: "30em"
                                     }}>
                                         {tasks}
                                     </div>
