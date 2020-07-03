@@ -30,6 +30,9 @@ const Content = {
   TASKS: 2
 };
 
+
+alert("The Taskroulette online demo will be shutdown at the end of August (31-08-2020).")
+
 export default function App() {
   const [drawer, setDrawer] = useState(Drawers.CLOSED);
   const [content, setContent] = useState(Content.WORK);
