@@ -67,8 +67,10 @@ const remote = new JSONAPISource({
 	bucket,
 	schema,
 	name: "remote",
-	host: process.env.REACT_JSONAPI_URL // "http://localhost:9000/api/fsvieira"
+	host: process.env.REACT_JSONAPI_URL
 });
+
+// remote.defaultFetchHeaders.Authorization = "Bearer 1234";
 
 /**
  * Tranform backup sync

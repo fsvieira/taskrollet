@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { useActiveTags } from "../db/tasks/hooks";
 
@@ -54,7 +54,7 @@ export default function SelectTags({ onChange, label, noText, filterTags = { all
     return (
         <Popover content={tagsSelector} position={Position.BOTTOM}>
             <Tooltip content={t("TAGS")} position={Position.TOP}>
-                <Button icon="tag" text={noText ? "" : label || "filter"} />
+                <Button icon="tag" text={noText ? "" : label || t("FILTER")} />
             </Tooltip>
         </Popover>
     );

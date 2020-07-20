@@ -52,7 +52,7 @@ function getTask(text, task) {
     };
 }
 
-export async function splitTask(task, textA, textB, onSave) {
+export async function splitTask(t, task, textA, textB, onSave) {
     const aTask = getTask(textA, task);
     const bTask = getTask(textB);
 
@@ -64,7 +64,7 @@ export async function splitTask(task, textA, textB, onSave) {
         await addTask(bTask, aTask.attributes.createdAt);
 
         AppToaster.show({
-            message: `Tasks Splited: ${msg}`,
+            message: `${t("TASKS_SPLITED")}: ${msg}`,
             intent: Intent.SUCCESS
         });
 
@@ -73,7 +73,7 @@ export async function splitTask(task, textA, textB, onSave) {
     catch (e) {
         console.log(e);
         AppToaster.show({
-            message: `Fail to split Tasks: ${msg}`,
+            message: `${t("FAIL_SPLIT_TASKS")}: ${msg}`,
             intent: Intent.DANGER
         });
 
@@ -83,10 +83,10 @@ export async function splitTask(task, textA, textB, onSave) {
     return true;
 }
 
-export async function addTaskText(task, text, onSave) {
+export async function addTaskText(t, task, text, onSave) {
     if (text.trim() === "") {
         AppToaster.show({
-            message: `Task description can't be empty.`,
+            message: t("TASK_DESC_CANT_BE_EMPTY"),
             intent: Intent.DANGER
         });
 
@@ -101,7 +101,8 @@ export async function addTaskText(task, text, onSave) {
         await (newTask.id ? editTask(newTask) : addTask(newTask));
 
         AppToaster.show({
-            message: `Task ${task ? "Saved" : "Added"}: ${msg}`,
+            message: // `${t("TASK")} ${(task ? t("SAVED") : t("ADDED")).toLowerCase()}: ${msg}`,
+                t(`TASK_${task ? "SAVED" : "ADDED"}`, { message: msg }),
             intent: Intent.SUCCESS
         });
 
@@ -110,7 +111,8 @@ export async function addTaskText(task, text, onSave) {
     catch (e) {
         console.log(e);
         AppToaster.show({
-            message: `Fail to ${task ? "save" : "add"} Task: ${msg}`,
+            message: // `${t("FAIL_TO")} ${(task ? "SAVE" : "ADD").toLowerCase()} ${t("TASK").toLowerCase()}: ${msg}`,
+                t(`TASK_FAIL_TO_${task ? "SAVE" : "ADD"}`, { message: msg }),
             intent: Intent.DANGER
         });
 

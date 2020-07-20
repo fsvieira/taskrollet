@@ -5,6 +5,7 @@ import {
 } from "@blueprintjs/core";
 
 import ProgressChart from "../charts/ProgessChart";
+import { useTranslation } from 'react-i18next';
 
 export function duration(d) {
     // if (d) {
@@ -36,6 +37,8 @@ export default function SprintStats({
     date: sprintDate
 }) {
 
+    const { t } = useTranslation();
+
     const [showInfo, setShowInfo] = useState(true);
 
     /*
@@ -51,15 +54,15 @@ export default function SprintStats({
             <div onClick={() => setShowInfo(!showInfo)}><Icon icon="small-plus" /></div>
             {showInfo &&
                 <div>
-                    {sprintDate && <p>Due Date: {moment(sprintDate).format("DD-MM-YYYY")}</p>}
-                    {inSprints > 0 && <p>In Sprints: {inSprints}</p>}
-                    <p>Open Tasks: {openTasksTotal}</p>
-                    <p>Estimated Due Date: {moment(estimatedDueDate).format("DD-MM-YYYY HH:mm")}</p>
-                    <p>Total Tasks: {total}</p>
-                    <p><sup>time</sup>&frasl;<sub>tasks</sub> = {duration(taskDueAvg)}</p>
-                    <p>Avg Close Task Time: {duration(doneAvg)}</p>
-                    <p>Next Todo Time: {duration(nextTodoAvgDueTime)}</p>
-                    <p>Oldest Open Task: {oldestOpenTask ? moment(oldestOpenTask).format("DD-MM-YYYY") : "None"}</p>
+                    {sprintDate && <p>{t("DUE_DATE")}: {moment(sprintDate).format("DD-MM-YYYY")}</p>}
+                    {inSprints > 0 && <p>{t("IN_SPRINTS")}: {inSprints}</p>}
+                    <p>{t("OPEN_TASKS")}: {openTasksTotal}</p>
+                    <p>{t("ESTIMATED_DUE_DATE")}: {moment(estimatedDueDate).format("DD-MM-YYYY HH:mm")}</p>
+                    <p>{t("TOTAL_TASKS")}: {total}</p>
+                    <p><sup>{t("TIME")}</sup>&frasl;<sub>{t("TASKS")}</sub> = {duration(taskDueAvg)}</p>
+                    <p>{t("AVG_CLOSE_TASK_TIME")}: {duration(doneAvg)}</p>
+                    <p>{t("NEXT_TODO_TIME")}: {duration(nextTodoAvgDueTime)}</p>
+                    <p>{t("OLDEST_OPEN_TASK")}: {oldestOpenTask ? moment(oldestOpenTask).format("DD-MM-YYYY") : t("NONE")}</p>
                 </div>
             }
         </div>

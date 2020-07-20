@@ -19,6 +19,15 @@ import Sprints from "./components/Sprints/Sprints";
 
 import Work from "./panel/Work";
 import Tasks from "./panel/Tasks";
+import Login from "./panel/Login";
+
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  Redirect
+} from "react-router-dom";
 
 const Drawers = {
   CLOSED: 0,
@@ -31,6 +40,45 @@ const Content = {
 };
 
 export default function App() {
+  return <Router>
+    <Switch>
+      <Route path="/login">
+        <Login />
+      </Route>
+
+      <PrivateRoute path="/">
+        <Taskroulette />
+      </PrivateRoute>
+    </Switch>
+  </Router>;
+}
+
+function PrivateRoute({ children, ...rest }) {
+
+  // TODO: make custom useState or useEffect , to store.
+  const isAuthenticated = true;
+
+  return (
+    <Route
+      {...rest}
+      render={({ location }) =>
+        isAuthenticated ? (
+          children
+        ) : (
+            <Redirect
+              to={{
+                pathname: "/login",
+                state: { from: location }
+              }}
+            />
+          )
+      }
+    />
+  );
+}
+
+
+function Taskroulette() {
   const [drawer, setDrawer] = useState(Drawers.CLOSED);
   const [content, setContent] = useState(Content.WORK);
 

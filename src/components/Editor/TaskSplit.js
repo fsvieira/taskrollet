@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 
+import { useTranslation } from 'react-i18next';
+
 import {
   Button,
   Position,
@@ -19,6 +21,7 @@ export default function TaskSplit({
   task,
   onSave
 }) {
+  const { t } = useTranslation();
 
   const [valueA, setValueA] = useState(task ? task.attributes.description : "");
   const [valueB, setValueB] = useState(task ? task.attributes.description : "");
@@ -41,7 +44,7 @@ export default function TaskSplit({
         style={{ width: "100%", height: "45%" }}
         value={valueA}
         onChange={setValueA}
-        placeholder={" Write here the task description, use # to add #tags!!"}
+        placeholder={t("PLACEHOLDER_WRITE_TASK")}
       />
       <TextInput
         options={newTags}
@@ -51,12 +54,12 @@ export default function TaskSplit({
         style={{ width: "100%", height: "45%" }}
         value={valueB}
         onChange={setValueB}
-        placeholder={" Write here the task description, use # to add #tags!!"}
+        placeholder={t("PLACEHOLDER_WRITE_TASK")}
       />
       <Divider />
       <Button
         position={Position.RIGHT}
-        onClick={() => splitTask(task, valueA, valueB, onSave)}
+        onClick={() => splitTask(t, task, valueA, valueB, onSave)}
         disabled={valueA.trim() === '' || valueB.trim() === ''}
       >Split</Button>
     </Card>

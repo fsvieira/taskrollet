@@ -40,9 +40,9 @@ export default function TaskEditor({
 
   const submit = () => {
     if (split) {
-      splitTask(task, valueA, valueB, onSave);
+      splitTask(t, task, valueA, valueB, onSave);
     }
-    else if (addTaskText(task, valueA, onSave)) {
+    else if (addTaskText(t, task, valueA, onSave)) {
       setValueA("");
     }
   };
@@ -63,7 +63,7 @@ export default function TaskEditor({
           style={{ width: "100%", height: split ? "45%" : height }}
           value={valueA}
           onChange={setValueA}
-          placeholder={t("EDIT_PLACEHOLDER")}
+          placeholder={t("PLACEHOLDER_WRITE_TASK")}
         />
         {canSplitTask && split &&
           <TextInput
@@ -74,7 +74,7 @@ export default function TaskEditor({
             style={{ width: "100%", height: "45%" }}
             value={valueB}
             onChange={setValueB}
-            placeholder={t("EDIT_PLACEHOLDER")}
+            placeholder={t("PLACEHOLDER_WRITE_TASK")}
           />
         }
         <Divider />
