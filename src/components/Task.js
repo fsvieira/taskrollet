@@ -106,7 +106,9 @@ export function PrettyDescription({ description, task }) {
           closed={checked}
         />
       }
-      {htmlDesc}
+      <div style={{ overflow: 'auto', width: "100%" }}>
+        {htmlDesc}
+      </div>
     </div>
   }
   else {
