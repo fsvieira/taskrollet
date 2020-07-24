@@ -37,5 +37,9 @@
     "NEXT_TODO_TIME": "Próximo tempo para tarefa a fazer",
     "OLDEST_OPEN_TASK": "Tarefa mais antiga",
     "NONE": "Nenhum",
-    "FILTER": "Filtro"
+    "FILTER": "Filtro",
+    "CONFIRM_DELETION": "Confirm deletion",
+    "DELETE_THIS_ITEMS": "Are you sure you want to delete these items?",
+    "YOU_WONT_RECOVER_THEM": "You won't be able to recover them.",
+    "CANCEL": "Cancel"
 }

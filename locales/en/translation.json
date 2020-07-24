@@ -37,5 +37,9 @@
     "NEXT_TODO_TIME": "Next Todo Time",
     "OLDEST_OPEN_TASK": "Oldest Open Task",
     "NONE": "None",
-    "FILTER": "Filter"
+    "FILTER": "Filter",
+    "CONFIRM_DELETION": "Confirm deletion",
+    "DELETE_THIS_ITEMS": "Are you sure you want to delete these items?",
+    "YOU_WONT_RECOVER_THEM": "You won't be able to recover them.",
+    "CANCEL": "Cancel"
 }

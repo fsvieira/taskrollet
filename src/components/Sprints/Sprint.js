@@ -16,6 +16,8 @@ import SprintStats, { duration } from "./SprintStats";
 
 import moment from "moment";
 
+import { useTranslation } from 'react-i18next';
+
 /*function duration(d) {
   console.log("Date", d)
   const md = moment.duration(d);
@@ -27,28 +29,27 @@ export default function Sprint({ sprint, deleteSprint }) {
   const date = moment(sprint.attributes.dueDate).format("DD-MM-YYYY");
   const days = duration(moment(sprint.attributes.dueDate).valueOf() - moment().valueOf());
 
-  console.log(days);
+  const { t } = useTranslation();
 
   const confirmDelete = (
     <div style={{ padding: "0.5em" }}>
-      <H5>Confirm deletion</H5>
-      <p>Are you sure you want to delete these items?<br />You won't be able to recover them.</p>
+      <H5>{t("CONFIRM_DELETION")}</H5>
+      <p>{t("DELETE_THIS_ITEMS")}<br />{t("YOU_WONT_RECOVER_THEM")}</p>
       <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 15 }}>
         <Button className={Classes.POPOVER_DISMISS} style={{ marginRight: 10 }}>
-          Cancel
-            </Button>
+          {t("CANCEL")}
+        </Button>
         <Button
           intent={Intent.DANGER}
           className={Classes.POPOVER_DISMISS}
           onClick={() => deleteSprint(sprint)}
         >
-          Delete
-            </Button>
+          {t("DELETE")}
+        </Button>
       </div>
     </div>
   );
 
-  console.log(sprint, !sprint.attributes.empty);
   const title = (
     <p>
       {date} ({days})
@@ -82,8 +83,6 @@ export default function Sprint({ sprint, deleteSprint }) {
       intent = Intent.WARNING;
     }
   }
-
-  console.log(sprint);
 
   const tags = sprint.relationships.tags.data.reduce((acc, tag) => {
     acc[tag.id] = true;
