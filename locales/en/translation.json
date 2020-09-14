@@ -41,5 +41,15 @@
     "CONFIRM_DELETION": "Confirm deletion",
     "DELETE_THIS_ITEMS": "Are you sure you want to delete these items?",
     "YOU_WONT_RECOVER_THEM": "You won't be able to recover them.",
-    "CANCEL": "Cancel"
+    "CANCEL": "Cancel",
+    "LOGIN": "Login",
+    "LOGIN_PRO_TIP": "Only set 'Forever' on trusted devices.",
+    "FOREVER": "Forever",
+    "PASSWORD": "Password",
+    "USERNAME_OR_EMAIL": "Username or Email",
+    "LOGIN_FORBIDDEN": "Wrong credential or user doesn't exist!",
+    "LOGIN_UNAUTHORIZED": "User account is not active!",
+    "LOGIN_EMPTY": "Username and password can't be empty!",
+    "PHOTO_BY": "Photo by",
+    "PHOTO_FROM": "from"
 }

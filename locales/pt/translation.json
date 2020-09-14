@@ -41,5 +41,15 @@
     "CONFIRM_DELETION": "Confirm deletion",
     "DELETE_THIS_ITEMS": "Are you sure you want to delete these items?",
     "YOU_WONT_RECOVER_THEM": "You won't be able to recover them.",
-    "CANCEL": "Cancel"
+    "CANCEL": "Cancel",
+    "LOGIN": "Entrar",
+    "LOGIN_PRO_TIP": "Selecione apenas 'Sempre' se o dispositivo for de confiança.",
+    "FOREVER": "Sempre",
+    "PASSWORD": "Palavra-Chave",
+    "USERNAME_OR_EMAIL": "Nome de Utilizador ou Email",
+    "LOGIN_FORBIDDEN": "Credenciais erradas ou utilizador inexistente!",
+    "LOGIN_UNAUTHORIZED": "Conta de utilizador desactivada!",
+    "LOGIN_EMPTY": "O Nome de utilizador e palavra-chave não podem ser vazias!",
+    "PHOTO_BY": "Foto por",
+    "PHOTO_FROM": "de"
 }

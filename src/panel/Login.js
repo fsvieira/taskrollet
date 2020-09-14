@@ -6,8 +6,12 @@ import {
     Card,
     Elevation,
     InputGroup,
-    Checkbox
+    Checkbox,
+    Callout,
+    Intent
 } from "@blueprintjs/core";
+
+import backgroundImage from './pexels-ketut-subiyanto-4560079.png';
 
 const API_URL_LOGIN = process.env.REACT_JSONAPI_URL + "/login";
 
@@ -15,41 +19,48 @@ export default function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [forever, setForever] = useState(false);
+    const [message, setMessage] = useState();
 
     const { t } = useTranslation();
 
     const login = async () => {
         // Fetch emdpoint
         try {
-            console.log(API_URL_LOGIN, username, password, forever);
-
-            const data = await fetch(API_URL_LOGIN, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': "application/vnd.api+json"
-                },
-                body: JSON.stringify({
-                    data: {
-                        type: "login",
-                        id: username,
-                        attributes: {
-                            password,
-                            forever
-                        }
-                    }
-                })
-            });
-
-            console.log(data);
-            if (data.status === 401) {
-                console.log("TODO: Unauth");
-            }
-            else if (data.status === 403) {
-                console.log("TODO: Forbiden");
+            if (!username.trim().length || !password.trim().length) {
+                setMessage("LOGIN_EMPTY");
             }
             else {
-                const { token, user } = await data.json();
-                console.log("DATA => ", token, user);
+                console.log(API_URL_LOGIN, username, password, forever);
+
+                const data = await fetch(API_URL_LOGIN, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': "application/vnd.api+json"
+                    },
+                    body: JSON.stringify({
+                        data: {
+                            type: "login",
+                            id: username,
+                            attributes: {
+                                password,
+                                forever
+                            }
+                        }
+                    })
+                });
+
+                console.log(data);
+                if (data.status === 401) {
+                    console.log("TODO: Unauth");
+                    setMessage("LOGIN_UNAUTHORIZED")
+                }
+                else if (data.status === 403) {
+                    console.log("LOGIN_FORBIDDEN");
+                }
+                else {
+                    const { token, user } = await data.json();
+                    console.log("DATA => ", token, user);
+                }
             }
 
         }
@@ -59,8 +70,28 @@ export default function Login() {
     };
 
     return (
-        <section>
+        <section style={{
+            backgroundImage: `url(${backgroundImage})`,
+            backgroundSize: "cover",
+            backgroundOpacity: 0.5,
+            backgroundRepeat: "no-repeat",
+            height: "100%"
+        }}>
             <article>
+                <div style={{
+                    bottom: "0.5em",
+                    position: "fixed",
+                    right: "0.5em"
+                }}>
+                    <a
+                        href='https://www.pexels.com/photo/crop-black-student-with-laptop-and-papers-on-green-lawn-4560079/'
+                        target='_blank'
+                        style={{ color: "white" }}
+                    >
+                        {t("PHOTO_BY")} Ketut Subiyanto {t("PHOTO_FROM")} Pexels
+                    </a>
+                </div>
+
                 <Card
                     interactive={true}
                     elevation={Elevation.TWO}
@@ -81,7 +112,7 @@ export default function Login() {
                     <InputGroup
                         disabled={false}
                         large={true}
-                        placeholder={t("Username or Email")}
+                        placeholder={t("USERNAME_OR_EMAIL")}
                         type="text"
                         style={{ margin: "0.5em" }}
                         value={username}
@@ -91,7 +122,7 @@ export default function Login() {
                     <InputGroup
                         disabled={false}
                         large={true}
-                        placeholder={t("Password")}
+                        placeholder={t("PASSWORD")}
                         type="password"
                         style={{ margin: "0.5em" }}
                         value={password}
@@ -108,9 +139,17 @@ export default function Login() {
                     />
 
                     <Button onClick={login} >{t("LOGIN")}</Button>
+
+                    <Callout
+                        intent={message ? Intent.DANGER : Intent.PRIMARY}
+                        style={{ margin: "0.5em" }}
+                    >
+                        {t(message || "LOGIN_PRO_TIP")}
+                    </Callout>
+
                 </Card>
             </article>
-        </section>
+        </section >
     );
 }
 
