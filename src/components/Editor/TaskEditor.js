@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from 'react-i18next';
 
 import {
@@ -39,6 +39,7 @@ export default function TaskEditor({
   const submitText = t(task ? (split ? "SPLIT" : "SAVE") : "ADD");
 
   const submit = () => {
+    console.log("SUBMIT");
     if (split) {
       splitTask(t, task, valueA, valueB, onSave);
     }
@@ -46,6 +47,23 @@ export default function TaskEditor({
       setValueA("");
     }
   };
+
+  const keydownHandler = e => {
+    if (e.keyCode === 13 && e.ctrlKey) {
+      submit();
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener('keydown', keydownHandler);
+
+    return () => window.removeEventListener('keydown', keydownHandler);
+
+  }, []);
+  /*
+  document.addEventListener('keydown', keydownHandler);
+  document.removeEventListener('keydown', keydownHandler);
+  */
 
   return (
     <>
