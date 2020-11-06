@@ -4,6 +4,7 @@ import moment from "moment";
 export { db, changes, refreshTime };
 
 export const addSprint = async ({ dueDate, tags }) => {
+    debugger;
     const nTags = [];
 
     for (let tag in tags) {
