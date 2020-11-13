@@ -113,7 +113,7 @@ export default function Login() {
                         large={true}
                         placeholder={t("USERNAME_OR_EMAIL")}
                         type="text"
-                        style={{ margin: "0.5em" }}
+                        style={{ margin: "auto", marginBottom: "0.5em" }}
                         value={username}
                         onChange={e => setUsername(e.target.value)}
                     />
@@ -123,7 +123,7 @@ export default function Login() {
                         large={true}
                         placeholder={t("PASSWORD")}
                         type="password"
-                        style={{ margin: "0.5em" }}
+                        style={{ margin: "auto", marginBottom: "0.5em" }}
                         value={password}
                         onChange={e => setPassword(e.target.value)}
                     />
@@ -133,11 +133,16 @@ export default function Login() {
                         label={t("FOREVER")}
                         onChange={e => setForever(e.target.checked)}
                         style={{
-                            float: "right"
+                            float: "left",
+                            margin: "0.5em"
                         }}
                     />
 
-                    <Button onClick={login} >{t("LOGIN")}</Button>
+                    <Button
+                        onClick={login}
+                        fill={true}
+                        intent={Intent.PRIMARY}
+                    >{t("LOGIN")}</Button>
 
                     <Callout
                         intent={message ? Intent.DANGER : Intent.PRIMARY}
