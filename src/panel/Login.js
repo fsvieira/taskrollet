@@ -98,7 +98,6 @@ export default function Login() {
                     style={{
                         width: "30em",
                         maxWidth: "100%",
-                        height: "20em",
                         maxHeight: "100%",
                         margin: 0,
                         position: "absolute",
@@ -107,7 +106,7 @@ export default function Login() {
                         transform: "translate(-50%, -50%)"
                     }}
                 >
-                    <h5>{t("LOGIN")}</h5>
+                    <h1>Task Roulette</h1>
 
                     <InputGroup
                         disabled={false}
@@ -146,7 +145,6 @@ export default function Login() {
                     >
                         {t(message || "LOGIN_PRO_TIP")}
                     </Callout>
-
                 </Card>
             </article>
         </section >
