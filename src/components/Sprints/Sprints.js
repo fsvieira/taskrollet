@@ -1,5 +1,7 @@
 import React from "react";
 
+import { useTranslation } from 'react-i18next';
+
 import {
   Classes,
   Drawer,
@@ -35,7 +37,6 @@ export default function Sprints({ onClose, isOpen }) {
   });
 
   const sprintsList = renderSprints.map((sprint, i) => <Sprint key={i} sprint={sprint} deleteSprint={deleteSprint} />);
-
 
   return (
     <Drawer

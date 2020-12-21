@@ -39,7 +39,6 @@ export default function TaskEditor({
   const submitText = t(task ? (split ? "SPLIT" : "SAVE") : "ADD");
 
   const submit = () => {
-    console.log("SUBMIT");
     if (split) {
       splitTask(t, task, valueA, valueB, onSave);
     }
@@ -49,21 +48,10 @@ export default function TaskEditor({
   };
 
   const keydownHandler = e => {
-    if (e.keyCode === 13 && e.ctrlKey) {
+    if (e.charCode === 13 && e.ctrlKey) {
       submit();
     }
   }
-
-  useEffect(() => {
-    window.addEventListener('keydown', keydownHandler);
-
-    return () => window.removeEventListener('keydown', keydownHandler);
-
-  }, []);
-  /*
-  document.addEventListener('keydown', keydownHandler);
-  document.removeEventListener('keydown', keydownHandler);
-  */
 
   return (
     <>
@@ -82,6 +70,7 @@ export default function TaskEditor({
           value={valueA}
           onChange={setValueA}
           placeholder={t("PLACEHOLDER_WRITE_TASK")}
+          onKeyPress={keydownHandler}
         />
         {canSplitTask && split &&
           <TextInput
@@ -93,6 +82,7 @@ export default function TaskEditor({
             value={valueB}
             onChange={setValueB}
             placeholder={t("PLACEHOLDER_WRITE_TASK")}
+            onKeyPress={keydownHandler}
           />
         }
         <Divider />
