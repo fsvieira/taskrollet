@@ -29,13 +29,14 @@ export default function SprintEditor({ addSprint }) {
     const [tags, setTags] = useState([]);
 
     const datePicker = <DatePicker onChange={date => setDate(moment(date).endOf("day"))} />;
+    const { t } = useTranslation();
 
     return (
         <Callout intent={Intent.PRIMARY} title={moment(date).format("DD-MM-YYYY")} icon="insert">
             <div>
                 <Divider />
                 <SelectTags
-                    label={"tags"}
+                    label={t("TAGS")}
                     onChange={tags => setTags(tags)}
                 />
                 <Popover content={datePicker} position={Position.BOTTOM}>

@@ -22,6 +22,8 @@ export default function Sprints({ onClose, isOpen }) {
     deleteSprint
   } = useActiveSprints();
 
+  const { t } = useTranslation();
+
   const renderSprints = (sprints || []).filter(s => !s.attributes.empty).sort((a, b) => {
     const aEndDateTime = moment(a.attributes.dueDate).valueOf();
     const at = (aEndDateTime - a.attributes.estimatedDueDate);
@@ -34,11 +36,12 @@ export default function Sprints({ onClose, isOpen }) {
 
   const sprintsList = renderSprints.map((sprint, i) => <Sprint key={i} sprint={sprint} deleteSprint={deleteSprint} />);
 
+
   return (
     <Drawer
       icon="walk"
       onClose={onClose}
-      title="Sprints"
+      title={t("SPRINTS")}
       isOpen={isOpen}
       position={Position.LEFT}
     >
@@ -48,6 +51,6 @@ export default function Sprints({ onClose, isOpen }) {
           <SprintEditor addSprint={addSprint} />
         </div>
       </div>
-    </Drawer>
+    </Drawer >
   );
 }
