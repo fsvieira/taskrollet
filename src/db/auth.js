@@ -1,25 +1,34 @@
-export default async function auth(username, password) {
-	const data = { username, password };
+import { useState, useEffect } from "react";
+import { setup, clear } from "./db";
 
-	const response = await fetch(`${process.env.REACT_APP_API_URL}/api/login`, {
-		method: "POST", // *GET, POST, PUT, DELETE, etc.
-		mode: "cors", // no-cors, *cors, same-origin
-		cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-		credentials: "same-origin", // include, *same-origin, omit
-		headers: {
-			"Content-Type": "application/json"
+import { useLocation, useHistory } from "react-router-dom";
+
+/*
+const history = useHistory();
+const location = useLocation();
+const { from } = location.state || { from: { pathname: "/" } };
+*/
+
+export function useAuth() {
+	const [user, setUser] = useState(JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user")));
+	const location = useLocation();
+	const history = useHistory();
+
+	useEffect(
+		() => {
+			if (user) {
+				(user.forever ? localStorage : sessionStorage).setItem("user", JSON.stringify(user));
+				console.log("Start Database!!");
+				history.replace(location.state || { pathname: "/" });
+			}
+
+			if (!user) {
+				console.log("Remove database!");
+				history.replace({ pathname: "/login" });
+			}
 		},
-		redirect: "follow", // manual, *follow, error
-		referrerPolicy: "no-referrer", // no-referrer, *client
-		body: JSON.stringify(data) // body data type must match "Content-Type" header
-	});
+		[user]
+	);
 
-	const r = await response.json();
-
-	const token = r.token;
-
-	localStorage.setItem("token", token);
-	localStorage.setItem("username", username);
-
-	return token;
+	return [user, setUser];
 }

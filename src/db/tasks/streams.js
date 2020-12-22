@@ -135,14 +135,8 @@ export const $taskStats = tags => $tasks(tags, [{ attribute: "deleted", value: f
 	const months = now - (dayMillis * monthsDays);
 	const workWeek = now - (dayMillis * 5);
 
-	console.log(tasks);
-
 	const tasksDone = tasks.filter(task => task.attributes.done && task.attributes.updatedAt > months);
-	const tasksDoneUntil = tasks.filter(task => {
-		console.log("--->", task.attributes.doneUntil, task.attributes.doneUntil, now);
-
-		return task.attributes.doneUntil && task.attributes.doneUntil > now;
-	});
+	const tasksDoneUntil = tasks.filter(task => task.attributes.doneUntil && task.attributes.doneUntil > now);
 
 	const tasksDoneUntilWeek = tasksDoneUntil.filter(task => task.attributes.doneUntil < workWeek);
 	const tasksOpen = tasks.filter(task => !task.attributes.done);

@@ -1,5 +1,7 @@
 import React, { useState, Suspense } from "react";
 
+import { useAuth } from "./db/auth";
+
 import {
   Alignment,
   Navbar,
@@ -55,14 +57,13 @@ export default function App() {
 
 function PrivateRoute({ children, ...rest }) {
 
-  // TODO: make custom useState or useEffect , to store.
-  const isAuthenticated = true;
+  const [user] = useAuth();
 
   return (
     <Route
       {...rest}
       render={({ location }) =>
-        isAuthenticated ? (
+        user && user.token ? (
           children
         ) : (
             <Redirect

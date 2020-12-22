@@ -222,12 +222,15 @@ export const db = cache => new Promise(
 /**
  * Setup
  */
-async function setup() {
+export async function setup() {
 	let transform = await backup.pull(q => q.findRecords());
 	await memDB.sync(transform);
 	await coordinator.activate();
 	ready = true;
 }
 
-setup();
+export async function clear() {
+	console.log("TODO: make clear db function");
+}
+// setup();
 

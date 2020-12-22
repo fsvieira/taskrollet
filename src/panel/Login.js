@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useTranslation } from 'react-i18next';
 
+import { useAuth } from "../db/auth";
+
 import {
     Button,
     Card,
@@ -21,7 +23,14 @@ export default function Login() {
     const [forever, setForever] = useState(false);
     const [message, setMessage] = useState({ intent: Intent.PRIMARY, text: "LOGIN_PRO_TIP" });
 
+    const [user, setUser] = useAuth();
     const { t } = useTranslation();
+
+    /*
+    const history = useHistory();
+    const location = useLocation();
+    const { from } = location.state || { from: { pathname: "/" } };
+    */
 
     const login = async () => {
         // Fetch emdpoint
@@ -49,7 +58,6 @@ export default function Login() {
                     })
                 });
 
-                console.log(data);
                 if (data.status === 401) {
                     console.log("TODO: Unauth");
                     setMessage({ intent: Intent.DANGER, text: "LOGIN_UNAUTHORIZED" });
@@ -61,7 +69,15 @@ export default function Login() {
                     const { token, user } = await data.json();
                     console.log("DATA => ", token, user);
                     setMessage({ intent: Intent.SUCCESS, text: "LOGIN_SUCCESS" });
-                    // redirect
+
+                    setUser({
+                        token,
+                        forever,
+                        ...user
+                    });
+
+                    /*console.log(from);
+                    history.replace(from);*/
                 }
             }
 
