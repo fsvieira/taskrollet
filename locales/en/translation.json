@@ -47,9 +47,11 @@
     "FOREVER": "Forever",
     "PASSWORD": "Password",
     "USERNAME_OR_EMAIL": "Username or Email",
-    "LOGIN_FORBIDDEN": "Wrong credential or user doesn't exist!",
-    "LOGIN_UNAUTHORIZED": "User account is not active!",
+    "LOGIN_FORBIDDEN": "User account doesn't exist or its not active!",
+    "LOGIN_UNAUTHORIZED": "Wrong credential!",
     "LOGIN_EMPTY": "Username and password can't be empty!",
+    "LOGIN_SUCCESS": "Login with success!",
+    "LOGIN_ERROR": "There was unexpected error, please try again later!",
     "PHOTO_BY": "Photo by",
     "PHOTO_FROM": "from"
 }

@@ -19,7 +19,7 @@ export default function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [forever, setForever] = useState(false);
-    const [message, setMessage] = useState();
+    const [message, setMessage] = useState({ intent: Intent.PRIMARY, text: "LOGIN_PRO_TIP" });
 
     const { t } = useTranslation();
 
@@ -52,20 +52,22 @@ export default function Login() {
                 console.log(data);
                 if (data.status === 401) {
                     console.log("TODO: Unauth");
-                    setMessage("LOGIN_UNAUTHORIZED")
+                    setMessage({ intent: Intent.DANGER, text: "LOGIN_UNAUTHORIZED" });
                 }
                 else if (data.status === 403) {
-                    console.log("LOGIN_FORBIDDEN");
+                    setMessage({ intent: Intent.DANGER, text: "LOGIN_FORBIDDEN" });
                 }
                 else {
                     const { token, user } = await data.json();
                     console.log("DATA => ", token, user);
+                    setMessage({ intent: Intent.SUCCESS, text: "LOGIN_SUCCESS" });
+                    // redirect
                 }
             }
 
         }
         catch (e) {
-            console.log(e);
+            setMessage({ intent: Intent.DANGER, text: "LOGIN_ERROR" });
         }
     };
 
@@ -145,10 +147,10 @@ export default function Login() {
                     >{t("LOGIN")}</Button>
 
                     <Callout
-                        intent={message ? Intent.DANGER : Intent.PRIMARY}
+                        intent={message.intent}
                         style={{ margin: "0.5em" }}
                     >
-                        {t(message || "LOGIN_PRO_TIP")}
+                        {t(message.text)}
                     </Callout>
                 </Card>
             </article>

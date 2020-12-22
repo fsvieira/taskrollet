@@ -127,3 +127,40 @@ export const $activeTags = (tags, filterDoneUntil) => $activeTasks(tags, filterD
 
 	return tags;
 });
+
+export const $taskStats = tags => $tasks(tags, [{ attribute: "deleted", value: false }], false).map(tasks => {
+	const now = new Date().getTime();
+	const monthsDays = 30 * 3;
+	const dayMillis = 1000 * 60 * 60 * 24;
+	const months = now - (dayMillis * monthsDays);
+	const workWeek = now - (dayMillis * 5);
+
+	console.log(tasks);
+
+	const tasksDone = tasks.filter(task => task.attributes.done && task.attributes.updatedAt > months);
+	const tasksDoneUntil = tasks.filter(task => {
+		console.log("--->", task.attributes.doneUntil, task.attributes.doneUntil, now);
+
+		return task.attributes.doneUntil && task.attributes.doneUntil > now;
+	});
+
+	const tasksDoneUntilWeek = tasksDoneUntil.filter(task => task.attributes.doneUntil < workWeek);
+	const tasksOpen = tasks.filter(task => !task.attributes.done);
+
+	const closedTasksTotal = tasksDone.length + tasksDoneUntil.length + 1;
+	const days = monthsDays / closedTasksTotal;
+	const daysPrediction = Math.ceil(days * (tasksOpen.length + tasksDoneUntilWeek.length));
+
+	const r = {
+		daysPerTask: days,
+		daysPrediction,
+		datePrediction: now + (daysPrediction * dayMillis),
+		tags,
+		taskPerDay: closedTasksTotal / monthsDays,
+		tasksDoneTotal: tasksDone.length,
+		tasksDoneUntilTotal: tasksDoneUntil.length,
+		tasksOpenTotal: tasksOpen.length
+	};
+
+	return r;
+});

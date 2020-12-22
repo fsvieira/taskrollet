@@ -47,9 +47,11 @@
     "FOREVER": "Sempre",
     "PASSWORD": "Palavra-Chave",
     "USERNAME_OR_EMAIL": "Nome de Utilizador ou Email",
-    "LOGIN_FORBIDDEN": "Credenciais erradas ou utilizador inexistente!",
-    "LOGIN_UNAUTHORIZED": "Conta de utilizador desactivada!",
+    "LOGIN_FORBIDDEN": "Conta de utilizador não existe ou está desactivada!",
+    "LOGIN_UNAUTHORIZED": "Credenciais erradas!",
     "LOGIN_EMPTY": "O Nome de utilizador e palavra-chave não podem ser vazias!",
+    "LOGIN_SUCCESS": "Credencias correctas!",
+    "LOGIN_ERROR": "Houve um erro inesperado, por favor tente mais tarde!",
     "PHOTO_BY": "Foto por",
     "PHOTO_FROM": "de"
 }
