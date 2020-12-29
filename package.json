@@ -6,7 +6,9 @@
   "license": "MIT",
   "scripts": {
     "start": "parcel index.html",
-    "ghpages": "rm ./docs/* -rf && parcel build index.html --public-url ./ --out-dir ./docs"
+    "ghpages": "rm ./docs/* -rf && parcel build index.html --public-url ./ --out-dir ./docs",
+    "web": "rm ./docs/* -rf && parcel build index.html --public-url ./ --out-dir ./dist/web",
+    "server": "lite-server -c bs-config.json"
   },
   "browserslist": [
     "last 1 Chrome versions"
