@@ -19,6 +19,7 @@ export function useAuth() {
 			if (user) {
 				(user.forever ? localStorage : sessionStorage).setItem("user", JSON.stringify(user));
 				console.log("Start Database!!");
+				setup(user);
 				history.replace(location.state || { pathname: "/" });
 			}
 

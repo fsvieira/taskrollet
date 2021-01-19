@@ -96,7 +96,7 @@ export const $activeTodo = tags =>
             const now = moment().valueOf();
             let total = 0;
 
-            if (tasks.filter(t => !selectedTasks.includes(t._id)).length === 0) {
+            if (tasks.filter(t => !selectedTasks.includes(t.id)).length === 0) {
                 selectedTasks = [];
             }
 

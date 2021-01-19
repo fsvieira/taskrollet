@@ -53,7 +53,7 @@ export function PrettyDescription({ description, task }) {
           return <span key={i} style={{ color: Colors.BLUE3 }}>{elem}</span>
         }
         else if (elem.startsWith("http://") || elem.startsWith("https://")) {
-          return <a href={elem} target="_blank">{elem}</a>
+          return <a key={i} href={elem} target="_blank">{elem}</a>
         }
         else if (elem === "[ ]") {
           const newDescription = tokens.slice();
@@ -92,7 +92,7 @@ export function PrettyDescription({ description, task }) {
           return <span key={i} style={{ width: "3em" }}></span>
         }
         else if (elem === ' ') {
-          return <>&nbsp;</>;
+          return <span key={i} >&nbsp;</span>;
         }
 
         return <span key={i}>{elem}</span>;

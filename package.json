@@ -47,7 +47,7 @@
     "db": "^1.1.1",
     "editor": "^1.0.0",
     "filesaver": "0.0.13",
-    "i18next": "^19.6.2",
+    "i18next": "^19.8.4",
     "i18next-browser-languagedetector": "^4.3.1",
     "i18next-http-backend": "^1.0.17",
     "import": "0.0.6",

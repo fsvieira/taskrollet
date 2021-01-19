@@ -174,7 +174,7 @@ export default function Tasks() {
             canEditTask={canEditTask}
             canSplitTask={canSplitTask}
             recoverTask={recoverTask}
-            key={task._id}
+            key={task.id}
         ></Task>
     );
 
