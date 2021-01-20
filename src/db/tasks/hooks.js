@@ -7,8 +7,6 @@ export const useActiveTags = (filterDoneUntil, filterTags) => {
 	const [tags, setTags] = useState({ all: true });
 	const [selectedTags, setSelectedTags] = useState(filterTags); // {});
 
-	console.log("filterTags", filterTags);
-
 	useEffect(
 		() => {
 			const cancel = $activeTags(selectedTags, filterDoneUntil).onValue(

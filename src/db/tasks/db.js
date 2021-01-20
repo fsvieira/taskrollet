@@ -1,99 +1,29 @@
-import { db, changes, refreshTime } from "../db";
+import { db, genID, changes } from "../db";
 import moment from "moment";
 
-export { db, changes, refreshTime };
+const dbTasks = db().tasks;
 
-export const addTask = async ({ computed, ...task }, createdAt) => {
-    const now = moment.utc().valueOf();
+export { dbTasks, changes };
 
-    return (await db()).update(tx => [
-        ...task.relationships.tags.data.map(tag => tx.addRecord(tag)),
-        tx.addRecord({
-            ...task,
-            attributes: {
-                ...task.attributes,
-                done: false,
-                deleted: false,
-                createdAt: createdAt || now,
-                updatedAt: now
-            }
-        })
-    ]);
+export const addTask = ({ computed, ...task }, createdAt) => {
+    const now = moment.utc().toDate();
+
+    return dbTasks.add({
+        taskID: genID(),
+        ...task,
+        done: 0,
+        deleted: 0,
+        createdAt: createdAt || now,
+        updatedAt: now
+    });
 }
 
-export const editTask = async ({ computed, ...task }) => {
-    const now = moment.utc().valueOf();
-
-    console.log("EDIT TASK!!");
-    return (await db()).update(tx => [
-        ...task.relationships.tags.data.map(tag => tx.addRecord(tag)),
-        tx.updateRecord({
-            ...task,
-            attributes: {
-                ...task.attributes,
-                updatedAt: now
-            }
-        })
-    ]);
-}
-
-export const doneTask = async ({ computed, ...task }) => (await db()).update(
-    tx => tx.updateRecord({
-        ...task,
-        attributes: {
-            ...task.attributes,
-            done: true,
-            updatedAt: moment.utc().valueOf()
-        }
-    })
-);
-
-export const doneTaskUntil = async ({ computed, ...task }, doneUntil) => {
-    return (await db()).update(
-        tx => tx.updateRecord({
-            ...task,
-            attributes: {
-                ...task.attributes,
-                doneUntil,
-                updatedAt: moment.utc().valueOf()
-            }
-        })
-    )
-};
-
-export const deleteTask = async ({ computed, ...task }) => (await db()).update(
-    tx => tx.updateRecord({
-        ...task,
-        attributes: {
-            ...task.attributes,
-            deleted: true,
-            updatedAt: moment.utc().valueOf()
-        }
-    })
-);
-
-export const resetTask = async ({ computed, ...task }) => {
-    if (task.deleted || task.done || task.doneUntil) {
-        (await db()).update(
-            tx => tx.updateRecord({
-                ...task,
-                attributes: {
-                    ...task.attributes,
-                    deleted: true,
-                    updatedAt: moment.utc().valueOf()
-                }
-            })
-        );
-    }
-};
-
-/*
-export const deleteTask = ({ computed, ...task }) => dbTasks.put({ ...task, deleted: true, updatedAt: moment().toDate() })
-
+export const editTask = ({ computed, ...task }) => dbTasks.put({ ...task, updatedAt: moment().toDate() });
+export const doneTask = ({ computed, ...task }) => dbTasks.put({ ...task, done: 1, updatedAt: moment().toDate() });
+export const doneTaskUntil = ({ computed, ...task }, doneUntil) => dbTasks.put({ ...task, doneUntil, updatedAt: moment().toDate() });
+export const deleteTask = ({ computed, ...task }) => dbTasks.put({ ...task, deleted: 1, updatedAt: moment().toDate() });
 export const resetTask = ({ computed, ...task }) => {
     if (task.deleted || task.done || task.doneUntil) {
-        return dbTasks.put({ ...task, done: false, deleted: false, doneUntil: null, updatedAt: moment().toDate() });
+        dbTasks.put({ ...task, deleted: 1, updatedAt: moment().toDate() });
     }
-}
-*/
-
+};

@@ -1,30 +1,23 @@
 import { useState, useEffect } from "react";
-import { setup, clear } from "./db";
+import { setup, db, clear } from "./db";
 
 import { useLocation, useHistory } from "react-router-dom";
 
-/*
-const history = useHistory();
-const location = useLocation();
-const { from } = location.state || { from: { pathname: "/" } };
-*/
-
 export function useAuth() {
-	const [user, setUser] = useState(JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user")));
+	const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
 	const location = useLocation();
 	const history = useHistory();
 
 	useEffect(
 		() => {
 			if (user) {
-				(user.forever ? localStorage : sessionStorage).setItem("user", JSON.stringify(user));
-				console.log("Start Database!!");
+				localStorage.setItem("user", JSON.stringify(user));
 				setup(user);
 				history.replace(location.state || { pathname: "/" });
 			}
 
 			if (!user) {
-				console.log("Remove database!");
+				clear();
 				history.replace({ pathname: "/login" });
 			}
 		},
