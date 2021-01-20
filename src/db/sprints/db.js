@@ -1,41 +1,10 @@
-import { db, changes, refreshTime } from "../db";
+import { db, genID } from "../db";
 import moment from "moment";
 
-export { db, changes, refreshTime };
+export const addSprint = async sprint => db.sprints.add({
+    sprintID: genID(),
+    createdAt: moment.utc().toDate(),
+    ...sprint
+});
 
-export const addSprint = async ({ dueDate, tags }) => {
-    debugger;
-    const nTags = [];
-
-    for (let tag in tags) {
-        if (tags[tag]) {
-            nTags.push(tag);
-        }
-    }
-
-    nTags.push("all");
-
-    return (await db()).update(
-        tx => tx.addRecord({
-            type: "sprint",
-            attributes: {
-                createdAt: moment.valueOf(),
-                dueDate
-            },
-            relationships: {
-                tags: {
-                    data: nTags.map(
-                        tag => ({
-                            type: "tag",
-                            id: tag
-                        })
-                    )
-                }
-            }
-        })
-    );
-};
-
-export const deleteSprint = async ({ type, id }) => (await db()).update(
-    tx => tx.removeRecord({ type, id })
-);
+export const deleteSprint = ({ sprintID }) => db.sprints.delete(sprintID);

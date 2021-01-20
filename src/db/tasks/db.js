@@ -1,14 +1,10 @@
 import { db, genID, changes } from "../db";
 import moment from "moment";
 
-const dbTasks = db().tasks;
-
-export { dbTasks, changes };
-
 export const addTask = ({ computed, ...task }, createdAt) => {
     const now = moment.utc().toDate();
 
-    return dbTasks.add({
+    return db().tasks.add({
         taskID: genID(),
         ...task,
         done: 0,
@@ -18,12 +14,12 @@ export const addTask = ({ computed, ...task }, createdAt) => {
     });
 }
 
-export const editTask = ({ computed, ...task }) => dbTasks.put({ ...task, updatedAt: moment().toDate() });
-export const doneTask = ({ computed, ...task }) => dbTasks.put({ ...task, done: 1, updatedAt: moment().toDate() });
-export const doneTaskUntil = ({ computed, ...task }, doneUntil) => dbTasks.put({ ...task, doneUntil, updatedAt: moment().toDate() });
-export const deleteTask = ({ computed, ...task }) => dbTasks.put({ ...task, deleted: 1, updatedAt: moment().toDate() });
+export const editTask = ({ computed, ...task }) => db().tasks.put({ ...task, updatedAt: moment().toDate() });
+export const doneTask = ({ computed, ...task }) => db().tasks.put({ ...task, done: 1, updatedAt: moment().toDate() });
+export const doneTaskUntil = ({ computed, ...task }, doneUntil) => db().tasks.put({ ...task, doneUntil, updatedAt: moment().toDate() });
+export const deleteTask = ({ computed, ...task }) => db().tasks.put({ ...task, deleted: 1, updatedAt: moment().toDate() });
 export const resetTask = ({ computed, ...task }) => {
     if (task.deleted || task.done || task.doneUntil) {
-        dbTasks.put({ ...task, deleted: 1, updatedAt: moment().toDate() });
+        db().tasks.put({ ...task, deleted: 1, updatedAt: moment().toDate() });
     }
 };

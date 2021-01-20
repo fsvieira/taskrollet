@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { setup, db, clear } from "./db";
+import { clear } from "./db";
 
 import { useLocation, useHistory } from "react-router-dom";
 
@@ -12,7 +12,7 @@ export function useAuth() {
 		() => {
 			if (user) {
 				localStorage.setItem("user", JSON.stringify(user));
-				setup(user);
+				// setup(user);
 				history.replace(location.state || { pathname: "/" });
 			}
 

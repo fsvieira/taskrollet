@@ -9,28 +9,35 @@ export const genID = uuidv4;
 
 const listenners = new Set();
 
-export function setup(user) {
-	_db = new Dexie("taskroulette", { addons: [dexieObservable, dexieSyncable] });
+function setup() {
+	const db = new Dexie("taskroulette", { addons: [dexieObservable, dexieSyncable] });
 
-	_db.version(1).stores({
+	db.version(1).stores({
 		tasks: "&taskID,createdAt,updatedAt,description,tags,deleted,done,doneUntil,[deleted+done]",
 		sprints: "&sprintID,createdAt,dueDate,tags",
 		todo: "&todoID,taskID,filterTags",
 		user: "&userID,email,expirationDate,userID,username"
 	});
 
-	_db.on("changes", changes => {
+	db.on("changes", changes => {
 		for (let fn of listenners) {
 			fn(changes);
 		}
 	});
+
+	return db;
 }
 
 export function db() {
+	if (!_db) {
+		_db = setup();
+	}
+
 	return _db;
 }
 
 export async function clear() {
+
 	return _db ? _db.delete().then(() => _db = undefined) : undefined
 };
 

@@ -1,40 +1,27 @@
-import { db, selectTodo, changes, refreshTime } from "./db";
+import { db, changes } from "../db";
+import { selectTodo } from "./db";
 import { $activeSprintsTasks } from "../sprints/streams";
 import { fromBinder } from "baconjs"
 import moment from "moment";
 
 export const $todo = () =>
     fromBinder(sink => {
-        const find = cache => db(cache).then(
-            async db => {
-                try {
-                    const todo = await db.query(q => q.findRecord({ type: "todo", id: "todo" }));
+        const find = () => db().todo.get("todo").then(
+            todo => {
+                if (todo) {
                     sink(todo);
                 }
-                catch (err) {
-                    db.requestQueue && db.requestQueue.skip();
-
-                    sink({
-                        relationships: {
-                            tags: {
-                                data: [{ type: "tag", id: "all" }]
-                            }
-                        }
-                    })
+                else {
+                    sink({ tags: { all: true } });
                 }
             }
         );
 
-        const cancel = changes(() => find(true));
+        const cancel = changes(find);
 
         find();
 
-        const cancelInterval = setInterval(() => find(), refreshTime);
-
-        return () => {
-            clearInterval(cancelInterval);
-            return cancel();
-        }
+        return cancel;
     });
 
 let selectedTasks = [];
@@ -57,6 +44,11 @@ function shuffle(array) {
 
     return array;
 }
+
+/** MAKE TODO: 
+ *  todo filter tags filter is no longer saved on database, 
+ *  this is because user may forget that a filter is selected in a new session.
+ */
 
 export const $activeTodo = tags =>
     $todo().combine($activeSprintsTasks(tags), (todo, { sprints, tasks }) => {

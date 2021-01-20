@@ -1,128 +1,60 @@
-import { db, changes, refreshTime, constants } from "./db";
+import { db, changes } from "../db";
 import { fromBinder } from "baconjs";
 import moment from "moment";
 
 export const $allTasks = (tags = { all: true }) =>
 	fromBinder(sink => {
-		const find = cache => db(cache).then(
-			db => db.query(
-				q => q.findRecords("task")
-			)
-		).then(
-			tasks => sink(tasks.filter(
-				({ relationships: { tags: { data } } }) => {
-					const s = new Set(data.map(({ id }) => id));
-
-					for (let tag in tags) {
-						if (!s.has(tag)) {
-							return false;
-						}
-					}
-
-					return true;
+		const find = () => db().tasks.filter(task => {
+			for (let tag in tags) {
+				if (!task.tags[tag]) {
+					return false;
 				}
-			)),
-			err => {
-				console.log(err);
-				return err;
 			}
-		);
 
-		const cancel = changes(() => find(true));
+			return true;
+		}).toArray().then(sink);
+
+		const cancel = changes(find);
 
 		find();
 
-		const cancelInterval = setInterval(() => find(), refreshTime);
-
-		return () => {
-			clearInterval(cancelInterval);
-			return cancel();
-		}
+		return cancel;
 	});
-
 
 export const $tasks = (tags = { all: true }, selector, filterDoneUntil = false) =>
 	fromBinder(sink => {
+		const find = () => db().tasks.where(selector).filter(task => {
+			const dateUntil = filterDoneUntil && doneUntil && moment.utc(doneUntil).isAfter(moment.utc());
 
-		/*
-		TODO: when we get orbit relationships filter subset working:
-		// TODO : we can try the some operator, https://github.com/orbitjs/orbit/issues/741
-		const filterTags = [];
-		for (let tag in tags) {
-			if (tags[tag]) {
-				filterTags.push({ type: "tag", id: tag });
+			if (dateUntil) {
+				return false;
 			}
-		}*/
 
-		const find = cache => db(cache).then(
-			db => db.query(
-				q => q.findRecords("task").filter(
-					...selector
-					// { attribute: "deleted", value: false },
-					// { attribute: "done", value: false }
-					// { relation: "tags", records: filterTags }
-				)
-			)
-		).then(
-			tasks => {
-				sink(tasks.filter(
-					({
-						attributes: { doneUntil },
-						relationships: { tags: { data } }
-					}) => {
-						const dateUntil = filterDoneUntil && doneUntil && moment.utc(doneUntil).isAfter(moment.utc());
-
-						if (dateUntil) {
-							return false;
-						}
-
-						const s = new Set(data.map(({ id }) => id));
-
-						for (let tag in tags) {
-							if (!s.has(tag)) {
-								return false;
-							}
-						}
-
-						return true;
-					}
-				));
-			},
-			err => {
-				console.log(err);
-				return err;
+			for (let tag in tags) {
+				if (!task.tags[tag]) {
+					return false;
+				}
 			}
-		);
 
-		const cancel = changes(() => find(true));
+			return true;
+		}).toArray().then(sink);
+
+		const cancel = changes(find);
 
 		find();
 
-		const cancelInterval = setInterval(() => find(), refreshTime);
-
-		return () => {
-			clearInterval(cancelInterval);
-			return cancel();
-		}
+		return cancel;
 	});
 
-export const $activeTasks = (tags, filterDoneUntil) => $tasks(
-	tags,
-	// { done: false, deleted: false }
-	[
-		{ attribute: "deleted", value: false },
-		{ attribute: "done", value: false }
-	],
-	filterDoneUntil
-);
-
+export const $activeTasks = (tags, filterDoneUntil) => $tasks(tags, { done: 0, deleted: 0 }, filterDoneUntil);
 
 export const $activeTags = (tags, filterDoneUntil) => $activeTasks(tags, filterDoneUntil).map(tasks => {
 	const tags = {};
-
 	for (let i = 0; i < tasks.length; i++) {
 		const task = tasks[i];
-		task.relationships.tags.data.forEach(({ id: tag }) => tags[tag] = true);
+		for (let tag in task.tags) {
+			tags[tag] = true;
+		}
 	}
 
 	return tags;
