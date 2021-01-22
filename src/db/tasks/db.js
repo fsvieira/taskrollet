@@ -20,6 +20,6 @@ export const doneTaskUntil = ({ computed, ...task }, doneUntil) => db().tasks.pu
 export const deleteTask = ({ computed, ...task }) => db().tasks.put({ ...task, deleted: 1, updatedAt: moment().toDate() });
 export const resetTask = ({ computed, ...task }) => {
     if (task.deleted || task.done || task.doneUntil) {
-        db().tasks.put({ ...task, deleted: 1, updatedAt: moment().toDate() });
+        db().tasks.put({ ...task, deleted: 0, done: 0, doneUntil: null, updatedAt: moment().toDate() });
     }
 };

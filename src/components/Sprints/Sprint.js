@@ -26,8 +26,8 @@ import { useTranslation } from 'react-i18next';
 
 
 export default function Sprint({ sprint, deleteSprint }) {
-  const date = moment(sprint.attributes.dueDate).format("DD-MM-YYYY");
-  const days = duration(moment(sprint.attributes.dueDate).valueOf() - moment().valueOf());
+  const date = moment(sprint.dueDate).format("DD-MM-YYYY");
+  const days = duration(moment(sprint.dueDate).valueOf() - moment().valueOf());
 
   const { t } = useTranslation();
 
@@ -69,25 +69,22 @@ export default function Sprint({ sprint, deleteSprint }) {
     </p>
   );
 
-  const endDateTime = moment(sprint.attributes.dueDate).valueOf();
+  const endDateTime = moment(sprint.dueDate).valueOf();
   let intent = Intent.SUCCESS;
 
-  if (endDateTime < sprint.attributes.estimatedDueDate) {
+  if (endDateTime < sprint.estimatedDueDate) {
     intent = Intent.DANGER;
   }
   else {
     // get 15% of remaining time.
     const time = (endDateTime - moment().valueOf()) * 0.15;
 
-    if (sprint.attributes.estimatedDueDate > endDateTime - time) {
+    if (sprint.estimatedDueDate > endDateTime - time) {
       intent = Intent.WARNING;
     }
   }
 
-  const tags = sprint.relationships.tags.data.reduce((acc, tag) => {
-    acc[tag.id] = true;
-    return acc;
-  }, {});
+  const tags = sprint.tags;
 
   return (
     <Callout

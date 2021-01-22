@@ -32,25 +32,15 @@ export const $activeSprintsTasks = (tags, filter = { deleted: 0 }) =>
 			(sprints, tasks) => {
 				const now = moment().valueOf();
 
-				sprints = sprints.concat([{
-					attributes: {
-						empty: true
-					},
-					relationships: {
-						tags: {
-							data: [ /* { type: "tag", id: "all" } */]
-						}
-					}
-				}]);
+				sprints = sprints.concat([{ tags: [], empty: true }]);
 
 				tasks.forEach(t => t.computed = { sprints: [] });
 
 				for (let i = 0; i < sprints.length; i++) {
 					const sprint = sprints[i];
 
-					sprint.relationships.tasks = tasks.filter(task => {
+					sprint.tasks = tasks.filter(task => {
 						for (let tag in sprint.tags) {
-							debugger;
 							if (!task.tags[tag]) {
 								return false;
 							}
@@ -59,38 +49,38 @@ export const $activeSprintsTasks = (tags, filter = { deleted: 0 }) =>
 						return true;
 					});
 
-					sprint.relationships.openTasks = sprint.relationships.tasks.filter(
-						task => !(task.attributes.deleted || task.attributes.done || (task.attributes.doneUntil && moment(task.attributes.doneUntil).isAfter(moment())))
-					).sort((a, b) => moment(a.attributes.createdAt).valueOf() - moment(b.attributes.createdAt).valueOf());
+					sprint.openTasks = sprint.tasks.filter(
+						task => !(task.deleted || task.done || (task.doneUntil && moment(task.doneUntil).isAfter(moment())))
+					).sort((a, b) => moment(a.createdAt).valueOf() - moment(b.createdAt).valueOf());
 
 
-					sprint.attributes.doneTasksTotal = 0;
-					sprint.relationships.doneTasks = sprint.relationships.tasks.filter(
+					sprint.doneTasksTotal = 0;
+					sprint.doneTasks = sprint.tasks.filter(
 						task => {
-							const doneUntil = task.attributes.doneUntil && moment(task.attributes.doneUntil).isAfter(moment());
-							const r = !task.attributes.deleted && (task.attributes.done || doneUntil);
+							const doneUntil = task.doneUntil && moment(task.doneUntil).isAfter(moment());
+							const r = !task.deleted && (task.done || doneUntil);
 
-							sprint.attributes.doneTasksTotal += r ? 1 : 0;
+							sprint.doneTasksTotal += r ? 1 : 0;
 
 							return r;
 						}
 					)
-						.filter(task => moment(task.attributes.updatedAt).valueOf() > moment().valueOf() - (1000 * 60 * 60 * 24 * 30 * 4))
-						.sort((a, b) => moment(a.attributes.updatedAt).valueOf() - moment(b.attributes.updatedAt).valueOf());
+						.filter(task => moment(task.updatedAt).valueOf() > moment().valueOf() - (1000 * 60 * 60 * 24 * 30 * 4))
+						.sort((a, b) => moment(a.updatedAt).valueOf() - moment(b.updatedAt).valueOf());
 
 					let openAvg = 0;
 
-					sprint.attributes.taskDueAvg;
+					sprint.taskDueAvg;
 
-					if (sprint.relationships.openTasks.length) {
+					if (sprint.openTasks.length) {
 						const lastestClosedTask = moment(
-							sprint.relationships.doneTasks && sprint.relationships.doneTasks.length ?
-								sprint.relationships.doneTasks[sprint.relationships.doneTasks.length - 1].updatedAt :
-								sprint.relationships.openTasks[sprint.relationships.openTasks.length - 1].createdAt
+							sprint.doneTasks && sprint.doneTasks.length ?
+								sprint.doneTasks[sprint.doneTasks.length - 1].updatedAt :
+								sprint.openTasks[sprint.openTasks.length - 1].createdAt
 						).valueOf();
 
-						openAvg = sprint.relationships.openTasks.reduce((avg, task) => {
-							const createdAt = moment(task.attributes.createdAt).valueOf();
+						openAvg = sprint.openTasks.reduce((avg, task) => {
+							const createdAt = moment(task.createdAt).valueOf();
 
 							let delta;
 							if (lastestClosedTask > createdAt) {
@@ -104,39 +94,39 @@ export const $activeSprintsTasks = (tags, filter = { deleted: 0 }) =>
 							return avg === null ? delta : (avg + delta) / 2;
 						}, null);
 
-						const dueTime = moment(sprint.attributes.dueDate).valueOf() - now;
-						sprint.attributes.taskDueAvg = dueTime / sprint.relationships.openTasks.length;
+						const dueTime = moment(sprint.dueDate).valueOf() - now;
+						sprint.taskDueAvg = dueTime / sprint.openTasks.length;
 
-						sprint.relationships.openTasks.forEach(task => {
+						sprint.openTasks.forEach(task => {
 							task.computed.sprints.push(sprint);
 						});
 
-						sprint.attributes.oldestOpenTask = sprint.relationships.openTasks[0].createdAt;
+						sprint.oldestOpenTask = sprint.openTasks[0].createdAt;
 					}
 
-					if (sprint.relationships.doneTasks.length) {
-						const latestDoneTime = moment(sprint.relationships.doneTasks[0].updatedAt).valueOf();
+					if (sprint.doneTasks.length) {
+						const latestDoneTime = moment(sprint.doneTasks[0].updatedAt).valueOf();
 						const time = now - latestDoneTime;
-						const t = (time + openAvg) / sprint.relationships.doneTasks.length;
-						sprint.attributes.doneAvg = t;
+						const t = (time + openAvg) / sprint.doneTasks.length;
+						sprint.doneAvg = t;
 					}
 					else {
-						sprint.attributes.doneAvg = openAvg;
+						sprint.doneAvg = openAvg;
 					}
 
-					sprint.attributes.nextTodoAvgDueTime = (sprint.attributes.doneAvg + sprint.attributes.taskDueAvg) / 2;
-					sprint.attributes.estimatedDueDate = now + sprint.attributes.doneAvg * sprint.relationships.openTasks.length;
+					sprint.nextTodoAvgDueTime = (sprint.doneAvg + sprint.taskDueAvg) / 2;
+					sprint.estimatedDueDate = now + sprint.doneAvg * sprint.openTasks.length;
 
-					sprint.attributes.openTasksTotal = sprint.relationships.openTasks.length;
+					sprint.openTasksTotal = sprint.openTasks.length;
 					// sprint.doneTasksTotal = sprint.doneTasks.length;
-					sprint.attributes.total = sprint.attributes.openTasksTotal + sprint.attributes.doneTasksTotal;
+					sprint.total = sprint.openTasksTotal + sprint.doneTasksTotal;
 
-					sprint.attributes.dueDate = sprint.attributes.dueDate || moment(sprint.attributes.estimatedDueDate).endOf("month").toISOString();
+					sprint.dueDate = sprint.dueDate || moment(sprint.estimatedDueDate).endOf("month").toISOString();
 				}
 
 				return {
 					sprints,
-					tasks: tasks.filter(task => !(task.attributes.deleted || task.attributes.done || (task.attributes.doneUntil && moment(task.attributes.doneUntil).isAfter(moment()))))
+					tasks: tasks.filter(task => !(task.deleted || task.done || (task.doneUntil && moment(task.doneUntil).isAfter(moment()))))
 				};
 			}
 		);

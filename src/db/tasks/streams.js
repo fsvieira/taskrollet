@@ -24,6 +24,7 @@ export const $allTasks = (tags = { all: true }) =>
 export const $tasks = (tags = { all: true }, selector, filterDoneUntil = false) =>
 	fromBinder(sink => {
 		const find = () => db().tasks.where(selector).filter(task => {
+			const doneUntil = task.doneUntil;
 			const dateUntil = filterDoneUntil && doneUntil && moment.utc(doneUntil).isAfter(moment.utc());
 
 			if (dateUntil) {
@@ -60,18 +61,18 @@ export const $activeTags = (tags, filterDoneUntil) => $activeTasks(tags, filterD
 	return tags;
 });
 
-export const $taskStats = tags => $tasks(tags, [{ attribute: "deleted", value: false }], false).map(tasks => {
+export const $taskStats = tags => $tasks(tags, { deleted: 0 }, false).map(tasks => {
 	const now = new Date().getTime();
 	const monthsDays = 30 * 3;
 	const dayMillis = 1000 * 60 * 60 * 24;
 	const months = now - (dayMillis * monthsDays);
 	const workWeek = now - (dayMillis * 5);
 
-	const tasksDone = tasks.filter(task => task.attributes.done && task.attributes.updatedAt > months);
-	const tasksDoneUntil = tasks.filter(task => task.attributes.doneUntil && task.attributes.doneUntil > now);
+	const tasksDone = tasks.filter(task => task.done && task.updatedAt > months);
+	const tasksDoneUntil = tasks.filter(task => task.doneUntil && task.doneUntil > now);
 
-	const tasksDoneUntilWeek = tasksDoneUntil.filter(task => task.attributes.doneUntil < workWeek);
-	const tasksOpen = tasks.filter(task => !task.attributes.done);
+	const tasksDoneUntilWeek = tasksDoneUntil.filter(task => task.doneUntil < workWeek);
+	const tasksOpen = tasks.filter(task => !task.done);
 
 	const closedTasksTotal = tasksDone.length + tasksDoneUntil.length + 1;
 	const days = monthsDays / closedTasksTotal;

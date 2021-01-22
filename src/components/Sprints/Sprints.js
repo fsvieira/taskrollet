@@ -26,12 +26,12 @@ export default function Sprints({ onClose, isOpen }) {
 
   const { t } = useTranslation();
 
-  const renderSprints = (sprints || []).filter(s => !s.attributes.empty).sort((a, b) => {
-    const aEndDateTime = moment(a.attributes.dueDate).valueOf();
-    const at = (aEndDateTime - a.attributes.estimatedDueDate);
+  const renderSprints = (sprints || []).filter(s => !s.empty).sort((a, b) => {
+    const aEndDateTime = moment(a.dueDate).valueOf();
+    const at = (aEndDateTime - a.estimatedDueDate);
 
-    const bEndDateTime = moment(b.attributes.dueDate).valueOf();
-    const bt = (bEndDateTime - b.attributes.estimatedDueDate);
+    const bEndDateTime = moment(b.dueDate).valueOf();
+    const bt = (bEndDateTime - b.estimatedDueDate);
 
     return at - bt;
   });

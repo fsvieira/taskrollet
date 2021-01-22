@@ -11,13 +11,13 @@ export function getTags(text) {
     }, {})
 }
 
+/*
 export function getTagsList(text) {
     const tags = (text.match(/#([^\s]+)/g) || []).concat(["all"]).map(t => t.replace("#", ""));
 
     return [...new Set(tags)].map(id => ({ type: "tag", id }));
-}
+}*/
 
-// TODO: is this the same as getTags ???
 export function parseValue(value, tags) {
     const pTags = Object.keys(tags).map(t => t.replace("#", ""));
 
@@ -37,18 +37,9 @@ export function parseValue(value, tags) {
 function getTask(text, task) {
 
     return {
-        type: "task",
-        id: task ? task.id : undefined,
-        attributes: {
-            description: text,
-            doneUntil: task ? task.doneUntil : undefined,
-            createdAt: task ? task.createdAt : undefined
-        },
-        relationships: {
-            tags: {
-                data: getTagsList(text)
-            }
-        }
+        ...(task || {}),
+        description: text,
+        tags: getTags(text)
     };
 }
 
@@ -56,12 +47,12 @@ export async function splitTask(t, task, textA, textB, onSave) {
     const aTask = getTask(textA, task);
     const bTask = getTask(textB);
 
-    const msg = (aTask.attributes.description.length > 8 ? aTask.attributes.description.substring(0, 8) + "..." : aTask.attributes.description) + " / " +
-        (bTask.attributes.description.length > 8 ? bTask.attributes.description.substring(0, 8) + "..." : bTask.attributes.description);
+    const msg = (aTask.description.length > 8 ? aTask.description.substring(0, 8) + "..." : aTask.description) + " / " +
+        (bTask.description.length > 8 ? bTask.substring(0, 8) + "..." : bTask.description);
 
     try {
         await editTask(aTask);
-        await addTask(bTask, aTask.attributes.createdAt);
+        await addTask(bTask, aTask.createdAt);
 
         AppToaster.show({
             message: `${t("TASKS_SPLITED")}: ${msg}`,
@@ -95,7 +86,7 @@ export async function addTaskText(t, task, text, onSave) {
 
     const newTask = getTask(text, task);
 
-    const msg = newTask.attributes.description.length > 10 ? newTask.attributes.description.substring(0, 10) + "..." : newTask.attributes.description;
+    const msg = newTask.description.length > 10 ? newTask.description.substring(0, 10) + "..." : newTask.description;
 
     try {
         await (newTask.id ? editTask(newTask) : addTask(newTask));

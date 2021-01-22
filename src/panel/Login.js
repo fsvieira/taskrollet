@@ -47,14 +47,17 @@ export default function Login() {
                         'Content-Type': "application/vnd.api+json"
                     },
                     body: JSON.stringify({
-                        data: {
+                        /*data: {
                             type: "login",
                             id: username,
                             attributes: {
                                 password,
                                 forever
                             }
-                        }
+                        }*/
+                        id: username,
+                        password,
+                        forever
                     })
                 });
 

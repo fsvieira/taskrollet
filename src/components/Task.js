@@ -130,13 +130,13 @@ export default function Task({
 }) {
   const { t } = useTranslation();
 
-  const description = task ? task.attributes.description : "There is no tasks, please add some!!";
-  const date = (task ? moment.utc(task.attributes.createdAt) : moment.utc()).calendar();
+  const description = task ? task.description : "There is no tasks, please add some!!";
+  const date = (task ? moment.utc(task.createdAt) : moment.utc()).calendar();
 
   const now = moment.utc();
 
-  const dateUntil = task && task.attributes.doneUntil && moment.utc(task.attributes.doneUntil).isAfter(now)
-    ? moment.utc(task.attributes.doneUntil).calendar() : undefined;
+  const dateUntil = task && task.doneUntil && moment.utc(task.doneUntil).isAfter(now)
+    ? moment.utc(task.doneUntil).calendar() : undefined;
 
   const [editTaskIsOpen, setEditTaskIsOpen] = useState(false);
   const [doneTaskUntilIsOpen, setDoneTaskUntilIsOpen] = useState(false);

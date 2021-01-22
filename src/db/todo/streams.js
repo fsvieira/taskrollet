@@ -45,11 +45,6 @@ function shuffle(array) {
     return array;
 }
 
-/** MAKE TODO: 
- *  todo filter tags filter is no longer saved on database, 
- *  this is because user may forget that a filter is selected in a new session.
- */
-
 export const $activeTodo = tags =>
     $todo().combine($activeSprintsTasks(tags), (todo, { sprints, tasks }) => {
         const t = { ...todo };
@@ -62,29 +57,30 @@ export const $activeTodo = tags =>
             selectedTasks.shift();
         }
 
-        if (t.relationships.task) {
-            const task = tasks.find(task => task.id === t.relationships.task.id);
+        if (t.taskID) {
+            const task = tasks.find(task => task.taskID === t.taskID);
 
             const dateUntil = t.task && t.task.doneUntil && moment(t.task.doneUntil).isAfter(moment())
                 ? moment(t.task.doneUntil).calendar() : undefined;
 
             if (!task || task.deleted || task.done || dateUntil) {
-                const index = selectedTasks.indexOf(t.relationships.task.id);
+                const index = selectedTasks.indexOf(t.taskID);
 
                 if (index !== -1) {
                     selectedTasks.splice(index, 1);
                 }
 
-                delete t.relationships.task;
+                delete t.taskID;
+                delete t.task;
             }
             else {
-                t.relationships.task = task;
+                t.task = task;
             }
 
             t.total = tasks.length;
         }
 
-        if (!t.relationships.task && tasks.length) {
+        if (!t.taskID && tasks.length) {
             const now = moment().valueOf();
             let total = 0;
 
@@ -96,9 +92,9 @@ export const $activeTodo = tags =>
                 const task = tasks[i];
 
                 const sprintLength = task.computed.sprints.length;
-                const time = now - task.attributes.createdAt;
+                const time = now - task.createdAt;
                 const sprintAvg = task.computed.sprints.reduce((acc, sprint) =>
-                    acc + Math.abs(sprint.attributes.doneAvg - sprint.attributes.taskDueAvg)
+                    acc + Math.abs(sprint.doneAvg - sprint.taskDueAvg)
                     , 0
                 );
 
@@ -112,19 +108,19 @@ export const $activeTodo = tags =>
                 task.computed.rank = task.computed.rank / total;
             });
 
-            // tasks.sort((a, b) => a.computed.rank - b.computed.rank);
             tasks = shuffle(tasks);
 
             const r = Math.random();
-
             let accum = 0;
+
             for (let i = 0; i < tasks.length; i++) {
                 const task = tasks[i];
 
                 const a = accum + task.computed.rank;
 
                 if (a >= r) {
-                    t.relationships.task = task;
+                    t.task = task;
+                    t.taskID = task.taskID;
                     selectTodo(task, tags);
                     break;
                 }

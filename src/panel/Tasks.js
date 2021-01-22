@@ -134,7 +134,7 @@ export default function Tasks() {
     }
 
     const selectTodoNotification = async task => {
-        const msg = task.attributes.description.length > 10 ? task.attributes.description.substring(0, 10) + "..." : task.attributes.description;
+        const msg = task.description.length > 10 ? task.description.substring(0, 10) + "..." : task.description;
 
         try {
             await selectTodo(task);
@@ -178,23 +178,15 @@ export default function Tasks() {
         ></Task>
     );
 
-    /*
-    const renderTasksList = (tasks, actions) =>
-        <div style={{
-            display: "flex",
-            flexWrap: "wrap",
-            flexDirection: "row"
-        }}>{renderTasksListAux(tasks, actions)}</div>;*/
-
     const tasksList = sort(
-        tasks.filter(t => t.attributes.description.toLowerCase().indexOf(searchText.toLocaleLowerCase()) !== -1),
+        tasks.filter(t => t.description.toLowerCase().indexOf(searchText.toLocaleLowerCase()) !== -1),
         orderBy
     );
 
     const isDoneUntil = doneUntil => moment(doneUntil).isAfter(moment());
 
     const activeTasks = renderTasksList(
-        tasksList.filter(t => !t.attributes.done && !t.attributes.deleted && !isDoneUntil(t.attributes.doneUntil)),
+        tasksList.filter(t => !t.done && !t.deleted && !isDoneUntil(t.doneUntil)),
         {
             doneTask, doneTaskUntil,
             deleteTask, selectTodoNotification,
@@ -204,16 +196,16 @@ export default function Tasks() {
     );
 
     const doneUntilTasks = renderTasksList(
-        tasksList.filter(t => !t.attributes.done && !t.attributes.deleted && isDoneUntil(t.attributes.doneUntil)),
+        tasksList.filter(t => !t.done && !t.deleted && isDoneUntil(t.doneUntil)),
         { doneTask, doneTaskUntil, deleteTask, selectTodoNotification }
     );
 
     const doneTasks = renderTasksList(tasksList.filter(
-        t => t.attributes.done && !t.attributes.deleted),
+        t => t.done && !t.deleted),
         { recoverTask: resetTask }
     );
 
-    const deletedTasks = renderTasksList(tasksList.filter(t => t.attributes.deleted), { recoverTask: resetTask });
+    const deletedTasks = renderTasksList(tasksList.filter(t => t.deleted), { recoverTask: resetTask });
 
     const tasksTable = [
         ["active", { tasks: activeTasks, label: "Active" }],

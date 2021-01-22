@@ -23,8 +23,8 @@ export default function TaskSplit({
 }) {
   const { t } = useTranslation();
 
-  const [valueA, setValueA] = useState(task ? task.attributes.description : "");
-  const [valueB, setValueB] = useState(task ? task.attributes.description : "");
+  const [valueA, setValueA] = useState(task ? task.description : "");
+  const [valueB, setValueB] = useState(task ? task.description : "");
 
   const { tags } = useActiveTags();
 
