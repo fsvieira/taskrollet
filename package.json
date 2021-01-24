@@ -59,6 +59,8 @@
     "reactjs": "^1.0.0",
     "redux": "^4.0.5",
     "remove": "^0.1.5",
-    "string-similarity": "^4.0.1"
+    "string-similarity": "^4.0.1",
+    "sync": "^0.2.5",
+    "ws": "^7.4.2"
   }
 }

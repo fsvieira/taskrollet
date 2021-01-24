@@ -32,7 +32,7 @@ export default function TaskEditor({
 
   const { tags } = useActiveTags();
 
-  const newTags = parseValue(valueA, tags).concat(parseValue(valueB, tags));
+  const newTags = [...new Set(parseValue(valueA, tags).concat(parseValue(valueB, tags)))];
 
   const [split, setSplit] = useState(false);
 
