@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
-import { clear } from "./db";
+import { useState, useEffect, useRef } from "react";
+import { clear, startSync } from "./db";
 
 import { useLocation, useHistory } from "react-router-dom";
-import sync from "./sync/sync";
 
 const API_URL_RENEW = process.env.REACT_JSONAPI_URL + "/renew";
 
@@ -12,7 +11,7 @@ export function useAuth() {
 	const location = useLocation();
 	const history = useHistory();
 
-	const token = useRef();
+	const token = useRef(null);
 
 	useEffect(
 		() => {
@@ -64,7 +63,7 @@ export function useAuth() {
 
 	useEffect(
 		() => {
-			sync(token).catch(e => {
+			startSync(token).catch(e => {
 				setError(e);
 			});
 		}, []

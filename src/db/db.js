@@ -12,15 +12,19 @@ export const genID = uuidv4;
 
 const listenners = new Set();
 
-export async function sync(token) {
-	db().disconnect(process.env.REACT_WS_SYNC);
-	closeConnections();
-	await db().syncable.connect(
-		"websocket",
-		process.env.REACT_WS_SYNC, {
-			token
-		}
-	)
+export async function startSync(token) {
+	try {
+		console.log("Start Sync");
+		db().syncable.disconnect(process.env.REACT_WS_SYNC);
+		closeConnections();
+		await db().syncable.connect(
+			"websocket",
+			process.env.REACT_WS_SYNC,
+			{ token }
+		);
+	} catch (e) {
+		console.log(e);
+	}
 }
 
 function setup() {

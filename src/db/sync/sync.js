@@ -18,6 +18,8 @@ export function closeConnections() {
 export default function sync(context, url, { token }, baseRevision, syncedRevision, changes, partial, applyRemoteChanges, onChangesAccepted, onSuccess, onError) {
     var RECONNECT_DELAY = 5000;
 
+    console.log("Start Sync", token);
+
     if (!token.current) {
         onError('EMPTY_TOKEN', RECONNECT_DELAY);
     }
@@ -63,7 +65,7 @@ export default function sync(context, url, { token }, baseRevision, syncedRevisi
         ws.send(JSON.stringify({
             type: "clientIdentity",
             clientIdentity: context.clientIdentity || null,
-            token
+            token: "Bearer " + token.current
         }));
 
         // Send our changes:
