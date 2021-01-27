@@ -26,12 +26,6 @@ export default function Login() {
     const [user, setUser] = useAuth();
     const { t } = useTranslation();
 
-    /*
-    const history = useHistory();
-    const location = useLocation();
-    const { from } = location.state || { from: { pathname: "/" } };
-    */
-
     const login = async () => {
         // Fetch emdpoint
         try {
@@ -39,22 +33,12 @@ export default function Login() {
                 setMessage("LOGIN_EMPTY");
             }
             else {
-                console.log(API_URL_LOGIN, username, password, forever);
-
                 const data = await fetch(API_URL_LOGIN, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': "application/vnd.api+json"
+                        'Content-Type': "application/json"
                     },
                     body: JSON.stringify({
-                        /*data: {
-                            type: "login",
-                            id: username,
-                            attributes: {
-                                password,
-                                forever
-                            }
-                        }*/
                         id: username,
                         password,
                         forever
@@ -78,12 +62,8 @@ export default function Login() {
                         forever,
                         ...user
                     });
-
-                    /*console.log(from);
-                    history.replace(from);*/
                 }
             }
-
         }
         catch (e) {
             setMessage({ intent: Intent.DANGER, text: "LOGIN_ERROR" });

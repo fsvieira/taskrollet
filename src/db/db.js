@@ -3,7 +3,7 @@ import Dexie from "dexie";
 import dexieObservable from "dexie-observable";
 import dexieSyncable from "dexie-syncable";
 import uuidv4 from "uuid/v4";
-import sync from './sync/sync';
+import sync, { closeConnections } from './sync/sync';
 
 Dexie.Syncable.registerSyncProtocol("websocket", { sync });
 
@@ -11,6 +11,17 @@ let _db;
 export const genID = uuidv4;
 
 const listenners = new Set();
+
+export async function sync(token) {
+	db().disconnect(process.env.REACT_WS_SYNC);
+	closeConnections();
+	await db().syncable.connect(
+		"websocket",
+		process.env.REACT_WS_SYNC, {
+			token
+		}
+	)
+}
 
 function setup() {
 
@@ -36,11 +47,6 @@ function setup() {
 			console.log("Sync Status changed: " + Dexie.Syncable.StatusTexts[newStatus]);
 		});
 
-		db.syncable.connect("websocket", process.env.REACT_WS_SYNC)
-			.catch(err => {
-				console.error(`Failed to connect: ${err.stack || err}`);
-			});
-
 		return db;
 	}
 	catch (e) {
@@ -57,6 +63,10 @@ export function db() {
 }
 
 export async function clear() {
+	localStorage.removeItem("user");
+	sessionStorage.removeItem("user");
+
+	closeConnections();
 
 	return _db ? _db.delete().then(() => _db = undefined) : undefined
 };
