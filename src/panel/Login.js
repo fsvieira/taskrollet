@@ -13,11 +13,16 @@ import {
     Intent
 } from "@blueprintjs/core";
 
+import {
+    Redirect
+} from "react-router-dom";
+
+
 import backgroundImage from './pexels-ketut-subiyanto-4560079.png';
 
 const API_URL_LOGIN = process.env.REACT_JSONAPI_URL + "/login";
 
-export default function Login() {
+export default function Login({ location }) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [forever, setForever] = useState(false);
@@ -69,6 +74,15 @@ export default function Login() {
             setMessage({ intent: Intent.DANGER, text: "LOGIN_ERROR" });
         }
     };
+
+    if (user) {
+        return <Redirect
+            to={{
+                pathname: "/",
+                state: { from: location }
+            }}
+        />;
+    }
 
     return (
         <section style={{

@@ -8,21 +8,44 @@
     or SQL) such as mysql, mongodb, etc.
 */
 
-let connections = [];
+/*
+function request(ws, onError) {
+    let requestID = 0;
+    let acks = {};
 
-export function closeConnections() {
-    connections.forEach(ws => ws.close());
-    connections = [];
-};
+    ws.onerror = event => {
+        ws.close();
+        onError(event.message, RECONNECT_DELAY);
+    }
+
+    // If socket is closed (network disconnected), inform framework and make it reconnect
+    ws.onclose = event => onError("Socket closed: " + event.reason, RECONNECT_DELAY);
+
+    ws.onmessage = event => {
+        let res = JSON.parse(event.data);
+
+        const { resolve, reject } = acks[res.requestID];
+        if (res.type === 'ack') {
+            resolve(res);
+        }
+        else if (res.type === 'error') {
+            reject(res);
+        }
+    }
+
+    return json => new Promise((resolve, reject) => {
+        let rID = requestID++;
+        acks[rID] = { resolve, reject };
+
+        ws.send(JSON.stringify({
+            ...json,
+            requestID: rID
+        }));
+    }
+}*/
 
 export default function sync(context, url, { token }, baseRevision, syncedRevision, changes, partial, applyRemoteChanges, onChangesAccepted, onSuccess, onError) {
     var RECONNECT_DELAY = 5000;
-
-    console.log("Start Sync", token);
-
-    if (!token.current) {
-        onError('EMPTY_TOKEN', RECONNECT_DELAY);
-    }
 
     // The following vars are needed because we must know which callback to ack when server sends it's ack to us.
     var requestId = 0;
@@ -30,7 +53,6 @@ export default function sync(context, url, { token }, baseRevision, syncedRevisi
 
     // Connect the WebSocket to given url:
     var ws = new WebSocket(url);
-    connections.push(ws);
 
     // sendChanges() method:
     function sendChanges(changes, baseRevision, partial, onChangesAccepted) {
@@ -59,15 +81,16 @@ export default function sync(context, url, { token }, baseRevision, syncedRevisi
     }
 
     // When WebSocket opens, send our changes to the server.
-    ws.onopen = function (event) {
+    ws.onopen = () => {
         // Initiate this socket connection by sending our clientIdentity. If we dont have a clientIdentity yet,
         // server will call back with a new client identity that we should use in future WebSocket connections.
         ws.send(JSON.stringify({
             type: "clientIdentity",
             clientIdentity: context.clientIdentity || null,
-            token: "Bearer " + token.current
+            token: "Bearer " + token
         }));
 
+        /*
         // Send our changes:
         sendChanges(changes, baseRevision, partial, onChangesAccepted);
 
@@ -76,6 +99,7 @@ export default function sync(context, url, { token }, baseRevision, syncedRevisi
             type: "subscribe",
             syncedRevision
         }));
+        */
     }
 
     // If network down or other error, tell the framework to reconnect again in some time:
@@ -135,6 +159,19 @@ export default function sync(context, url, { token }, baseRevision, syncedRevisi
             } else if (requestFromServer.type == "clientIdentity") {
                 context.clientIdentity = requestFromServer.clientIdentity;
                 context.save();
+
+                console.log("SEND CHANGES");
+
+                // Now that server has confirm clientIdentity start sending/receiving.
+                // Send our changes:
+                sendChanges(changes, baseRevision, partial, onChangesAccepted);
+
+                // Subscribe to server changes:
+                ws.send(JSON.stringify({
+                    type: "subscribe",
+                    syncedRevision
+                }));
+
             } else if (requestFromServer.type == "error") {
                 var requestId = requestFromServer.requestId;
                 ws.close();

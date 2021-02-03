@@ -1,6 +1,6 @@
 import React, { useState, Suspense } from "react";
 
-import { useAuth } from "./db/auth";
+import { useAuth, ProvideAuth } from "./db/auth";
 
 import {
   Alignment,
@@ -41,17 +41,19 @@ const Content = {
 };
 
 export default function App() {
-  return <Router>
-    <Switch>
-      <Route path="/login">
-        <Login />
-      </Route>
+  return <ProvideAuth>
+    <Router>
+      <Switch>
+        <Route path="/login">
+          <Login />
+        </Route>
 
-      <PrivateRoute path="/">
-        <Taskroulette />
-      </PrivateRoute>
-    </Switch>
-  </Router>;
+        <PrivateRoute path="/">
+          <Taskroulette />
+        </PrivateRoute>
+      </Switch>
+    </Router>
+  </ProvideAuth>;
 }
 
 function PrivateRoute({ children, ...rest }) {
