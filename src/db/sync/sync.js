@@ -54,6 +54,17 @@ export default function sync(context, url, { token }, baseRevision, syncedRevisi
     // Connect the WebSocket to given url:
     var ws = new WebSocket(url);
 
+    onSuccess({
+        // Specify a react function that will react on additional client changes
+        react: function (changes, baseRevision, partial, onChangesAccepted) {
+            sendChanges(changes, baseRevision, partial, onChangesAccepted);
+        },
+        // Specify a disconnect function that will close our socket so that we dont continue to monitor changes.
+        disconnect: function () {
+            ws.close();
+        }
+    });
+
     // sendChanges() method:
     function sendChanges(changes, baseRevision, partial, onChangesAccepted) {
         ++requestId;
@@ -139,7 +150,7 @@ export default function sync(context, url, { token }, baseRevision, syncedRevisi
                 applyRemoteChanges(requestFromServer.changes, requestFromServer.currentRevision, requestFromServer.partial);
                 if (isFirstRound && !requestFromServer.partial) {
                     // Since this is the first sync round and server sais we've got all changes - now is the time to call onsuccess()
-                    onSuccess({
+                    /*onSuccess({
                         // Specify a react function that will react on additional client changes
                         react: function (changes, baseRevision, partial, onChangesAccepted) {
                             sendChanges(changes, baseRevision, partial, onChangesAccepted);
@@ -148,7 +159,7 @@ export default function sync(context, url, { token }, baseRevision, syncedRevisi
                         disconnect: function () {
                             ws.close();
                         }
-                    });
+                    });*/
                     isFirstRound = false;
                 }
             } else if (requestFromServer.type == "ack") {

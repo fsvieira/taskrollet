@@ -89,7 +89,7 @@ export async function addTaskText(t, task, text, onSave) {
     const msg = newTask.description.length > 10 ? newTask.description.substring(0, 10) + "..." : newTask.description;
 
     try {
-        await (newTask.id ? editTask(newTask) : addTask(newTask));
+        await (newTask.taskID ? editTask(newTask) : addTask(newTask));
 
         AppToaster.show({
             message: // `${t("TASK")} ${(task ? t("SAVED") : t("ADDED")).toLowerCase()}: ${msg}`,

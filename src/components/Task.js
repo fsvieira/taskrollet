@@ -22,7 +22,7 @@ import moment from "moment";
 import TaskEditor from "./Editor/TaskEditor";
 // import TaskSplit from "./Editor/TaskSplit";
 
-import { addTask } from '../db/tasks/db';
+import { editTask } from '../db/tasks/db';
 
 import ProgressChart from "./charts/ProgessChart";
 
@@ -63,7 +63,7 @@ export function PrettyDescription({ description, task }) {
             inline={true}
             onChange={() => {
               task.description = newDescription.join("");
-              addTask(task);
+              editTask(task);
             }}
             key={i}
             style={{ marginRight: "0px" }}
@@ -78,7 +78,7 @@ export function PrettyDescription({ description, task }) {
             inline={true}
             onChange={() => {
               task.description = newDescription.join("");
-              addTask(task);
+              editTask(task);
             }}
             key={i}
             style={{ marginRight: "0px" }}
