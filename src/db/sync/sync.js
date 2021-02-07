@@ -56,13 +56,10 @@ export default function sync(context, url, { token }, baseRevision, syncedRevisi
 
     onSuccess({
         // Specify a react function that will react on additional client changes
-        react: function (changes, baseRevision, partial, onChangesAccepted) {
-            sendChanges(changes, baseRevision, partial, onChangesAccepted);
-        },
+        react: (changes, baseRevision, partial, onChangesAccepted) =>
+            sendChanges(changes, baseRevision, partial, onChangesAccepted),
         // Specify a disconnect function that will close our socket so that we dont continue to monitor changes.
-        disconnect: function () {
-            ws.close();
-        }
+        disconnect: () => ws.close()
     });
 
     // sendChanges() method:
@@ -121,6 +118,7 @@ export default function sync(context, url, { token }, baseRevision, syncedRevisi
 
     // If socket is closed (network disconnected), inform framework and make it reconnect
     ws.onclose = function (event) {
+        console.log(event.reason);
         onError("Socket closed: " + event.reason, RECONNECT_DELAY);
     }
 
