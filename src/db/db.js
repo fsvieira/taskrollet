@@ -15,6 +15,7 @@ export const genID = uuidv4;
 const listenners = new Set();
 
 export async function startSync(token) {
+	/*
 	try {
 		console.log("Start Sync");
 		db().syncable.disconnect(process.env.REACT_WS_SYNC);
@@ -26,7 +27,7 @@ export async function startSync(token) {
 		);
 	} catch (e) {
 		console.log(e);
-	}
+	}*/
 }
 
 function setup() {
@@ -35,7 +36,7 @@ function setup() {
 		const db = new Dexie(dbName, { addons: [dexieObservable, dexieSyncable] });
 
 		db.version(1).stores({
-			tasks: "&taskID,createdAt,updatedAt,description,tags,deleted,done,doneUntil,[deleted+done]",
+			tasks: "&taskID,createdAt,updatedAt,description,tags,deleted,done,doneUntil,[deleted+done],[done+updatedAt]",
 			sprints: "&sprintID,createdAt,dueDate,tags",
 			todo: "&todoID,taskID,filterTags",
 			user: "&userID,email,expirationDate,userID,username"
@@ -49,9 +50,10 @@ function setup() {
 			}
 		});
 
+		/*
 		db.syncable.on('statusChanged', (newStatus, url) => {
 			console.log("Sync Status changed: " + Dexie.Syncable.StatusTexts[newStatus]);
-		});
+		});*/
 
 		return db;
 	}
