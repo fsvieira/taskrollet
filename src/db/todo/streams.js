@@ -45,7 +45,93 @@ function shuffle(array) {
     return array;
 }
 
+// -- TODO: make a stats module -- 
+export const $stats = (tags = { all: true }) =>
+    fromBinder(sink => {
+        const find = () => db().tasks
+            .where(['done', 'updatedAt'])
+            .above([1, moment().subtract(3, 'months').toDate()])
+            .filter(task => {
+                for (let tag in tags) {
+                    if (!task.tags[tag]) {
+                        return false;
+                    }
+                }
+
+                return true;
+            }).sortBy('updatedAt')
+            .then(tasks => {
+
+                let daysPerTask = 7;
+                if (tasks.length) {
+
+                }
+
+                sink({
+                    daysPerTask,
+                    total: tasks.length
+                });
+            });
+
+        const cancel = changes(find);
+
+        find();
+
+        return cancel;
+    });
+
+
+export const $todoPlanner = (tags = { all: true }) =>
+    fromBinder(sink => {
+        const find = () => db().tasks
+            .where(['done', 'deleted', 'doneUntil'])
+            .below([0, 0, moment().toDate()])
+            .filter(task => {
+                for (let tag in tags) {
+                    if (!task.tags[tag]) {
+                        return false;
+                    }
+                }
+
+                return true;
+            }).sortBy('createdAt')
+            .then(sink);
+
+        const cancel = changes(find);
+
+        find();
+
+        return cancel;
+    });
+
+// $todoPlanner();
+
 export const $activeTodo = tags =>
+    $todoPlanner(tags).combine($stats(tags), (tasks, stats) => {
+        const task = tasks[0];
+        const todo = {};
+
+        console.log(stats);
+
+        if (task) {
+            todo.task = {
+                ...task,
+                computed: {
+                    sprints: [{ tags: [], empty: true }]
+                }
+            };
+            todo.taskID = task.taskID;
+            todo.stats = {
+                doneTasksTotal: stats.total,
+                openTasksTotal: tasks.length,
+                total: stats.total + tasks.length
+            };
+        };
+
+        return todo;
+    });
+
+export const __$activeTodo = tags =>
     $todo().combine($activeSprintsTasks(tags), (todo, { sprints, tasks }) => {
         const t = { ...todo };
 

@@ -1,4 +1,4 @@
-import { db, genID, changes } from "../db";
+import { db, genID } from "../db";
 import moment from "moment";
 
 export const addTask = ({ computed, ...task }, createdAt) => {
@@ -10,7 +10,8 @@ export const addTask = ({ computed, ...task }, createdAt) => {
         done: 0,
         deleted: 0,
         createdAt: createdAt || now,
-        updatedAt: now
+        updatedAt: now,
+        doneUntil: now
     });
 }
 
@@ -19,7 +20,5 @@ export const doneTask = ({ computed, ...task }) => db().tasks.put({ ...task, don
 export const doneTaskUntil = ({ computed, ...task }, doneUntil) => db().tasks.put({ ...task, doneUntil, updatedAt: moment().toDate() });
 export const deleteTask = ({ computed, ...task }) => db().tasks.put({ ...task, deleted: 1, updatedAt: moment().toDate() });
 export const resetTask = ({ computed, ...task }) => {
-    if (task.deleted || task.done || task.doneUntil) {
-        db().tasks.put({ ...task, deleted: 0, done: 0, doneUntil: null, updatedAt: moment().toDate() });
-    }
+    db().tasks.put({ ...task, deleted: 0, done: 0, doneUntil: now, updatedAt: now });
 };

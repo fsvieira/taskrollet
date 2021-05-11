@@ -22,6 +22,8 @@ export default function Todo() {
   let taskHeader;
   if (todo && todo.task) {
 
+    console.log("TODO", JSON.stringify(todo));
+
     const empty = todo.task.computed.sprints.find(s => s.empty);
     const sprints = todo.task.computed.sprints.filter(s => !s.empty);
 
@@ -29,7 +31,9 @@ export default function Todo() {
     const doneAvg = sprints.reduce((avg, s) => (avg + s.doneAvg) / 2, empty.doneAvg);
     const nextTodoAvgDueTime = (taskDueAvg + doneAvg) / 2;
     const inSprints = todo.task.computed.sprints.length - 1;
-    const { doneTasksTotal, openTasksTotal, total } = empty;
+    // const { doneTasksTotal, openTasksTotal, total } = empty;
+
+    const { doneTasksTotal, openTasksTotal, total } = todo.stats;
 
     const estimatedDueDate = openTasksTotal * nextTodoAvgDueTime;
     let sprintUI;

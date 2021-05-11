@@ -92,45 +92,8 @@ export const $taskStats = tags => $tasks(tags, { deleted: 0 }, false).map(tasks 
 	return r;
 });
 
+
 /*
-export const $tasksCounts = async () => {
-	const find = async () => {
-		let stats = { total: 0, tags: {} };
-		const aboveDate = moment().subtract(3, 'month').toDate();
-
-		await db().tasks
-			.where(['done', 'updatedAt'])
-			.above([1, aboveDate])
-			.each(task => {
-				stats.total++;
-
-				for (let label in task.tags) {
-					const tagStats = stats.tags[label] = stats.tags[label] || {
-						total: 0
-					};
-
-					tagStats.total++;
-
-					if (!tagStats.lastDate || (tagStats.lastDate && tagStats.lastDate > task.createdAt)) {
-						tagStats.lastDate = task.createdAt < aboveDate ? aboveDate : task.createdAt;
-					}
-				}
-
-				if (!stats.lastDate || (stats.lastDate && stats.lastDate > task.createdAt)) {
-					stats.lastDate = task.createdAt < aboveDate ? aboveDate : task.createdAt;
-				}
-			});
-
-		console.log("Days", moment.duration(moment().diff(stats.lastDate)).asDays());
-		console.log("Days per task", moment.duration(moment().diff(stats.lastDate)).asDays() / stats.total);
-		console.log("Stats", stats);
-	};
-
-	changes(find);
-
-	find();
-}*/
-
 export const $tasksCounts = async () => {
 	const find = async () => {
 		const aboveDate = moment().subtract(3, 'month').toDate();
@@ -173,5 +136,5 @@ export const $tasksCounts = async () => {
 }
 
 $tasksCounts();
-
+*/
 

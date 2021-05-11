@@ -35,14 +35,14 @@ function setup() {
 	try {
 		const db = new Dexie(dbName, { addons: [dexieObservable, dexieSyncable] });
 
-		db.version(1).stores({
-			tasks: "&taskID,createdAt,updatedAt,description,tags,deleted,done,doneUntil,[deleted+done],[done+updatedAt]",
+		db.version(6).stores({
+			tasks: "&taskID,createdAt,updatedAt,description,tags,deleted,done,doneUntil,[deleted+done],[done+updatedAt],[done+deleted+doneUntil],[done+deleted+createdAt]",
 			sprints: "&sprintID,createdAt,dueDate,tags",
 			todo: "&todoID,taskID,filterTags",
 			user: "&userID,email,expirationDate,userID,username"
 		});
 
-		db.version(2).stores({});
+		// db.version(3).stores({});
 
 		db.on("changes", changes => {
 			for (let fn of listenners) {
