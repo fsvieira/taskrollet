@@ -19,6 +19,8 @@ export default function SelectTags({ onChange, label, noText, filterTags = { all
 
     // const [selectedTags, setSelectedTags] = useState(filterTags);
 
+    console.log("=============>>>>", tags, selectedTags);
+
     const checks = [];
     const orderTags = Object.keys(tags).sort();
 
@@ -50,11 +52,12 @@ export default function SelectTags({ onChange, label, noText, filterTags = { all
     }
 
     const tagsSelector = <div style={{ padding: "0.5em", overflow: "auto", maxHeight: "70vh", width: "15em" }}>{checks}</div>;
+    const tagsString = Object.keys(selectedTags).sort().join(" ");
 
     return (
         <Popover content={tagsSelector} position={Position.BOTTOM}>
             <Tooltip content={t("TAGS")} position={Position.TOP}>
-                <Button icon="tag" text={noText ? "" : label || t("FILTER")} />
+                <Button icon="tag" text={noText ? "" : label || tagsString /* t("FILTER") */} />
             </Tooltip>
         </Popover>
     );
